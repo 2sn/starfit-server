@@ -1,7 +1,15 @@
 ---
-# tasks to install StarFit python package
-- name: Install the latest version of python
+- name: Install dependencies
   dnf:
     name:
       - python
+      - python3-devel
+      - pip
+      - python3-wheel
+      - gfortran
     state: latest
+
+- name: Install StarFit
+  shell: >
+    GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
+    pip install git+ssh://git@github.com/conradtchan/StarFit.git@tidy-autils

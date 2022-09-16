@@ -5,9 +5,9 @@
   become: true
 
   pre_tasks:
-    - name: Check for required arguments
+    - name: Fail if required arguments not provided
       fail:
-        msg: email and domain are required arguments
+        msg: "'email' and 'domain' are required arguments"
       when: email is not defined or domain is not defined
 
   roles:
