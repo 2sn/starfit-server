@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<head>
+<meta charset="US-ASCII">
+<link rel="stylesheet" type="text/css" href="index.css">
+<link href='http://fonts.googleapis.com/css?family=Exo+2:300,100' rel='stylesheet' type='text/css'>
+
+<script type="text/javascript">
+    function buttonCheck() {
+        var boxes = document.getElementsByClassName('ifGa'),
+        i = boxes.length;
+        if (document.getElementById('ga').checked) {var hide = 'block'}
+        else {var hide = 'none'}
+        while (i--) {boxes[i].style.display = hide;}
+
+        var boxes = document.getElementsByClassName('ifNotSingle'),
+        i = boxes.length;
+        if (document.getElementById('single').checked) {var hide = 'none'}
+        else {var hide = 'block'}
+        while (i--) {boxes[i].style.display = hide;}
+    }
+</script>
+
+<title>StarFit&trade;</title>
+</head>
+<html>
+
+<body>
+
+<div id="contentWrapper">
+
+
+<div id="starfit">
+    <a class="title" href="/index.html">STARFIT</a>
+</div>
+
+<div id="form">
+    <form name="GAform" action="py/starfitonline.py" method="POST" enctype="multipart/form-data">
+    <b>Algorithm</b>
+        <table class="inputs">
+            <tr>
+                <td colspan = "2">
+                    <input type="radio" name="algorithm" value="single" onclick="javascript:buttonCheck();" id="single" checked = "checked">Single Star
+                    <!-- <input type="radio" name="algorithm" value="ga" onclick="javascript:buttonCheck();" id="ga">Genetic Algorithm -->
+                    <input type="radio" name="algorithm" value="double" onclick="javascript:buttonCheck();" id="double">Complete Binary Search
+                </td>
+            </tr>
+        </table>
+        <div class="ifGa" style="display:none">
+        <table class="inputs">
+            <tr>
+                <td class="c1">
+                    Time limit:
+                </td>
+                <td>
+                    <input name="time_limit" type="number" value="5" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Population size:
+                </td>
+                <td>
+                    <input name="pop_size" type="number" value="200" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Gene size (number of stars):
+                </td>
+                <td>
+                    <input name="sol_size" type="number" value="2" />
+                </td>
+            </tr>
+        </table>
+        </div>
+        <br />
+        <b>Fitting</b>
+        <div class="ifNotSingle" style="display:none">
+        <table class="inputs">
+            <tr>
+                <td colspan = "2">
+                    <input type="radio" name="fixed" value="0" checked = "checked">Free fitting
+                    <input type="radio" name="fixed" value="1">Fixed offsets
+                </td>
+            </tr>
+        </table>
+        </div>
+        <table class="inputs">
+            <tr>
+                <td class="c1">
+            	    	<a href="README.txt">Stellar data</a> (Leave blank for HE1327-2326):
+                </td>
+                <td>
+                        <input name="stardata" type="file">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Model database:
+                </td>
+                <td>
+                    <select name = "database">
+                        <option value="znuc2012.S4.star.el.y.stardb.gz">znuc.S4 (2012)</option>
+                        <option value="znuc.S4.star.el.y.stardb.gz">znuc.S4 (2010)</option>
+                        <option value="znuc2012.Ye.star.el.y.stardb.gz">znuc.Ye (2012)</option>
+                        <option value="znuc.Ye.star.el.y.stardb.gz">znuc.Ye (2010)</option>
+                        <option value="he2sn.HW02.star.el.y.stardb.gz">he2sn.HW02</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Model lower limits:<br />
+                    (comma separated element symbols)
+                </td>
+                <td>
+                    <input type="text" name="z_lolim", value="Sc, Cu"><br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Combine elements:
+                </td>
+                <td>
+                    <select name = "combine">
+                        <option value="0" checked = "checked">None</option>
+                        <option value="1">C+N</option>
+                        <option value="2">C+N+O</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Max Z:
+                </td>
+                <td>
+                    <input name="z_max" type="number" value="30" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Exclude elements:<br />
+                    (comma separated element symbols)
+                </td>
+                <td>
+                    <input type="text" name="z_exclude", value="Li, Cr, Zn"><br>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Upper limits CDF
+                </td>
+                <td>
+                    <input type="checkbox" name="cdf" value="True">
+                </td>
+            </tr>
+        </table>
+        <br />
+        <b>Output</b>
+        <table class="inputs">
+            <tr>
+                <td class="c1">
+                    Email (necessary for jobs longer than 1 minute):<br />
+                    Includes data for plots.
+
+                </td>
+                <td>
+                    <input name="email" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Plot format (PDF will be mailed)
+                </td>
+                <td>
+                    <select name = "plotformat">
+                        <option value="svg" checked="checked">SVG</option>
+                        <option value="png">PNG</option>
+                        <option value="jpg">JPG</option>
+                        <option value="pdf">PDF</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <div class="ifGa" style="display:none">
+        <table class="inputs">
+            <tr>
+                <td class="c1">
+                    GA performance plot
+                </td>
+                <td>
+                    <input type="checkbox" name="perfplot" value="1" />
+                </td>
+            </tr>
+        </table>
+        </div>
+        <br />
+        <input type="submit" id="run" value="Run">
+    </form>
+</div>
+<br />
+<center>
+    <a href="http://moca.monash.edu/"><img src="images/mocalogo.png" width="120px"></a>
+    <br />
+    <a href="http://2sn.org/starfit/">Science Team</a>
+</center>
+</div>
+</body>
+</html>
