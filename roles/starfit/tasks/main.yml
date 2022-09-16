@@ -13,3 +13,8 @@
   shell: >
     GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
     pip install git+ssh://git@github.com/conradtchan/StarFit.git@tidy-autils
+
+- name: Add html content
+  copy:
+    src: html
+    dest: /var/www/
