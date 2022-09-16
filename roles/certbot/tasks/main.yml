@@ -1,0 +1,16 @@
+---
+- name: Install the latest version of Certbot
+  dnf:
+    name:
+      - certbot
+      - python3-certbot-apache
+    state: latest
+
+- name: Register certificate
+  shell: >
+    certbot --apache -n --agree-tos
+    --domains {{ domain }}
+    --email {{ email }}
+
+- name: Test certbot renew
+  shell: certbot renew --dry-run

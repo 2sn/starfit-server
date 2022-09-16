@@ -1,0 +1,7 @@
+---
+# tasks to install StarFit python package
+- name: Install the latest version of python
+  dnf:
+    name:
+      - python
+    state: latest

@@ -1,0 +1,16 @@
+---
+- name: Configure StarFit server
+  hosts: all
+  gather_facts: true
+  become: true
+
+  pre_tasks:
+    - name: Check for required arguments
+      fail:
+        msg: email and domain are required arguments
+      when: email is not defined or domain is not defined
+
+  roles:
+    - apache
+    - certbot
+    - starfit

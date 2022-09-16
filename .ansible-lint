@@ -1,0 +1,16 @@
+---
+skip_list:
+  - name[casing] # Rule for checking task and play names.
+  - command-instead-of-module # Using command rather than module.
+  - command-instead-of-shell # Use shell only when shell functionality is required.
+  - ignore-errors # Use failed_when and specify error conditions instead of using ignore_errors.
+  - fqcn-builtins # Use FQCN for builtin actions.
+  - latest[git] # Result of the command may vary on subsequent runs.
+  - meta-no-info # meta/main.yml should contain relevant info.
+  - no-changed-when # Commands should not change things if nothing needs doing.
+  - package-latest # Package installs should not use latest.
+  - yaml[line-length] # Violations reported by yamllint.
+  - var-naming
+
+warn_list:
+  - risky-file-permissions
