@@ -11,9 +11,17 @@
       <VirtualHost *:80>
           ServerName {{ domain }}
       </VirtualHost>
+
       <VirtualHost *:443>
           ServerName {{ domain }}
       </VirtualHost>
+
+      # Python CGI
+      <Directory /var/www/html/py>
+              Options ExecCGI
+              SetHandler cgi-script
+      </Directory>
+
     mode: "0644"
 
 - name: Make sure Apache is running

@@ -18,3 +18,4 @@
   copy:
     src: html
     dest: /var/www/
+    mode: preserve
