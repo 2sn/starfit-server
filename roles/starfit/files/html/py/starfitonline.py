@@ -198,9 +198,9 @@ if stardata.filename:
     with open(filename, 'wb') as fstar:
         fstar.write(stardata.file.read())
 else:
-    filename = '/var/www/starfit_data/stars/HE1327-2326.dat'
+    filename = os.path.join(starfit.DATA_DIR, 'stars', 'HE1327-2326.dat')
 
-dbpath = os.path.join('/var/www/starfit_data/db/',dbname)
+dbpath = os.path.join(starfit.DATA_DIR, 'db', dbname)
 
 if ( forcemail ) or ( time_limit > 60 ) or ( plotformat in ['pdf', 'eps', 'ps'] ):
     mail = True
