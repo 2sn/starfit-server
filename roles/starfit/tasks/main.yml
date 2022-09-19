@@ -10,12 +10,20 @@
     state: latest
 
 - name: Install StarFit
-  shell: >
-    GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
-    pip install git+ssh://git@github.com/conradtchan/StarFit.git@tidy-autils
+  shell: pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ starfit
 
 - name: Add html content
   copy:
     src: html
     dest: /var/www/
     mode: preserve
+
+- name: Ensure starfit data is mounted and served
+  mount:
+    src: LABEL=starfit-data
+    path: /var/www/html/data
+    fstype: ext4
+    opts: defaults
+    dump: 0
+    passno: 2
+    state: remounted
