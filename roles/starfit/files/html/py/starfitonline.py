@@ -7,10 +7,8 @@ import cgi
 import cgitb; cgitb.enable()
 import matplotlib as mpl; mpl.use('Agg'); mpl.rc('text', usetex = True);
 
-import numpy as np
-
-from autils.isotope import Ion
-from autils.time2human import time2human
+from starfit.autils.isotope import Ion
+from starfit.autils.time2human import time2human
 
 import starfit
 from starfit.dbtrim import TrimDB as StarDB
