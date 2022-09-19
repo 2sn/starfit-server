@@ -4,11 +4,13 @@
   gather_facts: true
   become: true
 
-  pre_tasks:
-    - name: Fail if required arguments not provided
-      fail:
-        msg: "'email' and 'domain' are required arguments"
-      when: email is not defined or domain is not defined
+  vars_prompt:
+    - name: domain
+      prompt: Domain name of your server
+      private: false
+    - name: email
+      prompt: Email for registering SSL certificate
+      private: false
 
   roles:
     - apache
