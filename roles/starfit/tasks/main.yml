@@ -7,6 +7,10 @@
       - python3-devel
       - python3-wheel
       - python3-ipython
+      - python3-matplotlib
+      - texlive
+      - texlive-latex
+      - texlive-type1cm
       - gfortran
     state: latest
 
@@ -19,6 +23,12 @@
     dest: /var/www/
     mode: preserve
 
+- name: Create mount point
+  file:
+    path: /var/www/html/data
+    state: directory
+    mode: "0755"
+
 - name: Ensure starfit data is mounted and served
   mount:
     src: LABEL=starfit-data
@@ -27,4 +37,4 @@
     opts: defaults
     dump: 0
     passno: 2
-    state: remounted
+    state: mounted
