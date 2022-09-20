@@ -4,10 +4,11 @@
     name: httpd
     state: latest
 
-- name: Configure domain name
-  copy:
+- name: Add apache configuration
+  blockinfile:
     dest: /etc/httpd/conf.d/{{ domain }}.conf
-    content: |
+    create: true
+    block: |
       <VirtualHost *:80>
           ServerName {{ domain }}
           SetEnv MPLCONFIGDIR {{ mplconfigdir }}
@@ -23,10 +24,9 @@
           Options ExecCGI
           SetHandler cgi-script
       </Directory>
-
     mode: "0644"
 
-- name: Make sure Apache is running
+- name: Restart Apache
   systemd:
     state: restarted
     name: httpd
