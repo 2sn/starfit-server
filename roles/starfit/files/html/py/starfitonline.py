@@ -387,7 +387,7 @@ if mail:
     msg = MIMEMultipart()
     msg['From'] = sender
     msg['To'] = email
-    msg['Subject'] = "StarFit Resulst"
+    msg['Subject'] = "StarFit Results"
 
     msg.attach( MIMEText(body, 'html') )
 
