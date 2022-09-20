@@ -15,7 +15,10 @@ from starfit.dbtrim import TrimDB as StarDB
 
 from starfit.daemonize import createDaemon
 from starfit.read import Star
-from starfit.validate_email import validate_email
+from validate_email import validate_email
+
+import smtplib
+
 
 import base64
 from io import BytesIO, StringIO
@@ -371,29 +374,22 @@ if not mail:
             )
         print(img_tag)
     print(closetags)
+
+
 if mail:
     sys.stdout = previous_stdout
-    body_of_email = stringio.getvalue()
+    body = stringio.getvalue()
 
-    #Gmail login details
-    GMAIL_USERNAME = ''
-    GMAIL_PASSWORD = ''
+    session = smtplib.SMTP('localhost')
 
-    email_subject = 'StarFit Results'
-    recipient = email
-
-    # The below code never changes, though obviously those variables need values.
-    session = smtplib.SMTP('smtp.gmail.com', 587)
-    session.ehlo()
-    session.starttls()
-    session.login(GMAIL_USERNAME, GMAIL_PASSWORD)
+    sender = 'results@starfit2.swin-dev.cloud.edu.au'
 
     msg = MIMEMultipart()
-    msg['From'] = GMAIL_USERNAME
-    msg['To'] = recipient
-    msg['Subject'] = email_subject
+    msg['From'] = sender
+    msg['To'] = email
+    msg['Subject'] = "StarFit Resulst"
 
-    msg.attach( MIMEText(body_of_email, 'html') )
+    msg.attach( MIMEText(body, 'html') )
 
     #Attach images
     for i in plotrange:
@@ -427,4 +423,4 @@ if mail:
         msg.attach(part)
 
     #Send!
-    session.sendmail(GMAIL_USERNAME, recipient, msg.as_string())
+    session.sendmail(sender, email, msg.as_string())
