@@ -7,7 +7,9 @@
     state: latest
 
 - name: Register certificate
-  shell: certbot --apache -n --agree-tos --domains {{ domain }} --email {{ email }}
+  shell:
+    cmd: certbot --apache -n --agree-tos --domains {{ domain }} --email {{ email }}
+    creates: /etc/letsencrypt/live/{{ domain }}
 
 - name: Test certbot renew
   shell: certbot renew --dry-run

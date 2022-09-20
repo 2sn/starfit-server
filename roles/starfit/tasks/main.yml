@@ -38,3 +38,7 @@
     dump: 0
     passno: 2
     state: mounted
+
+- name: Generate matplotlib and tex cache
+  shell:
+    cmd: sudo -u apache MPLCONFIGDIR={{ mplconfigdir }} python -c "import starfit; starfit.Single('HE1327-2326.dat').plot()"
