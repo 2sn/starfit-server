@@ -18,3 +18,4 @@
     - apache
     - certbot
     - starfit
+    - mail
