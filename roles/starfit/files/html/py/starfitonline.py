@@ -21,9 +21,9 @@ from email.mime.text import MIMEText
 from io import BytesIO, StringIO
 
 import starfit
+from daemonize import createDaemon
 from starfit.autils.isotope import Ion
 from starfit.autils.time2human import time2human
-from starfit.daemonize import createDaemon
 from starfit.dbtrim import TrimDB as StarDB
 from starfit.read import Star
 from validate_email import validate_email
