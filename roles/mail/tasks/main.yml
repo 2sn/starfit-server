@@ -1,0 +1,12 @@
+---
+- name: Install sendmail
+  dnf:
+    name:
+      - mailx
+      - sendmail
+    state: latest
+
+- name: Ensure sendmail service is up
+  systemd:
+    state: started
+    name: sendmail
