@@ -4,19 +4,26 @@
     name: httpd
     state: latest
 
+- name: Set ServerName
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: "^ServerName "
+    insertafter: ^#ServerName
+    line: ServerName localhost
+
 - name: Add apache configuration
   blockinfile:
     dest: /etc/httpd/conf.d/{{ domain }}.conf
     create: true
     block: |
+      SetEnv MPLCONFIGDIR {{ mplconfigdir }}
+
       <VirtualHost *:80>
           ServerName {{ domain }}
-          SetEnv MPLCONFIGDIR {{ mplconfigdir }}
       </VirtualHost>
 
       <VirtualHost *:443>
           ServerName {{ domain }}
-          SetEnv MPLCONFIGDIR {{ mplconfigdir }}
       </VirtualHost>
 
       # Python CGI
@@ -25,10 +32,11 @@
           SetHandler cgi-script
       </Directory>
     mode: "0644"
+  register: apacheconfig
 
-- name: Restart Apache
+- name: Apache service
   systemd:
-    state: restarted
+    state: "{{ 'restarted' if apacheconfig.changed else 'started' }}"
     name: httpd
 
 - name: Create mplconfigdir
