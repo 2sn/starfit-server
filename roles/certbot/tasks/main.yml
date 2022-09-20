@@ -13,3 +13,5 @@
 
 - name: Test certbot renew
   shell: certbot renew --dry-run
+  register: certbotrenew
+  changed_when: "'(success)' not in certbotrenew.stdout"
