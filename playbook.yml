@@ -3,6 +3,8 @@
   hosts: all
   gather_facts: true
   become: true
+  vars:
+    mplconfigdir: /usr/share/httpd/mplconfig.d
 
   vars_prompt:
     - name: domain

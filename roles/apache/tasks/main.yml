@@ -10,12 +10,12 @@
     content: |
       <VirtualHost *:80>
           ServerName {{ domain }}
-          SetEnv MPLCONFIGDIR /usr/share/httpd/mplconfig.d
+          SetEnv MPLCONFIGDIR {{ mplconfigdir }}
       </VirtualHost>
 
       <VirtualHost *:443>
           ServerName {{ domain }}
-          SetEnv MPLCONFIGDIR /usr/share/httpd/mplconfig.d
+          SetEnv MPLCONFIGDIR {{ mplconfigdir }}
       </VirtualHost>
 
       # Python CGI
@@ -33,7 +33,7 @@
 
 - name: Create mplconfigdir
   file:
-    path: /usr/share/httpd/mplconfig.d
+    path: "{{ mplconfigdir }}"
     state: directory
     owner: apache
     group: apache
