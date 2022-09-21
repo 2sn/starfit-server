@@ -4,6 +4,9 @@ import cgi
 import cgitb
 import os
 import sys
+from contextlib import nullcontext
+
+import daemon
 
 cgitb.enable()
 import matplotlib as mpl
@@ -22,7 +25,6 @@ from io import BytesIO, StringIO
 from socket import gethostname
 
 import starfit
-from daemonize import createDaemon
 from starfit.autils.isotope import Ion
 from starfit.autils.time2human import time2human
 from starfit.dbtrim import TrimDB as StarDB
@@ -244,211 +246,215 @@ if mail:
     )
     print(closetags)
 
-    # Fork off if mailing
+    # Flush output before forking process
     sys.stdout.flush()
-    createDaemon()
 
-if algorithm == "ga":
-    ## Run the fitting algorithm
-    result = starfit.Ga(
-        filename=filename,
-        db=dbpath,
-        time_limit=time_limit,
-        pop_size=pop_size,
-        sol_size=sol_size,
-        local_search=True,
-        z_max=z_max,
-        z_exclude=z_exclude,
-        z_lolim=z_lolim,
-        combine=combine,
-        fixed_offsets=fixed,
-        cdf=cdf,
-    )
-elif algorithm == "double":
-    sol_size = 2
-    result = starfit.Double(
-        filename=filename,
-        db=dbpath,
-        silent=True,
-        n_top=1000,
-        combine=combine,
-        fixed=fixed,
-        save=True,
-        webfile=start_time,
-        cdf=cdf,
-    )
-elif algorithm == "single":
-    sol_size = 1
-    result = starfit.Single(
-        filename=filename,
-        db=dbpath,
-        silent=True,
-        combine=combine,
-        z_max=z_max,
-        z_exclude=z_exclude,
-        z_lolim=z_lolim,
-        cdf=cdf,
-    )
+with daemon.DaemonContext() if mail else nullcontext():
 
-# Make plots
-imgfiles = []
-plots = []
-if algorithm in ["single", "double"]:
-    plotrange = [0]
-elif perfplot:
-    plotrange = [0, 1]
-else:
-    plotrange = [0]
-for i in plotrange:
-    result.plot(i + 1)
-    imgfile = BytesIO()
-
-    # BUG
-    mpl.pyplot.savefig(imgfile, format=plotformat)
-
-    imgfiles += [imgfile]
-    imgdata = imgfile.getvalue()
-    plots += [str(base64.b64encode(imgdata))[2:-1]]
-
-db = result.db
-
-plotdatafile = os.path.join("/tmp", "plotdata" + start_time)
-with open(plotdatafile, mode="w") as f:
-    f.write("Z      log(X/X_sun)\n")
-    for z, abu in zip(result.plotdata[0], result.plotdata[1]):
-        f.write("{:<2}     {:7.5f}\n".format(z, abu))
-
-if mail:
-    stringio = StringIO()
-    previous_stdout = sys.stdout
-    sys.stdout = stringio
-
-print("<br />")
-print('<div id="textWrapper">')
-
-print("<b>Star:</b>")
-print("<br />")
-print(result.star.name)
-print("<br />")
-print("Max Z: ", z_max)
-print("<br />")
-
-exc_string = ", ".join([Ion(x).element_symbol() for x in z_exclude])
-lol_string = ", ".join([Ion(x).element_symbol() for x in z_lolim])
-
-if exc_string == "":
-    exc_string = "None"
-if lol_string == "":
-    lol_string = "None"
-
-print("Excluded elements: ", exc_string)
-print("<br />")
-print("Model lower limits: ", lol_string)
-print("<br />")
-print("<br />")
-
-print("<b>Method:</b>")
-print("<br />")
-
-print(
-    method2human(
-        algorithm,
-        sol_size,
-        z_max,
-        comb,
-        pop_size,
-        time_limit,
-        dbname,
-        fixed,
-        cdf,
-    )
-)
-
-print("<br />")
-print("<br />")
-
-print("<b>Best fitting models:</b>")
-print("<br />")
-print("<table>")
-print(result.webtable())
-print("</table>")
-print("</div>")
-print("<br />")
-
-if not mail:
-    print("<br />")
-    for plot in plots:
-        if plotformat == "svg":
-            typestr = plotformat + "+xml"
-        else:
-            typestr = plotformat
-        img_tag = '<object data="data:image/{typestr};base64,{data}" type="image/{typestr}" width="700"></object>'.format(
-            typestr=typestr,
-            data=plot,
+    if algorithm == "ga":
+        ## Run the fitting algorithm
+        result = starfit.Ga(
+            filename=filename,
+            db=dbpath,
+            time_limit=time_limit,
+            pop_size=pop_size,
+            sol_size=sol_size,
+            local_search=True,
+            z_max=z_max,
+            z_exclude=z_exclude,
+            z_lolim=z_lolim,
+            combine=combine,
+            fixed_offsets=fixed,
+            cdf=cdf,
         )
-        print(img_tag)
-    print(closetags)
+    elif algorithm == "double":
+        sol_size = 2
+        result = starfit.Double(
+            filename=filename,
+            db=dbpath,
+            silent=True,
+            n_top=1000,
+            combine=combine,
+            fixed=fixed,
+            save=True,
+            webfile=start_time,
+            cdf=cdf,
+        )
+    elif algorithm == "single":
+        sol_size = 1
+        result = starfit.Single(
+            filename=filename,
+            db=dbpath,
+            silent=True,
+            combine=combine,
+            z_max=z_max,
+            z_exclude=z_exclude,
+            z_lolim=z_lolim,
+            cdf=cdf,
+        )
 
-
-if mail:
-    sys.stdout = previous_stdout
-    body = stringio.getvalue()
-
-    session = smtplib.SMTP("localhost")
-
-    sender = "results@{:s}".format(gethostname())
-
-    msg = MIMEMultipart()
-    msg["From"] = sender
-    msg["To"] = email
-    msg["Subject"] = "StarFit Results"
-
-    msg.attach(MIMEText(body, "html"))
-
-    # Attach images
+    # Make plots
+    imgfiles = []
+    plots = []
+    if algorithm in ["single", "double"]:
+        plotrange = [0]
+    elif perfplot:
+        plotrange = [0, 1]
+    else:
+        plotrange = [0]
     for i in plotrange:
-        part = MIMEBase("application", "octet-stream")
-        part.set_payload(imgfiles[i].getvalue())
-        Encoders.encode_base64(part)
-        part.add_header(
-            "Content-Disposition",
-            'attachment; filename="{:s}"'.format("plot" + str(i) + "." + plotformat),
-        )
-        msg.attach(part)
+        result.plot(i + 1)
+        imgfile = BytesIO()
 
-    # Attach big numbers
-    if algorithm == "double":
-        part = MIMEBase("application", "octet-stream")
-        part.set_payload(open(os.path.join("/tmp", start_time), "rb").read())
-        Encoders.encode_base64(part)
-        part.add_header(
-            "Content-Disposition",
-            'attachment; filename="{:s}"'.format(start_time + ".txt"),
-        )
-        msg.attach(part)
+        # BUG
+        mpl.pyplot.savefig(imgfile, format=plotformat)
 
-    # Attach plot data
-    part = MIMEBase("application", "octet-stream")
-    part.set_payload(open(os.path.join("/tmp", "plotdata" + start_time), "rb").read())
-    Encoders.encode_base64(part)
-    part.add_header(
-        "Content-Disposition",
-        'attachment; filename="{:s}"'.format(
-            "plotdata_" + stardata.filename + "_" + start_time + ".txt"
-        ),
+        imgfiles += [imgfile]
+        imgdata = imgfile.getvalue()
+        plots += [str(base64.b64encode(imgdata))[2:-1]]
+
+    db = result.db
+
+    plotdatafile = os.path.join("/tmp", "plotdata" + start_time)
+    with open(plotdatafile, mode="w") as f:
+        f.write("Z      log(X/X_sun)\n")
+        for z, abu in zip(result.plotdata[0], result.plotdata[1]):
+            f.write("{:<2}     {:7.5f}\n".format(z, abu))
+
+    if mail:
+        stringio = StringIO()
+        previous_stdout = sys.stdout
+        sys.stdout = stringio
+
+    print("<br />")
+    print('<div id="textWrapper">')
+
+    print("<b>Star:</b>")
+    print("<br />")
+    print(result.star.name)
+    print("<br />")
+    print("Max Z: ", z_max)
+    print("<br />")
+
+    exc_string = ", ".join([Ion(x).element_symbol() for x in z_exclude])
+    lol_string = ", ".join([Ion(x).element_symbol() for x in z_lolim])
+
+    if exc_string == "":
+        exc_string = "None"
+    if lol_string == "":
+        lol_string = "None"
+
+    print("Excluded elements: ", exc_string)
+    print("<br />")
+    print("Model lower limits: ", lol_string)
+    print("<br />")
+    print("<br />")
+
+    print("<b>Method:</b>")
+    print("<br />")
+
+    print(
+        method2human(
+            algorithm,
+            sol_size,
+            z_max,
+            comb,
+            pop_size,
+            time_limit,
+            dbname,
+            fixed,
+            cdf,
+        )
     )
-    msg.attach(part)
 
-    # Attach input data
-    if stardata.filename:
+    print("<br />")
+    print("<br />")
+
+    print("<b>Best fitting models:</b>")
+    print("<br />")
+    print("<table>")
+    print(result.webtable())
+    print("</table>")
+    print("</div>")
+    print("<br />")
+
+    if not mail:
+        print("<br />")
+        for plot in plots:
+            if plotformat == "svg":
+                typestr = plotformat + "+xml"
+            else:
+                typestr = plotformat
+            img_tag = '<object data="data:image/{typestr};base64,{data}" type="image/{typestr}" width="700"></object>'.format(
+                typestr=typestr,
+                data=plot,
+            )
+            print(img_tag)
+        print(closetags)
+
+    if mail:
+        sys.stdout = previous_stdout
+        body = stringio.getvalue()
+
+        session = smtplib.SMTP("localhost")
+
+        sender = "results@{:s}".format(gethostname())
+
+        msg = MIMEMultipart()
+        msg["From"] = sender
+        msg["To"] = email
+        msg["Subject"] = "StarFit Results"
+
+        msg.attach(MIMEText(body, "html"))
+
+        # Attach images
+        for i in plotrange:
+            part = MIMEBase("application", "octet-stream")
+            part.set_payload(imgfiles[i].getvalue())
+            Encoders.encode_base64(part)
+            part.add_header(
+                "Content-Disposition",
+                'attachment; filename="{:s}"'.format(
+                    "plot" + str(i) + "." + plotformat
+                ),
+            )
+            msg.attach(part)
+
+        # Attach big numbers
+        if algorithm == "double":
+            part = MIMEBase("application", "octet-stream")
+            part.set_payload(open(os.path.join("/tmp", start_time), "rb").read())
+            Encoders.encode_base64(part)
+            part.add_header(
+                "Content-Disposition",
+                'attachment; filename="{:s}"'.format(start_time + ".txt"),
+            )
+            msg.attach(part)
+
+        # Attach plot data
         part = MIMEBase("application", "octet-stream")
-        part.set_payload(open(filename, "rb").read())
+        part.set_payload(
+            open(os.path.join("/tmp", "plotdata" + start_time), "rb").read()
+        )
         Encoders.encode_base64(part)
         part.add_header(
             "Content-Disposition",
-            'attachment; filename="{:s}"'.format(stardata.filename),
+            'attachment; filename="{:s}"'.format(
+                "plotdata_" + stardata.filename + "_" + start_time + ".txt"
+            ),
         )
         msg.attach(part)
 
-    # Send!
-    session.sendmail(sender, email, msg.as_string())
+        # Attach input data
+        if stardata.filename:
+            part = MIMEBase("application", "octet-stream")
+            part.set_payload(open(filename, "rb").read())
+            Encoders.encode_base64(part)
+            part.add_header(
+                "Content-Disposition",
+                'attachment; filename="{:s}"'.format(stardata.filename),
+            )
+            msg.attach(part)
+
+        # Send!
+        session.sendmail(sender, email, msg.as_string())
