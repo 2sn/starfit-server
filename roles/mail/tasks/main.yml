@@ -43,8 +43,10 @@
 
 - name: Generate key
   shell:
-    cmd: opendkim-default-keygen
-    creates: /etc/opendkim/keys/default.private
+    cmd: |
+      rm -f /etc/opendkim/keys/{{ opendkim_selector }}.* && opendkim-default-keygen
+      opendkim-genkey -r -D /etc/opendkim/keys -s {{ opendkim_selector }} -d {{ domain }}
+    creates: /etc/opendkim/keys/{{ opendkim_selector }}.private
   notify:
     - Restart opendkim
 

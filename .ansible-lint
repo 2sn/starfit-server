@@ -16,6 +16,7 @@ skip_list:
 warn_list:
   - risky-file-permissions
   - no-handler
+  - deprecated-command-syntax
 
 mock_modules:
   - mount
