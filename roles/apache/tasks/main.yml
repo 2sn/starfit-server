@@ -32,14 +32,11 @@
           SetHandler cgi-script
       </Directory>
     mode: "0644"
-  notify: Restart apache
-
-- name: Flush handlers
-  meta: flush_handlers
+  register: apacheconf
 
 - name: Apache service
   systemd:
-    state: started
+    state: "{{ 'restarted' if apacheconf.change else 'started' }}"
     name: httpd
 
 - name: Create mplconfigdir

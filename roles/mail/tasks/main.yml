@@ -3,6 +3,7 @@
   hostname:
     name: "{{ domain }}"
     use: systemd
+  register: hostname
 
 - name: Install sendmail
   dnf:
@@ -13,5 +14,5 @@
 
 - name: Ensure sendmail service is up
   systemd:
-    state: started
+    state: "{{ 'restarted' if hostname.change else 'started' }}"
     name: sendmail
