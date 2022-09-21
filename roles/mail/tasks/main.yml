@@ -1,18 +1,70 @@
 ---
-- name: Set hostname
-  hostname:
-    name: "{{ domain }}"
-    use: systemd
-  register: hostname
-
-- name: Install sendmail
+- name: Install mail tools
   dnf:
     name:
       - mailx
       - sendmail
+      - sendmail-cf
+      - opendkim
+      - opendkim-tools
     state: latest
+
+- name: Set hostname
+  hostname:
+    name: "{{ domain }}"
+    use: systemd
+  notify:
+    - Restart sendmail
+
+- name: Ensure signing mode is on
+  lineinfile:
+    path: /etc/opendkim.conf
+    regexp: ^Mode
+    line: Mode sv
+  notify:
+    - Restart opendkim
+
+- name: Enable TrustedHosts file
+  lineinfile:
+    path: /etc/opendkim.conf
+    regexp: "^InternalHosts "
+    insertafter: "# InternalHosts"
+    line: InternalHosts refile:/etc/opendkim/TrustedHosts
+  notify:
+    - Restart opendkim
+
+- name: Add domain to trusted hosts
+  lineinfile:
+    path: /etc/opendkim/TrustedHosts
+    search_string: "{{ domain }}"
+    line: "{{ domain }}"
+  notify:
+    - Restart opendkim
+
+- name: Generate key
+  shell:
+    cmd: opendkim-default-keygen
+    creates: /etc/opendkim/keys/default.private
+  notify:
+    - Restart opendkim
+
+- name: Add opendkim to sendmail config
+  lineinfile:
+    path: /etc/mail/sendmail.mc
+    search_string: INPUT_MAIL_FILTER
+    line: INPUT_MAIL_FILTER(`opendkim', `S=inet:8891@localhost')
+  notify:
+    - Restart sendmail
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Ensure opendkim service is up
+  systemd:
+    state: started
+    name: sendmail
 
 - name: Ensure sendmail service is up
   systemd:
-    state: "{{ 'restarted' if hostname.change else 'started' }}"
+    state: started
     name: sendmail

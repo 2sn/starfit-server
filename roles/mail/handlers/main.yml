@@ -1,0 +1,11 @@
+---
+- name: Restart opendkim
+  systemd:
+    state: restarted
+    name: opendkim
+  notify: Restart sendmail
+
+- name: Restart sendmail
+  systemd:
+    state: restarted
+    name: sendmail
