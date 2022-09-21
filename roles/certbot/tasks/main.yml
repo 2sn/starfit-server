@@ -6,10 +6,16 @@
       - python3-certbot-apache
     state: latest
 
-- name: Register certificate
+- name: Register and install certificate
   shell:
     cmd: certbot --apache -n --agree-tos --domains {{ domain }} --email {{ email }}
     creates: /etc/letsencrypt/live/{{ domain }}
+  register: certbot
+
+- name: Install certificate
+  shell:
+    cmd: certbot install --cert-name {{ domain }}
+  when: not certbot.changed
 
 - name: Test certbot renew
   shell: certbot renew --dry-run
