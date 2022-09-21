@@ -1,0 +1,30 @@
+#!/bin/bash -eu
+if [ "$EUID" -ne 0 ]; then
+  echo "ERROR: please run as root"
+  exit 1
+fi
+
+ip4=$(curl -s ifconfig.me | cat)
+
+cat << EOF
+================> Address record <================
+Type: A
+Host/Name: {{ domain }}
+Value: ${ip4}
+
+================> SPF record <================
+Type: TXT
+Host/Name: {{ domain }}
+Value: "v=spf1 ip4:${ip4} -all"
+
+================> DKIM record <================
+Type: TXT
+Host/Name: {{ opendkim_selector }}._domainkey.{{ domain }}
+Value: "$(cat /etc/opendkim/keys/{{ opendkim_selector }}.txt | tr -d '[:space:]' | cut -d'(' -f2 | cut -d')' -f1 | tr -d '"' | column -t -s ';' -o '; ')"
+
+================> DMARC record <================
+Type: TXT
+Host/Name: _dmarc.{{ domain }}
+Value: "v=DMARC1; p=quarantine; rua=mailto:{{ email }}; ruf=mailto:{{ email }}; fo=1;"
+
+EOF

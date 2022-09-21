@@ -70,3 +70,11 @@
   systemd:
     state: started
     name: sendmail
+
+- name: Add script for listing required recordsets
+  template:
+    src: recordsets.j2
+    dest: /usr/local/sbin/show-recordsets
+    owner: root
+    group: root
+    mode: "0755"
