@@ -19,6 +19,7 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from io import BytesIO, StringIO
+from socket import gethostname
 
 import starfit
 from starfit.autils.isotope import Ion
@@ -395,7 +396,7 @@ if mail:
 
     session = smtplib.SMTP("localhost")
 
-    sender = "results@starfit2.swin-dev.cloud.edu.au"
+    sender = "results@{:s}".format(gethostname())
 
     msg = MIMEMultipart()
     msg["From"] = sender

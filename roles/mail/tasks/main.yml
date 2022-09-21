@@ -1,4 +1,9 @@
 ---
+- name: Set hostname
+  hostname:
+    name: "{{ domain }}"
+    use: systemd
+
 - name: Install sendmail
   dnf:
     name:
