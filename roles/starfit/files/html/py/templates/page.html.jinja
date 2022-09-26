@@ -1,0 +1,37 @@
+Content-Type: text/html; charset=UTF-8
+<html>
+
+<head>
+  <title>StarFit&trade;</title>
+  <link rel="stylesheet" type="text/css" href="../../index.css">
+  <link href='http://fonts.googleapis.com/css?family=Exo+2:300,100' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+  <div id="contentWrapper">
+    <div id="starfit">
+      <a class="title" href="/index.html">STARFIT</a>
+    </div>
+
+    {% if error %}
+      {% for line in error %}
+        {{ line }} <br />
+      {% endfor %}
+    {% elif mail %}
+      Results will be mailed to {{ email }} in {{ time_eta }}
+    {% else %}
+      {% block results %}
+      {% endblock %}
+    {% endif %}
+
+    <br />
+    <br />
+    <center>
+      <a href="http://moca.monash.edu/"><img src="../../images/mocalogo.png" width="120px"></a>
+      <br />
+      <a href="http://2sn.org/starfit/">Science Team</a>
+    </center>
+  </div>
+</body>
+
+</html>

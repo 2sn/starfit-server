@@ -24,6 +24,7 @@ from email.mime.text import MIMEText
 from io import BytesIO, StringIO
 from socket import gethostname
 
+import jinja2 as j2
 import starfit
 from starfit.autils.isotope import Ion
 from starfit.autils.time2human import time2human
@@ -33,6 +34,12 @@ from starfit.read import Star
 from validate_email import validate_email
 
 global filename, dbname, sol_size, pop_size, email, mail, plotformat
+
+
+env = j2.Environment(
+    loader=j2.FileSystemLoader("templates"), autoescape=j2.select_autoescape()
+)
+template = env.get_template("page.html.jinja")
 
 
 def errorcheck():
@@ -392,6 +399,8 @@ with daemon.DaemonContext() if mail else nullcontext():
             )
             print(img_tag)
         print(closetags)
+
+        ####### print(template.render())
 
     if mail:
         sys.stdout = previous_stdout

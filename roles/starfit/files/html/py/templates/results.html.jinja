@@ -1,0 +1,33 @@
+{% extends "page.html.jinja" %}
+{% block results %}
+<br />
+<div id="textWrapper">
+  <b>Star:</b>
+  <br />
+  {{ result.star.name }}
+  <br />
+  Max Z: {{ z_max }}
+  <br />
+  Excluded elements: {{ exc_string }}
+  <br />
+  Model lower limits: {{ lol_string }}
+  <br />
+  <br />
+  <b>Method:</b>
+  <br />
+  {{ method_string }}
+  <br />
+  <br />
+  <b>Best fitting models:</b>
+  <br />
+  <table>"
+    {{ result.webtable() }}
+  </table>"
+</div>"
+<br />
+{% if not mail %}
+  <br />
+  {{ img_tag }}
+{% endif %}
+
+{% endblock %}
