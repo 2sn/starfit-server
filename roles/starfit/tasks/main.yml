@@ -13,6 +13,11 @@
       - texlive-type1cm
       - gfortran
     state: latest
+  register: dnf
+
+- name: Run texhash
+  shell: texhash
+  when: dnf.changed
 
 - name: Install StarFit
   shell: pip install -U -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ starfit
