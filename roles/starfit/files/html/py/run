@@ -29,6 +29,7 @@ from starfit.autils.isotope import Ion
 from starfit.autils.time2human import time2human
 from starfit.dbtrim import TrimDB as StarDB
 from starfit.read import Star
+
 from validate_email import validate_email
 
 global filename, dbname, sol_size, pop_size, email, mail, plotformat
