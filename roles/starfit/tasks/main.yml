@@ -8,6 +8,7 @@
       - python3-wheel
       - python3-ipython
       - python3-matplotlib
+      - python3-daemon
       - texlive
       - texlive-latex
       - texlive-type1cm
