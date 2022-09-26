@@ -21,19 +21,13 @@ repos:
     rev: v6.6.0
     hooks:
       - id: ansible-lint
-        entry: ansible-lint --write build/
+        entry: ansible-lint --write
   - repo: https://github.com/ambv/black
     rev: 22.8.0
     hooks:
       - id: black
         language_version: python3.10
-  - repo: https://github.com/asottile/seed-isort-config
-    rev: v2.2.0
-    hooks:
-      - id: seed-isort-config
-        args: [--application-directories, src]
-  - repo: https://github.com/pre-commit/mirrors-isort
-    rev: v5.10.1
+  - repo: https://github.com/pycqa/isort
+    rev: 5.10.1
     hooks:
       - id: isort # sort imports alphabetically and separates import into sections
-        args: [--line-width=88, --multi-line=3, --trailing-comma]
