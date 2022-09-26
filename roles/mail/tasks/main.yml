@@ -24,7 +24,7 @@
   notify:
     - Restart sendmail
 
-- name: Ensure signing mode is on
+- name: Ensure opendkim signing mode is on
   lineinfile:
     path: /etc/opendkim.conf
     regexp: ^Mode
@@ -32,7 +32,7 @@
   notify:
     - Restart opendkim
 
-- name: Enable TrustedHosts file
+- name: Enable opendkim TrustedHosts file
   lineinfile:
     path: /etc/opendkim.conf
     regexp: "^InternalHosts "
@@ -41,7 +41,7 @@
   notify:
     - Restart opendkim
 
-- name: Add domain to be signed
+- name: Add domain to be signed in opendkim
   lineinfile:
     path: /etc/opendkim.conf
     regexp: "^Domain "
@@ -50,7 +50,7 @@
   notify:
     - Restart opendkim
 
-- name: Add domain to trusted hosts
+- name: Add domain to trusted hosts in opendkim
   lineinfile:
     path: /etc/opendkim/TrustedHosts
     search_string: "{{ domain }}"
@@ -58,7 +58,7 @@
   notify:
     - Restart opendkim
 
-- name: Generate key
+- name: Generate opendkim key
   shell:
     cmd: |
       rm -f /etc/opendkim/keys/default.* && opendkim-default-keygen

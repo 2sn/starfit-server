@@ -1,5 +1,5 @@
 ---
-- name: Install the latest version of Certbot
+- name: Install Certbot
   dnf:
     name:
       - certbot
@@ -12,12 +12,12 @@
     creates: /etc/letsencrypt/live/{{ domain }}
   register: certbot
 
-- name: Install certificate
+- name: Reinstall certificate if necessary
   shell:
     cmd: certbot install --cert-name {{ domain }}
   when: not certbot.changed
 
-- name: Test certbot renew
+- name: Test "certbot renew"
   shell: certbot renew --dry-run
   register: certbotrenew
   changed_when: "'(success)' not in certbotrenew.stdout"

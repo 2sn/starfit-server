@@ -4,14 +4,14 @@
     name: httpd
     state: latest
 
-- name: Set ServerName
+- name: Set ServerName in apache config
   lineinfile:
     path: /etc/httpd/conf/httpd.conf
     regexp: "^ServerName "
     insertafter: ^#ServerName
     line: ServerName localhost
 
-- name: Add apache configuration
+- name: Create VirtualHosts in apache config
   blockinfile:
     dest: /etc/httpd/conf.d/{{ domain }}.conf
     create: true
@@ -34,12 +34,12 @@
     mode: "0644"
   register: apacheconf
 
-- name: Apache service
+- name: (re)start apache
   systemd:
     state: "{{ 'restarted' if apacheconf.change else 'started' }}"
     name: httpd
 
-- name: Create mplconfigdir
+- name: Create custom "mplconfigdir"
   file:
     path: "{{ mplconfigdir }}"
     state: directory

@@ -23,7 +23,7 @@
     dest: /var/www/
     mode: preserve
 
-- name: Create mount point
+- name: Create mount point for data
   file:
     path: /var/www/html/data
     state: directory
@@ -39,6 +39,6 @@
     passno: 2
     state: mounted
 
-- name: Generate matplotlib and tex cache
+- name: Run code to generate matplotlib and tex caches
   shell:
     cmd: sudo -u apache MPLCONFIGDIR={{ mplconfigdir }} python -c "import starfit; starfit.Single('HE1327-2326.dat').plot()"
