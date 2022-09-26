@@ -16,6 +16,14 @@
   notify:
     - Restart sendmail
 
+- name: Edit /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    search_string: 127.0.0.1 {{ domain }}
+    line: 127.0.0.1 {{ domain }}
+  notify:
+    - Restart sendmail
+
 - name: Ensure signing mode is on
   lineinfile:
     path: /etc/opendkim.conf
@@ -30,6 +38,15 @@
     regexp: "^InternalHosts "
     insertafter: "# InternalHosts"
     line: InternalHosts refile:/etc/opendkim/TrustedHosts
+  notify:
+    - Restart opendkim
+
+- name: Add domain to be signed
+  lineinfile:
+    path: /etc/opendkim.conf
+    regexp: "^Domain "
+    insertafter: "# Domain"
+    line: Domain {{ domain }}
   notify:
     - Restart opendkim
 
