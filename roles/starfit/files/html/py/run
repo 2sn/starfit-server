@@ -397,7 +397,7 @@ with daemon.DaemonContext() if mail else nullcontext():
         sys.stdout = previous_stdout
         body = stringio.getvalue()
 
-        session = smtplib.SMTP("localhost")
+        session = smtplib.SMTP(gethostname())
 
         sender = "results@{:s}".format(gethostname())
 
