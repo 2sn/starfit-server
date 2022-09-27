@@ -4,16 +4,18 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
+ip4=$(curl -s ifconfig.me | cat)
+
 cat << EOF
 ================> Address record <================
 Type: A
 Host/Name: $(hostname)
-Value: $(hostname -i | cut -d' ' -f 2)
+Value: ${ip4}
 
 ================> SPF record <================
 Type: TXT
 Host/Name: $(hostname)
-Value: "v=spf1 ip4:$(hostname -i | cut -d' ' -f 2) -all"
+Value: "v=spf1 ip4:${ip4} -all"
 
 ================> DKIM record <================
 Type: TXT
