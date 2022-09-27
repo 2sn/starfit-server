@@ -51,6 +51,7 @@ env = j2.Environment(
     loader=j2.FileSystemLoader("templates"), autoescape=j2.select_autoescape()
 )
 template = env.get_template("page.html.jinja")
+template_email = env.get_template("email.html.jinja")
 
 
 def errorcheck():
@@ -225,7 +226,8 @@ if mail:
     print(template.render(vars()))
     sys.stdout.flush()  # Flush output before forking process
 
-with daemon.DaemonContext() if mail else nullcontext():
+# with daemon.DaemonContext() if mail else nullcontext():
+with nullcontext():
 
     if algorithm == "ga":
         # Run the fitting algorithm
@@ -333,7 +335,7 @@ with daemon.DaemonContext() if mail else nullcontext():
         print(template.render(vars()))
 
     else:
-        body = template.render(vars())
+        body = template_email.render(vars())
         session = smtplib.SMTP(gethostname())
         sender = "results@{:s}".format(gethostname())
 
