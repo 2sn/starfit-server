@@ -4,7 +4,6 @@ import cgi
 import cgitb
 import os
 import sys
-from contextlib import nullcontext
 
 from error_check import check
 
@@ -189,52 +188,49 @@ if mail:
     print(template.render(vars()))
     sys.stdout.flush()  # Flush output before forking process
 
-# with daemon.DaemonContext() if mail else nullcontext():
-with nullcontext():
-
-    if algorithm == "ga":
-        # Run the fitting algorithm
-        result = starfit.Ga(
-            filename=filename,
-            db=dbpath,
-            time_limit=time_limit,
-            pop_size=pop_size,
-            sol_size=sol_size,
-            local_search=True,
-            z_max=z_max,
-            z_exclude=z_exclude,
-            z_lolim=z_lolim,
-            combine=combine,
-            fixed_offsets=fixed,
-            cdf=cdf,
-        )
-    elif algorithm == "double":
-        sol_size = 2
-        result = starfit.Double(
-            filename=filename,
-            db=dbpath,
-            silent=True,
-            n_top=1000,
-            combine=combine,
-            fixed=fixed,
-            save=True,
-            webfile=start_time,
-            cdf=cdf,
-        )
-    elif algorithm == "single":
-        sol_size = 1
-        result = starfit.Single(
-            filename=filename,
-            db=dbpath,
-            silent=True,
-            combine=combine,
-            z_max=z_max,
-            z_exclude=z_exclude,
-            z_lolim=z_lolim,
-            cdf=cdf,
-        )
-    else:
-        raise RuntimeError('Bad choice of "algorithm"')
+if algorithm == "ga":
+    # Run the fitting algorithm
+    result = starfit.Ga(
+        filename=filename,
+        db=dbpath,
+        time_limit=time_limit,
+        pop_size=pop_size,
+        sol_size=sol_size,
+        local_search=True,
+        z_max=z_max,
+        z_exclude=z_exclude,
+        z_lolim=z_lolim,
+        combine=combine,
+        fixed_offsets=fixed,
+        cdf=cdf,
+    )
+elif algorithm == "double":
+    sol_size = 2
+    result = starfit.Double(
+        filename=filename,
+        db=dbpath,
+        silent=True,
+        n_top=1000,
+        combine=combine,
+        fixed=fixed,
+        save=True,
+        webfile=start_time,
+        cdf=cdf,
+    )
+elif algorithm == "single":
+    sol_size = 1
+    result = starfit.Single(
+        filename=filename,
+        db=dbpath,
+        silent=True,
+        combine=combine,
+        z_max=z_max,
+        z_exclude=z_exclude,
+        z_lolim=z_lolim,
+        cdf=cdf,
+    )
+else:
+    raise RuntimeError('Bad choice of "algorithm"')
 
 # Make plots
 imgfiles = []
