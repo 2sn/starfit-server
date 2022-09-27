@@ -57,7 +57,6 @@ try:
 except:
     sys.exit()
 
-# filename  = str(form.getfirst("filename"))
 email = str(form.getfirst("email"))
 algorithm = str(form.getfirst("algorithm"))
 sol_size = int(form.getfirst("sol_size"))
