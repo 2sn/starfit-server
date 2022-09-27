@@ -194,7 +194,7 @@ plotdatafile = os.path.join("/tmp", "plotdata" + start_time)
 with open(plotdatafile, mode="w") as f:
     f.write("Z      log(X/X_sun)\n")
     for z, abu in zip(result.plotdata[0], result.plotdata[1]):
-        f.write("{:<2}     {:7.5f}\n".format(z, abu))
+        f.write(f"{z:<2}     {abu:7.5f}\n")
 
 exc_string = ", ".join([Ion(x).element_symbol() for x in z_exclude])
 lol_string = ", ".join([Ion(x).element_symbol() for x in z_lolim])
@@ -232,7 +232,7 @@ if not mail:
 else:
     body = template_email.render(vars())
     session = smtplib.SMTP(gethostname())
-    sender = "results@{:s}".format(gethostname())
+    sender = f"results@{gethostname():s}"
 
     msg = MIMEMultipart()
     msg["From"] = sender
@@ -248,7 +248,7 @@ else:
         Encoders.encode_base64(part)
         part.add_header(
             "Content-Disposition",
-            'attachment; filename="{:s}"'.format("plot" + str(i) + "." + plotformat),
+            f"attachment; filename=\"{'plot' + str(i) + '.' + plotformat:s}\"",
         )
         msg.attach(part)
 
@@ -259,7 +259,7 @@ else:
         Encoders.encode_base64(part)
         part.add_header(
             "Content-Disposition",
-            'attachment; filename="{:s}"'.format(start_time + ".txt"),
+            f"attachment; filename=\"{start_time + '.txt':s}\"",
         )
         msg.attach(part)
 
@@ -282,7 +282,7 @@ else:
         Encoders.encode_base64(part)
         part.add_header(
             "Content-Disposition",
-            'attachment; filename="{:s}"'.format(stardata.filename),
+            f'attachment; filename="{stardata.filename:s}"',
         )
         msg.attach(part)
 
