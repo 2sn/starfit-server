@@ -18,7 +18,7 @@ repos:
       # - id: pretty-format-json
         args: [--autofix]
   - repo: https://github.com/ansible/ansible-lint
-    rev: v6.6.0
+    rev: v6.7.0
     hooks:
       - id: ansible-lint
         entry: ansible-lint --write
@@ -36,3 +36,9 @@ repos:
     rev: "0.76"
     hooks:
       - id: flynt
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 5.0.4
+    hooks:
+      - id: flake8
+        args: [--max-line-length=131, --ignore=E722]
