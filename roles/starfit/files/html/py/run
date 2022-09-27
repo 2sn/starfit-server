@@ -323,10 +323,9 @@ with nullcontext():
 
     if not mail:
         for plot in plots:
+            typestr = plotformat
             if plotformat == "svg":
-                typestr = plotformat + "+xml"
-            else:
-                typestr = plotformat
+                typestr += "+xml"
             img_tag = f'<object data="data:image/{typestr};base64,{plot}" type="image/{typestr}" width="700"></object>'
             img_tags += [img_tag]
         print(template.render(vars()))
