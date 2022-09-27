@@ -21,9 +21,10 @@ from email import encoders as Encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from io import BytesIO, StringIO
+from io import BytesIO
 from socket import gethostname
 
+import jinja2 as j2
 import starfit
 from starfit.autils.isotope import Ion
 from starfit.autils.time2human import time2human
@@ -34,16 +35,34 @@ from validate_email import validate_email
 
 global filename, dbname, sol_size, pop_size, email, mail, plotformat
 
+# Initialise render vars
+error = ""
+mail = False
+email = ""
+time_eta = ""
+result = None
+z_max = ""
+exc_string = ""
+lol_string = ""
+method_string = ""
+img_tags = []
+
+env = j2.Environment(
+    loader=j2.FileSystemLoader("templates"), autoescape=j2.select_autoescape()
+)
+template = env.get_template("page.html.jinja")
+template_email = env.get_template("email.html.jinja")
+
 
 def errorcheck():
     error = []
     try:
-        test = Star(filename)
+        Star(filename)
     except:
         error += ["There is something wrong with this stellar data."]
 
     try:
-        test = StarDB(dbpath)
+        StarDB(dbpath)
     except:
         error += ["There is something wrong with this database."]
 
@@ -132,41 +151,6 @@ def method2human(
     return out
 
 
-# this needs to print first
-print("Content-Type: text/html; charset=UTF-8")
-
-opentags = """
-<html>
-<head>
-<title>StarFit&trade;</title>
-<link rel="stylesheet" type="text/css" href="../../index.css">
-<link href='http://fonts.googleapis.com/css?family=Exo+2:300,100' rel='stylesheet' type='text/css'>
-</head>
-<body>
-<div id="contentWrapper">
-<div id="starfit">
-    <a class = "title" href="/index.html">STARFIT</a>
-</div>
-"""
-# <div id="testing">
-#     <a class="subtitle" href="/index.html">TESTING</a>
-# </div>
-# '''
-closetags = """
-<br />
-<br />
-<center>
-<a href="http://moca.monash.edu/"><img src="../../images/mocalogo.png" width="120px"></a>
-<br />
-<a href="http://2sn.org/starfit/">Science Team</a>
-</center>
-</div>
-</body>
-</html>
-"""
-
-print(opentags)
-
 # Retrieve form fields
 form = cgi.FieldStorage()  # Get POST data
 
@@ -228,9 +212,7 @@ else:
 
 error = errorcheck()
 if error != []:
-    for line in error:
-        print(line, "<br />")
-    print(closetags)
+    print(template.render(vars()))
     sys.exit()
 
 # Manually assign time_limit
@@ -240,20 +222,15 @@ elif algorithm == "single":
     time_limit = 0
 
 if mail:
-    print(
-        "Results will be mailed to {:} in {:}".format(
-            email, time2human(time_limit) if (time_limit < 600) else "the future..."
-        )
-    )
-    print(closetags)
+    time_eta = time2human(time_limit) if (time_limit < 600) else "the future..."
+    print(template.render(vars()))
+    sys.stdout.flush()  # Flush output before forking process
 
-    # Flush output before forking process
-    sys.stdout.flush()
-
-with daemon.DaemonContext() if mail else nullcontext():
+# with daemon.DaemonContext() if mail else nullcontext():
+with nullcontext():
 
     if algorithm == "ga":
-        ## Run the fitting algorithm
+        # Run the fitting algorithm
         result = starfit.Ga(
             filename=filename,
             db=dbpath,
@@ -293,6 +270,8 @@ with daemon.DaemonContext() if mail else nullcontext():
             z_lolim=z_lolim,
             cdf=cdf,
         )
+    else:
+        raise RuntimeError('Bad choice of "algorithm"')
 
     # Make plots
     imgfiles = []
@@ -322,21 +301,6 @@ with daemon.DaemonContext() if mail else nullcontext():
         for z, abu in zip(result.plotdata[0], result.plotdata[1]):
             f.write("{:<2}     {:7.5f}\n".format(z, abu))
 
-    if mail:
-        stringio = StringIO()
-        previous_stdout = sys.stdout
-        sys.stdout = stringio
-
-    print("<br />")
-    print('<div id="textWrapper">')
-
-    print("<b>Star:</b>")
-    print("<br />")
-    print(result.star.name)
-    print("<br />")
-    print("Max Z: ", z_max)
-    print("<br />")
-
     exc_string = ", ".join([Ion(x).element_symbol() for x in z_exclude])
     lol_string = ", ".join([Ion(x).element_symbol() for x in z_lolim])
 
@@ -345,42 +309,19 @@ with daemon.DaemonContext() if mail else nullcontext():
     if lol_string == "":
         lol_string = "None"
 
-    print("Excluded elements: ", exc_string)
-    print("<br />")
-    print("Model lower limits: ", lol_string)
-    print("<br />")
-    print("<br />")
-
-    print("<b>Method:</b>")
-    print("<br />")
-
-    print(
-        method2human(
-            algorithm,
-            sol_size,
-            z_max,
-            comb,
-            pop_size,
-            time_limit,
-            dbname,
-            fixed,
-            cdf,
-        )
+    method_string = method2human(
+        algorithm,
+        sol_size,
+        z_max,
+        comb,
+        pop_size,
+        time_limit,
+        dbname,
+        fixed,
+        cdf,
     )
 
-    print("<br />")
-    print("<br />")
-
-    print("<b>Best fitting models:</b>")
-    print("<br />")
-    print("<table>")
-    print(result.webtable())
-    print("</table>")
-    print("</div>")
-    print("<br />")
-
     if not mail:
-        print("<br />")
         for plot in plots:
             if plotformat == "svg":
                 typestr = plotformat + "+xml"
@@ -390,15 +331,12 @@ with daemon.DaemonContext() if mail else nullcontext():
                 typestr=typestr,
                 data=plot,
             )
-            print(img_tag)
-        print(closetags)
+            img_tags += [img_tag]
+        print(template.render(vars()))
 
-    if mail:
-        sys.stdout = previous_stdout
-        body = stringio.getvalue()
-
+    else:
+        body = template_email.render(vars())
         session = smtplib.SMTP(gethostname())
-
         sender = "results@{:s}".format(gethostname())
 
         msg = MIMEMultipart()
