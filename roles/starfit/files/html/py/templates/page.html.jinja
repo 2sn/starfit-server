@@ -20,6 +20,7 @@ Content-Type: text/html; charset=UTF-8
     {% elif mail %}
       Results will be mailed to {{ email }} in {{ time_eta }}
     {% else %}
+      {% include 'results.html.jinja' %}
       {% block results %}
       {% endblock %}
     {% endif %}
