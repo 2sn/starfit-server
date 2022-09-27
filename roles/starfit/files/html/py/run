@@ -327,10 +327,7 @@ with nullcontext():
                 typestr = plotformat + "+xml"
             else:
                 typestr = plotformat
-            img_tag = '<object data="data:image/{typestr};base64,{data}" type="image/{typestr}" width="700"></object>'.format(
-                typestr=typestr,
-                data=plot,
-            )
+            img_tag = f'<object data="data:image/{typestr};base64,{plot}" type="image/{typestr}" width="700"></object>'
             img_tags += [img_tag]
         print(template.render(vars()))
 
