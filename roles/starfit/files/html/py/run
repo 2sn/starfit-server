@@ -194,7 +194,7 @@ plotdatafile = os.path.join("/tmp", "plotdata" + start_time)
 with open(plotdatafile, mode="w") as f:
     f.write("Z      log(X/X_sun)\n")
     for z, abu in zip(result.plotdata[0], result.plotdata[1]):
-        f.write("{:<2}     {:7.5f}\n".format(z, abu))
+        f.write(f"{z:<2}     {abu:7.5f}\n")
 
 exc_string = ", ".join([Ion(x).element_symbol() for x in z_exclude])
 lol_string = ", ".join([Ion(x).element_symbol() for x in z_lolim])
@@ -218,21 +218,17 @@ method_string = method2human(
 
 if not mail:
     for plot in plots:
+        typestr = plotformat
         if plotformat == "svg":
-            typestr = plotformat + "+xml"
-        else:
-            typestr = plotformat
-        img_tag = '<object data="data:image/{typestr};base64,{data}" type="image/{typestr}" width="700"></object>'.format(
-            typestr=typestr,
-            data=plot,
-        )
+            typestr += "+xml"
+        img_tag = f'<object data="data:image/{typestr};base64,{plot}" type="image/{typestr}" width="700"></object>'
         img_tags += [img_tag]
     print(template.render(vars()))
 
 else:
     body = template_email.render(vars())
     session = smtplib.SMTP(gethostname())
-    sender = "results@{:s}".format(gethostname())
+    sender = f"results@{gethostname()}"
 
     msg = MIMEMultipart()
     msg["From"] = sender
@@ -248,7 +244,7 @@ else:
         Encoders.encode_base64(part)
         part.add_header(
             "Content-Disposition",
-            'attachment; filename="{:s}"'.format("plot" + str(i) + "." + plotformat),
+            f'attachment; filename="plot{i}.{plotformat}"',
         )
         msg.attach(part)
 
@@ -269,9 +265,7 @@ else:
     Encoders.encode_base64(part)
     part.add_header(
         "Content-Disposition",
-        'attachment; filename="{:s}"'.format(
-            "plotdata_" + stardata.filename + "_" + start_time + ".txt"
-        ),
+        f'attachment; filename="plotdata_{stardata.filename}_{start_time}.txt"',
     )
     msg.attach(part)
 
@@ -282,7 +276,7 @@ else:
         Encoders.encode_base64(part)
         part.add_header(
             "Content-Disposition",
-            'attachment; filename="{:s}"'.format(stardata.filename),
+            f'attachment; filename="{stardata.filename}"',
         )
         msg.attach(part)
 
