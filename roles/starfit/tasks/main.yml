@@ -9,6 +9,7 @@
       - python3-ipython
       - python3-matplotlib
       - python3-daemon
+      - python3-jinja2
       - texlive
       - texlive-latex
       - texlive-type1cm

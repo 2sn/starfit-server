@@ -1,4 +1,4 @@
-{% extends "page.html.jinja" %}
+{% if mail %}{% extends "email.html.jinja" %}{% else %}{% extends "page.html.jinja" %}{% endif %}
 {% block results %}
 <br />
 <div id="textWrapper">
@@ -27,7 +27,9 @@
 <br />
 {% if not mail %}
   <br />
-  {{ img_tag }}
+  {% for img_tag in img_tags %}
+    {{ img_tag }}
+  {% endfor %}
 {% endif %}
 
 {% endblock %}
