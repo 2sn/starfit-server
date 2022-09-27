@@ -10,6 +10,7 @@
       - python3-matplotlib
       - python3-daemon
       - python3-jinja2
+      - python3-email-validator
       - texlive
       - texlive-latex
       - texlive-type1cm
