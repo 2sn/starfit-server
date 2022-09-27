@@ -31,3 +31,8 @@ repos:
     rev: 5.10.1
     hooks:
       - id: isort # sort imports alphabetically and separates import into sections
+
+  - repo: https://github.com/ikamensh/flynt/
+    rev: "0.76"
+    hooks:
+      - id: flynt

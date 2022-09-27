@@ -28,7 +28,7 @@ def check(filename, dbpath, sol_size, pop_size, plotformat, mail, email):
             validate_email(email, check_deliverability=True)
 
         except EmailNotValidError:
-            error += ["{} is not a valid email.".format(email)]
+            error += [f"{email} is not a valid email."]
 
     if plotformat == "pdf" and not mail:
         error += ["PDF plot format must be emailed."]
