@@ -21,7 +21,7 @@ from email import encoders as Encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from io import BytesIO, StringIO
+from io import BytesIO
 from socket import gethostname
 
 import jinja2 as j2
@@ -56,12 +56,12 @@ template = env.get_template("page.html.jinja")
 def errorcheck():
     error = []
     try:
-        test = Star(filename)
+        Star(filename)
     except:
         error += ["There is something wrong with this stellar data."]
 
     try:
-        test = StarDB(dbpath)
+        StarDB(dbpath)
     except:
         error += ["There is something wrong with this database."]
 
@@ -228,7 +228,7 @@ if mail:
 with daemon.DaemonContext() if mail else nullcontext():
 
     if algorithm == "ga":
-        ## Run the fitting algorithm
+        # Run the fitting algorithm
         result = starfit.Ga(
             filename=filename,
             db=dbpath,
@@ -299,11 +299,6 @@ with daemon.DaemonContext() if mail else nullcontext():
         for z, abu in zip(result.plotdata[0], result.plotdata[1]):
             f.write("{:<2}     {:7.5f}\n".format(z, abu))
 
-    if mail:
-        stringio = StringIO()
-        previous_stdout = sys.stdout
-        sys.stdout = stringio
-
     exc_string = ", ".join([Ion(x).element_symbol() for x in z_exclude])
     lol_string = ", ".join([Ion(x).element_symbol() for x in z_lolim])
 
@@ -336,12 +331,10 @@ with daemon.DaemonContext() if mail else nullcontext():
             )
             img_tags += [img_tag]
         print(template.render(vars()))
+
     else:
-        sys.stdout = previous_stdout
-        body = stringio.getvalue()
-
+        body = template.render(vars())
         session = smtplib.SMTP(gethostname())
-
         sender = "results@{:s}".format(gethostname())
 
         msg = MIMEMultipart()
