@@ -57,7 +57,7 @@ time_limit = int(form.getfirst("time_limit"))
 dbname = str(form.getfirst("database"))
 fixed = int(form.getfirst("fixed"))
 plotformat = str(form.getfirst("plotformat"))
-perfplot = form.getlist("perfplot")
+perfplot = bool(int(form.getlist("perfplot")))
 z_exclude_str = str(form.getfirst("z_exclude"))
 z_lolim_str = str(form.getfirst("z_lolim"))
 cdf = bool(form.getfirst("cdf"))
@@ -71,9 +71,6 @@ elif comb == 2:
     combine = [[6, 7, 8]]
 else:
     combine = [[]]
-
-if perfplot == []:
-    perfplot = 0
 
 # Save files to tmp
 if stardata.filename:
