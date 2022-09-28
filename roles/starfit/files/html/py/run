@@ -6,7 +6,6 @@ import cgitb
 
 cgitb.enable()
 
-import base64
 import os
 import smtplib
 import sys
@@ -21,6 +20,7 @@ import jinja2 as j2
 import starfit
 from error_check import check
 from human import method2human
+from img_utils import convert_img_to_b64_tag
 from plot import make_plots
 from starfit.autils.isotope import Ion
 from starfit.autils.time2human import time2human
@@ -186,13 +186,7 @@ method_string = method2human(
 )
 
 if not mail:
-    for img in imgfiles:
-        plot_b64 = str(base64.b64encode(img.getvalue()))[2:-1]
-        typestr = plotformat
-        if plotformat == "svg":
-            typestr += "+xml"
-        img_tag = f'<object data="data:image/{typestr};base64,{plot_b64}" type="image/{typestr}" width="700"></object>'
-        img_tags += [img_tag]
+    img_tags = [convert_img_to_b64_tag(f, plotformat) for f in imgfiles]
     print(template.render(vars()))
 
 else:
