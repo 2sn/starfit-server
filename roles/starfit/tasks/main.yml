@@ -11,6 +11,7 @@
       - texlive-type1cm
       - texlive-dvipng
       - gfortran
+      - redis
     state: latest
   register: dnf
 
@@ -36,6 +37,8 @@
     src: html
     dest: /var/www/
     mode: preserve
+    group: root
+    owner: root
 
 - name: Create mount point for data
   file:
@@ -56,3 +59,22 @@
 - name: Run code to generate matplotlib and tex caches
   shell:
     cmd: sudo -u apache MPLCONFIGDIR={{ mplconfigdir }} python -c "import starfit; starfit.Single('HE1327-2326.dat').plot()"
+
+- name: Start redis service
+  systemd:
+    state: started
+    name: redis
+
+- name: Create RQ service
+  copy:
+    src: rqworker.service
+    dest: /etc/systemd/system/rqworker.service
+    owner: root
+    group: root
+    mode: 0644
+  register: rqservice
+
+- name: (re)start rqworker service
+  systemd:
+    state: "{{ 'restarted' if rqservice.changed else 'started' }}"
+    name: rqworker
