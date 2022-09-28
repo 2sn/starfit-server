@@ -9,6 +9,7 @@
       - texlive
       - texlive-latex
       - texlive-type1cm
+      - texlive-dvipng
       - gfortran
     state: latest
   register: dnf
