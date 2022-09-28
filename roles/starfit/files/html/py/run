@@ -16,12 +16,12 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from socket import gethostname
 
-import jinja2 as j2
 import starfit
 from error_check import check
 from human import method2human
 from img_utils import convert_img_to_b64_tag
 from plot import make_plots
+from render import render
 from starfit.autils.isotope import Ion
 from starfit.autils.time2human import time2human
 
@@ -38,12 +38,6 @@ exc_string = ""
 lol_string = ""
 method_string = ""
 img_tags = []
-
-env = j2.Environment(
-    loader=j2.FileSystemLoader("templates"), autoescape=j2.select_autoescape()
-)
-template = env.get_template("page.html.jinja")
-template_email = env.get_template("email.html.jinja")
 
 # Retrieve form fields
 form = cgi.FieldStorage()  # Get POST data
@@ -97,28 +91,18 @@ else:
 dbpath = os.path.join(starfit.DATA_DIR, "db", dbname)
 
 if (forcemail) or (time_limit > 60) or (plotformat in ["pdf", "eps", "ps"]):
-    mail = True
-else:
-    mail = False
-
-error = check(filename, dbpath, sol_size, pop_size, plotformat, mail, email)
-if error != []:
-    print(template.render(vars()))
-    sys.exit()
-
-# Manually assign time_limit
+if len(error) == 0:
+    # Manually assign time_limit
 if algorithm == "double":
     time_limit = 60 * 15
 elif algorithm == "single":
     time_limit = 0
 
-if mail:
-    time_eta = time2human(time_limit) if (time_limit < 600) else "the future..."
-    print(template.render(vars()))
-    sys.stdout.flush()  # Flush output before forking process
+    if mail:
+        time_eta = time2human(time_limit) if (time_limit < 600) else "the future..."
 
-if algorithm == "ga":
-    # Run the fitting algorithm
+    if algorithm == "ga":
+        # Run the fitting algorithm
     result = starfit.Ga(
         filename=filename,
         db=dbpath,
@@ -185,12 +169,27 @@ method_string = method2human(
     cdf,
 )
 
-if not mail:
-    img_tags = [convert_img_to_b64_tag(f, plotformat) for f in imgfiles]
-    print(template.render(vars()))
+    if not mail:
+        img_tags = [convert_img_to_b64_tag(f, plotformat) for f in imgfiles]
 
-else:
-    body = template_email.render(vars())
+page, body = render(
+    result,
+    z_max,
+    exc_string,
+    lol_string,
+    method_string,
+    img_tags,
+    mail,
+    time_eta,
+    error,
+)
+
+print(page)
+
+if len(error) > 0:
+    sys.exit()
+
+if mail:
     session = smtplib.SMTP(gethostname())
     sender = f"results@{gethostname()}"
 
