@@ -78,6 +78,8 @@ else:
 
 dbpath = os.path.join(starfit.DATA_DIR, "db", dbname)
 
+mail = email != ""
+
 error = check(filename, dbpath, sol_size, pop_size, time_limit, plotformat, mail, email)
 if len(error) == 0:
     # Manually assign time_limit
