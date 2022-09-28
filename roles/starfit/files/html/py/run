@@ -15,20 +15,17 @@ from email import encoders as Encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from io import BytesIO
 from socket import gethostname
 
 import jinja2 as j2
-import matplotlib as mpl
-
-mpl.use("Agg")
-mpl.rc("text", usetex=True)
-
 import starfit
 from error_check import check
 from human import method2human
+from plot import make_plots
 from starfit.autils.isotope import Ion
 from starfit.autils.time2human import time2human
+
+start_time = datetime.now().strftime("%Y-%M-%d-%H-%M-%S")
 
 # Initialise render vars
 error = ""
@@ -88,8 +85,6 @@ if email != "":
     forcemail = 1
 else:
     forcemail = 0
-
-start_time = datetime.now().strftime("%Y-%M-%d-%H-%M-%S")
 
 # Save files to tmp
 if stardata.filename:
@@ -166,33 +161,9 @@ elif algorithm == "single":
 else:
     raise RuntimeError('Bad choice of "algorithm"')
 
-# Make plots
-imgfiles = []
-plots = []
-if algorithm in ["single", "double"]:
-    plotrange = [0]
-elif perfplot:
-    plotrange = [0, 1]
-else:
-    plotrange = [0]
-for i in plotrange:
-    result.plot(i + 1)
-    imgfile = BytesIO()
-
-    # BUG
-    mpl.pyplot.savefig(imgfile, format=plotformat)
-
-    imgfiles += [imgfile]
-    imgdata = imgfile.getvalue()
-    plots += [str(base64.b64encode(imgdata))[2:-1]]
+imgfiles = make_plots(result, algorithm, perfplot, plotformat, start_time)
 
 db = result.db
-
-plotdatafile = os.path.join("/tmp", "plotdata" + start_time)
-with open(plotdatafile, mode="w") as f:
-    f.write("Z      log(X/X_sun)\n")
-    for z, abu in zip(result.plotdata[0], result.plotdata[1]):
-        f.write(f"{z:<2}     {abu:7.5f}\n")
 
 exc_string = ", ".join([Ion(x).element_symbol() for x in z_exclude])
 lol_string = ", ".join([Ion(x).element_symbol() for x in z_lolim])
@@ -215,11 +186,12 @@ method_string = method2human(
 )
 
 if not mail:
-    for plot in plots:
+    for img in imgfiles:
+        plot_b64 = str(base64.b64encode(img.getvalue()))[2:-1]
         typestr = plotformat
         if plotformat == "svg":
             typestr += "+xml"
-        img_tag = f'<object data="data:image/{typestr};base64,{plot}" type="image/{typestr}" width="700"></object>'
+        img_tag = f'<object data="data:image/{typestr};base64,{plot_b64}" type="image/{typestr}" width="700"></object>'
         img_tags += [img_tag]
     print(template.render(vars()))
 
@@ -236,9 +208,9 @@ else:
     msg.attach(MIMEText(body, "html"))
 
     # Attach images
-    for i in plotrange:
+    for i, img in enumerate(imgfiles):
         part = MIMEBase("application", "octet-stream")
-        part.set_payload(imgfiles[i].getvalue())
+        part.set_payload(img.getvalue())
         Encoders.encode_base64(part)
         part.add_header(
             "Content-Disposition",
