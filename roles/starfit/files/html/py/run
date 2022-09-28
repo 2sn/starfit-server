@@ -75,11 +75,6 @@ else:
 if perfplot == []:
     perfplot = 0
 
-if email != "":
-    forcemail = 1
-else:
-    forcemail = 0
-
 # Save files to tmp
 if stardata.filename:
     filename = os.path.join("/tmp", stardata.filename + start_time)
@@ -90,84 +85,84 @@ else:
 
 dbpath = os.path.join(starfit.DATA_DIR, "db", dbname)
 
-if (forcemail) or (time_limit > 60) or (plotformat in ["pdf", "eps", "ps"]):
+error = check(filename, dbpath, sol_size, pop_size, time_limit, plotformat, mail, email)
 if len(error) == 0:
     # Manually assign time_limit
-if algorithm == "double":
-    time_limit = 60 * 15
-elif algorithm == "single":
-    time_limit = 0
+    if algorithm == "double":
+        time_limit = 60 * 15
+    elif algorithm == "single":
+        time_limit = 0
 
     if mail:
         time_eta = time2human(time_limit) if (time_limit < 600) else "the future..."
 
     if algorithm == "ga":
         # Run the fitting algorithm
-    result = starfit.Ga(
-        filename=filename,
-        db=dbpath,
-        time_limit=time_limit,
-        pop_size=pop_size,
-        sol_size=sol_size,
-        local_search=True,
-        z_max=z_max,
-        z_exclude=z_exclude,
-        z_lolim=z_lolim,
-        combine=combine,
-        fixed_offsets=fixed,
-        cdf=cdf,
+        result = starfit.Ga(
+            filename=filename,
+            db=dbpath,
+            time_limit=time_limit,
+            pop_size=pop_size,
+            sol_size=sol_size,
+            local_search=True,
+            z_max=z_max,
+            z_exclude=z_exclude,
+            z_lolim=z_lolim,
+            combine=combine,
+            fixed_offsets=fixed,
+            cdf=cdf,
+        )
+    elif algorithm == "double":
+        sol_size = 2
+        result = starfit.Double(
+            filename=filename,
+            db=dbpath,
+            silent=True,
+            n_top=1000,
+            combine=combine,
+            fixed=fixed,
+            save=True,
+            webfile=start_time,
+            cdf=cdf,
+        )
+    elif algorithm == "single":
+        sol_size = 1
+        result = starfit.Single(
+            filename=filename,
+            db=dbpath,
+            silent=True,
+            combine=combine,
+            z_max=z_max,
+            z_exclude=z_exclude,
+            z_lolim=z_lolim,
+            cdf=cdf,
+        )
+    else:
+        raise RuntimeError('Bad choice of "algorithm"')
+
+    imgfiles = make_plots(result, algorithm, perfplot, plotformat, start_time)
+
+    db = result.db
+
+    exc_string = ", ".join([Ion(x).element_symbol() for x in z_exclude])
+    lol_string = ", ".join([Ion(x).element_symbol() for x in z_lolim])
+
+    if exc_string == "":
+        exc_string = "None"
+    if lol_string == "":
+        lol_string = "None"
+
+    method_string = method2human(
+        algorithm,
+        sol_size,
+        z_max,
+        comb,
+        pop_size,
+        time_limit,
+        dbname,
+        fixed,
+        cdf,
     )
-elif algorithm == "double":
-    sol_size = 2
-    result = starfit.Double(
-        filename=filename,
-        db=dbpath,
-        silent=True,
-        n_top=1000,
-        combine=combine,
-        fixed=fixed,
-        save=True,
-        webfile=start_time,
-        cdf=cdf,
-    )
-elif algorithm == "single":
-    sol_size = 1
-    result = starfit.Single(
-        filename=filename,
-        db=dbpath,
-        silent=True,
-        combine=combine,
-        z_max=z_max,
-        z_exclude=z_exclude,
-        z_lolim=z_lolim,
-        cdf=cdf,
-    )
-else:
-    raise RuntimeError('Bad choice of "algorithm"')
-
-imgfiles = make_plots(result, algorithm, perfplot, plotformat, start_time)
-
-db = result.db
-
-exc_string = ", ".join([Ion(x).element_symbol() for x in z_exclude])
-lol_string = ", ".join([Ion(x).element_symbol() for x in z_lolim])
-
-if exc_string == "":
-    exc_string = "None"
-if lol_string == "":
-    lol_string = "None"
-
-method_string = method2human(
-    algorithm,
-    sol_size,
-    z_max,
-    comb,
-    pop_size,
-    time_limit,
-    dbname,
-    fixed,
-    cdf,
-)
 
     if not mail:
         img_tags = [convert_img_to_b64_tag(f, plotformat) for f in imgfiles]

@@ -3,7 +3,7 @@ from starfit.dbtrim import TrimDB as StarDB
 from starfit.read import Star
 
 
-def check(filename, dbpath, sol_size, pop_size, plotformat, mail, email):
+def check(filename, dbpath, sol_size, pop_size, time_limit, plotformat, mail, email):
     error = []
     try:
         Star(filename)
@@ -21,6 +21,9 @@ def check(filename, dbpath, sol_size, pop_size, plotformat, mail, email):
 
     if pop_size > 1000:
         error += ["Population sizes over 1000 are not supported."]
+
+    if time_limit > 60 and mail:
+        error += ["Results must be emailed for time limit > 60s."]
 
     if mail:
         try:
