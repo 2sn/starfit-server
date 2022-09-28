@@ -2,7 +2,7 @@ def method2human(
     algorithm,
     sol_size,
     z_max,
-    comb,
+    combine_mode,
     pop_size,
     time_limit,
     dbname,
@@ -20,11 +20,11 @@ def method2human(
     z_max2h = "Z max: " + str(z_max)
 
     combine2h = "Combined elements: "
-    if comb == 0:
+    if combine_mode == 0:
         combine2h += "None"
-    if comb == 1:
+    if combine_mode == 1:
         combine2h += "C+N"
-    if comb == 2:
+    if combine_mode == 2:
         combine2h += "C+N+O"
 
     dbname2h = "Model database: " + dbname
