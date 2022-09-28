@@ -5,12 +5,7 @@
       - python
       - pip
       - python3-devel
-      - python3-wheel
       - python3-ipython
-      - python3-matplotlib
-      - python3-daemon
-      - python3-jinja2
-      - python3-email-validator
       - texlive
       - texlive-latex
       - texlive-type1cm
@@ -22,8 +17,18 @@
   shell: texhash
   when: dnf.changed
 
+- name: Install python deps
+  pip:
+    name:
+      - wheel
+      - jinja2
+      - email-validator
+      - rq
+
 - name: Install StarFit
-  shell: pip install -U -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ starfit
+  pip:
+    name: starfit
+    extra_args: -U -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/
 
 - name: Add html content
   copy:
