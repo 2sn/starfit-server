@@ -181,6 +181,3 @@ def compute_and_render(config, start_time):
     else:
         # Return the page with results to be displayed immediately
         return body
-
-def blah():
-    return "blah"
