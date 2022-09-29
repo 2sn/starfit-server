@@ -100,3 +100,11 @@ class Config:
             self.mail,
             self.email,
         )
+
+    def get_time_limit(self):
+        # Manually assign time_limit
+        if self.algorithm == "double":
+            time_limit = 60 * 15
+        elif self.algorithm == "single":
+            time_limit = 0
+        return time_limit

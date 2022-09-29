@@ -31,12 +31,8 @@ c = Config(cgi.FieldStorage(), start_time)  # Get POST data and validate
 combine = c.combine_elements()
 
 if len(c.errors) == 0:
-    # Manually assign time_limit
-    if c.algorithm == "double":
-        time_limit = 60 * 15
-    elif c.algorithm == "single":
-        time_limit = 0
 
+    time_limit = c.get_time_limit()
     time_eta = time2human(time_limit) if (time_limit < 600) else "the future..."
 
     if c.algorithm == "ga":
