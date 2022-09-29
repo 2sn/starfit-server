@@ -155,7 +155,7 @@ class Config:
         if self.pop_size > 1000:
             errors += ["Population sizes over 1000 are not supported."]
 
-        if self.time_limit > 60 and self.mail:
+        if self.time_limit > 60 and not self.mail:
             errors += ["Results must be emailed for time limit > 60s."]
 
         if self.mail:
