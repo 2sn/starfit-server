@@ -152,9 +152,14 @@ class Config:
         elif self.algorithm == "single":
             time_limit = 0
         self.time_limit = time_limit
-        self.time_eta = (
-            time2human(time_limit) if (time_limit < 600) else "the future..."
-        )
+
+        if time_limit < 1:
+            eta = "now"
+        elif time_limit > 600:
+            eta = "in more than 10 minutes"
+        else:
+            eta = "in " + time2human(time_limit)
+        self.time_eta = eta
 
         if self.algorithm not in ("ga", "double", "single"):
             raise RuntimeError('Bad choice of "algorithm"')

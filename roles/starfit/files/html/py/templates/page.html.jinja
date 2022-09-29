@@ -17,7 +17,7 @@
         {{ line }} <br />
       {% endfor %}
     {% elif mail %}
-      Results will be mailed to {{ email }} in {{ time_eta }}
+      Results will be mailed to {{ email }} {{ time_eta }}
     {% else %}
       {% include 'results.html.jinja' %}
       {% block results %}
