@@ -23,15 +23,10 @@ def render_results(
     return template.render(vars())
 
 
-def render_page(
-    mail,
-    email,
-    time_eta,
-    errors,
-):
+def render_page(mail, email, time_eta, errors):
     env = j2.Environment(
         loader=j2.FileSystemLoader("templates"), autoescape=j2.select_autoescape()
     )
 
     template = env.get_template("page.html.jinja")
-    return template.render(vars())
+    return template.render(mail=mail, email=email, time_eta=time_eta, errors=errors)

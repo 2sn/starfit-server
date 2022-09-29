@@ -153,7 +153,7 @@ def compute(config):
     return result
 
 
-def compute_and_render(config):
+def run_job(config):
 
     result = compute(config)
     imgfiles = make_plots(result, config)

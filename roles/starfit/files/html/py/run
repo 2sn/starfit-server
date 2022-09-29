@@ -10,7 +10,7 @@ from rq import Queue
 
 cgitb.enable()
 
-from job import compute_and_render
+from job import run_job
 from render import render_page
 from utils import Config
 
@@ -25,7 +25,7 @@ if config.mail or len(config.errors) > 0:
 if len(config.errors) == 0:
     # Start background task
     q = Queue(connection=Redis())
-    j = q.enqueue(compute_and_render, config)
+    j = q.enqueue(run_job, config)
     if not config.mail:
         # Wait for job to complete
         while j.get_status() in ("queued", "started", "scheduled", "deferred"):
