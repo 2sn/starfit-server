@@ -22,7 +22,7 @@ if len(config.errors) > 0:
     page = render(config=config, result=None, img_tags=[], doc="webpage")
 else:
     # Start job in background
-    q = Queue(connection=Redis())
+    q = Queue(connection=Redis(), default_timeout=3600)
     j = q.enqueue(run_job, config)
     if not config.mail:  # Wait for job to complete if not sending an email
         while j.get_status() in ("queued", "started", "scheduled", "deferred"):
