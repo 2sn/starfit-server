@@ -6,20 +6,14 @@ import cgitb
 
 cgitb.enable()
 
-import os
-import smtplib
 import sys
 from datetime import datetime
-from email import encoders as Encoders
-from email.mime.base import MIMEBase
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from socket import gethostname
 
 import starfit
 from img_utils import convert_img_to_b64_tag
 from plot import make_plots
 from render import render
+from sendmail import send_email
 from starfit.autils.isotope import Ion
 from starfit.autils.time2human import time2human
 from utils import Config
@@ -121,58 +115,4 @@ if len(c.errors) > 0:
     sys.exit()
 
 if c.mail:
-    session = smtplib.SMTP(gethostname())
-    sender = f"results@{gethostname()}"
-
-    msg = MIMEMultipart()
-    msg["From"] = sender
-    msg["To"] = c.email
-    msg["Subject"] = "StarFit Results"
-
-    msg.attach(MIMEText(body, "html"))
-
-    # Attach images
-    for i, img in enumerate(imgfiles):
-        part = MIMEBase("application", "octet-stream")
-        part.set_payload(img.getvalue())
-        Encoders.encode_base64(part)
-        part.add_header(
-            "Content-Disposition",
-            f'attachment; filename="plot{i}.{c.plotformat}"',
-        )
-        msg.attach(part)
-
-    # Attach big numbers
-    if c.algorithm == "double":
-        part = MIMEBase("application", "octet-stream")
-        part.set_payload(open(os.path.join("/tmp", start_time), "rb").read())
-        Encoders.encode_base64(part)
-        part.add_header(
-            "Content-Disposition",
-            f'attachment; filename="{start_time}.txt"',
-        )
-        msg.attach(part)
-
-    # Attach plot data
-    part = MIMEBase("application", "octet-stream")
-    part.set_payload(open(os.path.join("/tmp", "plotdata" + start_time), "rb").read())
-    Encoders.encode_base64(part)
-    part.add_header(
-        "Content-Disposition",
-        f'attachment; filename="plotdata_{c.stardata.filename}_{start_time}.txt"',
-    )
-    msg.attach(part)
-
-    # Attach input data
-    if c.stardata.filename:
-        part = MIMEBase("application", "octet-stream")
-        part.set_payload(open(c.filename, "rb").read())
-        Encoders.encode_base64(part)
-        part.add_header(
-            "Content-Disposition",
-            f'attachment; filename="{c.stardata.filename}"',
-        )
-        msg.attach(part)
-
-    # Send!
-    session.sendmail(sender, c.email, msg.as_string())
+    send_email(c, body, imgfiles, start_time)
