@@ -11,33 +11,29 @@ from rq import Queue
 cgitb.enable()
 
 from job import run_job
-from render import render_page
+from render import render
 from utils import Config
 
 forms = cgi.FieldStorage()  # Retrieve form fields
 config = Config(forms)  # Validate form fields and generate config
 
-if config.mail or len(config.errors) > 0:
-    # Render page immediately
-    page = render_page(config)
-
-# Start the job if there are no errors
-if len(config.errors) == 0:
-    # Start background task
+if len(config.errors) > 0:
+    # Render the error page
+    page = render(config=config, result=None, img_tags=[], doc="webpage")
+else:
+    # Start job in background
     q = Queue(connection=Redis())
     j = q.enqueue(run_job, config)
-    if not config.mail:
-        # Wait for job to complete
+    if not config.mail:  # Wait for job to complete if not sending an email
         while j.get_status() in ("queued", "started", "scheduled", "deferred"):
             time.sleep(1)
-
         if j.get_status() == "finished":
-            page = j.result  # page = output of render_result()
-        else:
-            # TODO: convert into a user friendly error
-            print(j.get_status())
-            print(j.exc_info)
+            page = j.result
+        else:  # TODO: convert into a user friendly error
+            print(j.get_status(), j.exc_info)
             raise RuntimeError(j.exc_info)
+    else:  # Render the 'sending email' page
+        page = render(config=config, result=None, img_tags=[], doc="webpage")
 
 # Display page
 print(page)

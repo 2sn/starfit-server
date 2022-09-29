@@ -5,15 +5,12 @@ env = j2.Environment(
 )
 
 
-def render_results(config, result, img_tags):
-    if config.errors or not config.mail:
+def render(config, result, img_tags, doc="webpage"):
+    if doc == "webpage":
         template = env.get_template("page.html.jinja")
-    else:
+    elif doc == "email":
         template = env.get_template("email.html.jinja")
+    else:
+        raise RuntimeError("Bad choice of 'doc'")
 
     return template.render(config=config, result=result, img_tags=img_tags)
-
-
-def render_page(config):
-    template = env.get_template("page.html.jinja")
-    return template.render(config=config)
