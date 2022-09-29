@@ -18,4 +18,5 @@
     - apache
     - certbot
     - starfit
+    - rqmonitor
     - mail
