@@ -17,7 +17,7 @@
         {{ line }} <br />
       {% endfor %}
     {% elif config.mail %}
-      Results will be mailed to {{ config.email }} {{ config.time_eta }}
+      Results will be mailed to {{ config.email }} {{ config.time_eta }} (check your spam folder)
     {% else %}
       {% include 'results.html.jinja' %}
       {% block results %}
