@@ -3,7 +3,9 @@ print("Content-Type: text/html; charset=UTF-8\n")
 
 import cgi
 import cgitb
+import os
 import time
+from uuid import uuid4
 
 from redis import Redis
 from rq import Queue
@@ -15,6 +17,7 @@ from utils import Config
 
 forms = cgi.FieldStorage()  # Retrieve form fields
 config = Config(forms)  # Validate form fields and generate config
+ip = os.environ["REMOTE_ADDR"]
 
 if len(config.errors) > 0:
     # Render the error page
@@ -22,7 +25,15 @@ if len(config.errors) > 0:
 else:
     # Start job in background
     q = Queue(connection=Redis(), default_timeout=3600)
-    j = q.enqueue(run_job, config)
+    j = q.enqueue_call(
+        run_job,
+        args=(config,),
+        result_ttl=600,
+        ttl=600,
+        failure_ttl=600,
+        description=f"StarFit job from: {ip}",
+        job_id=f"{config.start_time}-{str(uuid4())}",
+    )
     if not config.mail:  # Wait for job to complete if not sending an email
         while j.get_status() in ("queued", "started", "scheduled", "deferred"):
             time.sleep(1)
