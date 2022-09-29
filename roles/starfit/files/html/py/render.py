@@ -1,5 +1,9 @@
 import jinja2 as j2
 
+env = j2.Environment(
+    loader=j2.FileSystemLoader("templates"), autoescape=j2.select_autoescape()
+)
+
 
 def render_results(
     result,
@@ -11,10 +15,6 @@ def render_results(
     mail,
     errors,
 ):
-    env = j2.Environment(
-        loader=j2.FileSystemLoader("templates"), autoescape=j2.select_autoescape()
-    )
-
     if errors or not mail:
         template = env.get_template("page.html.jinja")
     else:
@@ -24,9 +24,5 @@ def render_results(
 
 
 def render_page(mail, email, time_eta, errors):
-    env = j2.Environment(
-        loader=j2.FileSystemLoader("templates"), autoescape=j2.select_autoescape()
-    )
-
     template = env.get_template("page.html.jinja")
     return template.render(mail=mail, email=email, time_eta=time_eta, errors=errors)
