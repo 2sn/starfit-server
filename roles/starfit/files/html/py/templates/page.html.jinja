@@ -12,12 +12,12 @@
       <a class="title" href="/index.html">STARFIT</a>
     </div>
 
-    {% if errors %}
-      {% for line in errors %}
+    {% if config.errors %}
+      {% for line in config.errors %}
         {{ line }} <br />
       {% endfor %}
-    {% elif mail %}
-      Results will be mailed to {{ email }} in {{ time_eta }}
+    {% elif config.mail %}
+      Results will be mailed to {{ config.email }} in {{ config.time_eta }}
     {% else %}
       {% include 'results.html.jinja' %}
       {% block results %}

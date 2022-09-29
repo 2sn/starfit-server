@@ -20,25 +20,15 @@ def render_results(config, result, img_tags):
     if lol_string == "":
         lol_string = "None"
 
-    method_string = config.get_method_string()
-
     return template.render(
+        config=config,
         result=result,
-        z_max=config.z_max,
         exc_string=exc_string,
         lol_string=lol_string,
-        method_string=method_string,
         img_tags=img_tags,
-        mail=config.mail,
-        errors=config.errors,
     )
 
 
 def render_page(config):
     template = env.get_template("page.html.jinja")
-    return template.render(
-        mail=config.mail,
-        email=config.email,
-        time_eta=config.time_eta,
-        errors=config.errors,
-    )
+    return template.render(config=config)

@@ -5,7 +5,7 @@
   <br />
   {{ result.star.name }}
   <br />
-  Max Z: {{ z_max }}
+  Max Z: {{ config.z_max }}
   <br />
   Excluded elements: {{ exc_string }}
   <br />
@@ -14,7 +14,7 @@
   <br />
   <b>Method:</b>
   <br />
-  {{ method_string }}
+  {{ config.get_method_string() }}
   <br />
   <br />
   <b>Best fitting models:</b>
