@@ -4,7 +4,6 @@ print("Content-Type: text/html; charset=UTF-8\n")
 import cgi
 import cgitb
 import time
-from datetime import datetime
 
 from redis import Redis
 from rq import Queue
@@ -15,20 +14,18 @@ from job import compute_and_render
 from render import render_page
 from utils import Config
 
-start_time = datetime.now().strftime("%Y-%M-%d-%H-%M-%S")
-
 forms = cgi.FieldStorage()  # Retrieve form fields
-config = Config(forms, start_time)  # Validate form fields and generate config
+config = Config(forms)  # Validate form fields and generate config
 
 if config.mail or len(config.errors) > 0:
     # Render page immediately
     page = render_page(config.mail, config.email, config.time_eta, config.errors)
 
-# Start the j if there are no errors
+# Start the job if there are no errors
 if len(config.errors) == 0:
     # Start background task
     q = Queue(connection=Redis())
-    j = q.enqueue(compute_and_render, config, start_time)
+    j = q.enqueue(compute_and_render, config)
     if not config.mail:
         # Wait for job to complete
         while j.get_status() in ("queued", "started", "scheduled", "deferred"):

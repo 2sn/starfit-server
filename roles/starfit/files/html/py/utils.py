@@ -1,6 +1,7 @@
 import base64
 import os
 import sys
+from datetime import datetime
 
 import starfit
 from cerberus import Validator
@@ -103,11 +104,13 @@ class Config:
         cdf={"type": "boolean", "coerce": bool},
     )
 
-    def __init__(self, form, start_time):
+    def __init__(self, form):
         try:
             stardata = form["stardata"]
         except:
             sys.exit()
+
+        self.start_time = datetime.now().strftime("%Y-%M-%d-%H-%M-%S")
 
         v = Validator(require_all=True)
 
@@ -130,7 +133,7 @@ class Config:
 
         # Save files to tmp
         if stardata.filename:
-            filepath = os.path.join("/tmp", stardata.filename + start_time)
+            filepath = os.path.join("/tmp", stardata.filename + self.start_time)
             with open(filepath, "wb") as fstar:
                 fstar.write(stardata.file.read())
             filename = stardata.filename
@@ -144,6 +147,9 @@ class Config:
         self.mail = self.email != ""
 
         self.errors = self._check_for_errors()
+
+        if self.algorithm not in ("ga", "double", "single"):
+            raise RuntimeError('Bad choice of "algorithm"')
 
         if self.algorithm == "double":
             self.sol_size = 2

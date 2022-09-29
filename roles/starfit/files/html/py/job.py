@@ -17,13 +17,14 @@ mpl.use("Agg")
 mpl.rc("text", usetex=True)
 
 
-def make_plots(result, algorithm, perfplot, plotformat, start_time):
+def make_plots(result, config):
+
     # File objects
     file_obj = []
 
-    if algorithm in ["single", "double"]:
+    if config.algorithm in ["single", "double"]:
         plotrange = [0]
-    elif perfplot:
+    elif config.perfplot:
         plotrange = [0, 1]
     else:
         plotrange = [0]
@@ -32,11 +33,11 @@ def make_plots(result, algorithm, perfplot, plotformat, start_time):
     for i in plotrange:
         result.plot(i + 1)
         imgfile = BytesIO()
-        mpl.pyplot.savefig(imgfile, format=plotformat)
+        mpl.pyplot.savefig(imgfile, format=config.plotformat)
         file_obj += [imgfile]
 
     # Save plot data to ASCII file
-    plotdatafile = os.path.join("/tmp", "plotdata" + start_time)
+    plotdatafile = os.path.join("/tmp", "plotdata" + config.start_time)
     with open(plotdatafile, mode="w") as f:
         f.write("Z      log(X/X_sun)\n")
         for z, abu in zip(result.plotdata[0], result.plotdata[1]):
@@ -45,7 +46,7 @@ def make_plots(result, algorithm, perfplot, plotformat, start_time):
     return file_obj
 
 
-def send_email(config, body, imgfiles, start_time):
+def send_email(config, body, imgfiles):
     session = smtplib.SMTP(gethostname())
     sender = f"results@{gethostname()}"
 
@@ -70,21 +71,23 @@ def send_email(config, body, imgfiles, start_time):
     # Attach big numbers
     if config.algorithm == "double":
         part = MIMEBase("application", "octet-stream")
-        part.set_payload(open(os.path.join("/tmp", start_time), "rb").read())
+        part.set_payload(open(os.path.join("/tmp", config.start_time), "rb").read())
         Encoders.encode_base64(part)
         part.add_header(
             "Content-Disposition",
-            f'attachment; filename="{start_time}.txt"',
+            f'attachment; filename="{config.start_time}.txt"',
         )
         msg.attach(part)
 
     # Attach plot data
     part = MIMEBase("application", "octet-stream")
-    part.set_payload(open(os.path.join("/tmp", "plotdata" + start_time), "rb").read())
+    part.set_payload(
+        open(os.path.join("/tmp", "plotdata" + config.start_time), "rb").read()
+    )
     Encoders.encode_base64(part)
     part.add_header(
         "Content-Disposition",
-        f'attachment; filename="plotdata_{config.filename}_{start_time}.txt"',
+        f'attachment; filename="plotdata_{config.filename}_{config.start_time}.txt"',
     )
     msg.attach(part)
 
@@ -103,9 +106,8 @@ def send_email(config, body, imgfiles, start_time):
     session.sendmail(sender, config.email, msg.as_string())
 
 
-def compute_and_render(config, start_time):
+def compute(config):
     combine = config.combine_elements()
-
     if config.algorithm == "ga":
         # Run the fitting algorithm
         result = starfit.Ga(
@@ -131,7 +133,7 @@ def compute_and_render(config, start_time):
             combine=combine,
             fixed=config.fixed,
             save=True,
-            webfile=start_time,
+            webfile=config.start_time,
             cdf=config.cdf,
         )
     elif config.algorithm == "single":
@@ -146,11 +148,15 @@ def compute_and_render(config, start_time):
             cdf=config.cdf,
         )
     else:
-        raise RuntimeError('Bad choice of "algorithm"')
+        result = None
 
-    imgfiles = make_plots(
-        result, config.algorithm, config.perfplot, config.plotformat, start_time
-    )
+    return result
+
+
+def compute_and_render(config):
+
+    result = compute(config)
+    imgfiles = make_plots(result, config)
 
     exc_string = ", ".join([Ion(x).element_symbol() for x in config.z_exclude])
     lol_string = ", ".join([Ion(x).element_symbol() for x in config.z_lolim])
@@ -177,7 +183,7 @@ def compute_and_render(config, start_time):
     if config.mail:
         if len(config.errors) == 0:
             # Send an email with the results
-            send_email(config, body, imgfiles, start_time)
+            send_email(config, body, imgfiles)
     else:
         # Return the page with results to be displayed immediately
         return body
