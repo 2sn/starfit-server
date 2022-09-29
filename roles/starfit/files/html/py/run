@@ -9,105 +9,16 @@ cgitb.enable()
 import sys
 from datetime import datetime
 
-import starfit
-from img_utils import convert_img_to_b64_tag
-from plot import make_plots
-from render import render
+from job import process
 from sendmail import send_email
-from starfit.autils.isotope import Ion
-from starfit.autils.time2human import time2human
 from utils import Config
 
 start_time = datetime.now().strftime("%Y-%M-%d-%H-%M-%S")
 
 # Retrieve form fields
 c = Config(cgi.FieldStorage(), start_time)  # Get POST data and validate
-combine = c.combine_elements()
 
-if len(c.errors) == 0:
-
-    time_limit = c.get_time_limit()
-    time_eta = time2human(time_limit) if (time_limit < 600) else "the future..."
-
-    if c.algorithm == "ga":
-        # Run the fitting algorithm
-        result = starfit.Ga(
-            filename=c.filename,
-            db=c.dbpath,
-            time_limit=time_limit,
-            pop_size=c.pop_size,
-            sol_size=c.sol_size,
-            local_search=True,
-            z_max=c.z_max,
-            z_exclude=c.z_exclude,
-            z_lolim=c.z_lolim,
-            combine=combine,
-            fixed_offsets=c.fixed,
-            cdf=c.cdf,
-        )
-    elif c.algorithm == "double":
-        sol_size = 2
-        result = starfit.Double(
-            filename=c.filename,
-            db=c.dbpath,
-            silent=True,
-            n_top=1000,
-            combine=combine,
-            fixed=c.fixed,
-            save=True,
-            webfile=start_time,
-            cdf=c.cdf,
-        )
-    elif c.algorithm == "single":
-        sol_size = 1
-        result = starfit.Single(
-            filename=c.filename,
-            db=c.dbpath,
-            silent=True,
-            combine=combine,
-            z_max=c.z_max,
-            z_exclude=c.z_exclude,
-            z_lolim=c.z_lolim,
-            cdf=c.cdf,
-        )
-    else:
-        raise RuntimeError('Bad choice of "algorithm"')
-
-    imgfiles = make_plots(result, c.algorithm, c.perfplot, c.plotformat, start_time)
-
-    db = result.db
-
-    exc_string = ", ".join([Ion(x).element_symbol() for x in c.z_exclude])
-    lol_string = ", ".join([Ion(x).element_symbol() for x in c.z_lolim])
-
-    if exc_string == "":
-        exc_string = "None"
-    if lol_string == "":
-        lol_string = "None"
-
-    method_string = c.get_method_string()
-    img_tags = [convert_img_to_b64_tag(f, c.plotformat) for f in imgfiles]
-
-else:
-    # Set some values for render vars
-    time_eta = ""
-    result = None
-    exc_string = ""
-    lol_string = ""
-    method_string = ""
-    img_tags = []
-
-page, body = render(
-    result,
-    c.z_max,
-    exc_string,
-    lol_string,
-    method_string,
-    img_tags,
-    c.mail,
-    time_eta,
-    c.errors,
-)
+page, body, imgfiles = process(c, start_time)
 
 print(page)
 

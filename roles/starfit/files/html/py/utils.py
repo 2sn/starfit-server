@@ -65,6 +65,11 @@ class Config:
 
         self.errors = self._check_for_errors()
 
+        if self.algorithm == "double":
+            self.sol_size = 2
+        elif self.algorithm == "single":
+            self.sol_size = 1
+
     def combine_elements(self):
         """Preset element combinations"""
         if self.combine_mode == 1:
