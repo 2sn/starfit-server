@@ -24,6 +24,11 @@ if len(config.errors) > 0:
     page = render(config=config, result=None, img_tags=[], doc="webpage")
 else:
     # Start job in background
+    description = f"""
+        StarFit job from: {ip}
+        (email: {str(config.email) if config.mail else 'None'},
+        ETA: {config.time_eta})
+        """
     q = Queue(connection=Redis(), default_timeout=3600)
     j = q.enqueue_call(
         run_job,
@@ -31,8 +36,8 @@ else:
         result_ttl=600,
         ttl=600,
         failure_ttl=600,
-        description=f"StarFit job from: {ip}",
-        job_id=f"{config.start_time}-{str(uuid4())}",
+        description=description,
+        job_id=f"{config.start_time}__{str(uuid4())}",
     )
     if not config.mail:  # Wait for job to complete if not sending an email
         while j.get_status() in ("queued", "started", "scheduled", "deferred"):
