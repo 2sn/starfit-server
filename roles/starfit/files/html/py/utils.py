@@ -122,7 +122,7 @@ class Config:
     def combine_elements_str(self):
         group_strings = []
         for group in self.combine_elements():
-            group_strings += ["+".join(["x" for i in group])]
+            group_strings += ["+".join([Ion(i).element_symbol() for i in group])]
         output = ", ".join(group_strings)
         if output == "":
             output = "None"
