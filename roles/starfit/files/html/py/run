@@ -3,25 +3,18 @@ print("Content-Type: text/html; charset=UTF-8\n")
 
 import cgi
 import cgitb
-import sys
 from datetime import datetime
 
 cgitb.enable()
 
-from job import compute_and_render, send_email
+from job import compute_and_render
 from utils import Config
 
 start_time = datetime.now().strftime("%Y-%M-%d-%H-%M-%S")
 
-# Retrieve form fields and validate
-c = Config(cgi.FieldStorage(), start_time)
+forms = cgi.FieldStorage()  # Retrieve form fields
+config = Config(forms, start_time)  # Validate form fields and generate config
+page = compute_and_render(config, start_time)
 
-page, body, imgfiles = compute_and_render(c, start_time)
-
+# Print html to browser
 print(page)
-
-if len(c.errors) > 0:
-    sys.exit()
-
-if c.mail:
-    send_email(c, body, imgfiles, start_time)

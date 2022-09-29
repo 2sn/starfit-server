@@ -189,4 +189,7 @@ def compute_and_render(config, start_time):
         config.errors,
     )
 
-    return page, body, imgfiles
+    if config.mail and len(config.errors) == 0:
+        send_email(config, body, imgfiles, start_time)
+
+    return page
