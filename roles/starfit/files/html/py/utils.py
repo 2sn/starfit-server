@@ -146,16 +146,6 @@ class Config:
         self.dbpath = os.path.join(starfit.DATA_DIR, "db", self.database)
         self.mail = self.email != ""
 
-        self.errors = self._check_for_errors()
-
-        if self.algorithm not in ("ga", "double", "single"):
-            raise RuntimeError('Bad choice of "algorithm"')
-
-        if self.algorithm == "double":
-            self.sol_size = 2
-        elif self.algorithm == "single":
-            self.sol_size = 1
-
         # Override time limit for some algorithms
         if self.algorithm == "double":
             time_limit = 60 * 15
@@ -165,6 +155,17 @@ class Config:
         self.time_eta = (
             time2human(time_limit) if (time_limit < 600) else "the future..."
         )
+
+        if self.algorithm not in ("ga", "double", "single"):
+            raise RuntimeError('Bad choice of "algorithm"')
+
+        if self.algorithm == "double":
+            self.sol_size = 2
+        elif self.algorithm == "single":
+            self.sol_size = 1
+
+        # Check for errors after all the config has been handled
+        self.errors = self._check_for_errors()
 
     def combine_elements(self):
         """Preset element combinations"""
