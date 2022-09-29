@@ -5,7 +5,7 @@ def method2human(
     combine_mode,
     pop_size,
     time_limit,
-    dbname,
+    database,
     fixed,
     cdf,
 ):
@@ -27,7 +27,7 @@ def method2human(
     if combine_mode == 2:
         combine2h += "C+N+O"
 
-    dbname2h = "Model database: " + dbname
+    dbname2h = "Model database: " + database
 
     if fixed:
         fixed2h = "Fixed offsets"
