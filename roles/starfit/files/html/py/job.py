@@ -7,10 +7,14 @@ from email.mime.text import MIMEText
 from io import BytesIO
 from socket import gethostname
 
+import jinja2 as j2
 import matplotlib as mpl
 import starfit
-from render import render
 from utils import convert_img_to_b64_tag
+
+jinja_env = j2.Environment(
+    loader=j2.FileSystemLoader("templates"), autoescape=j2.select_autoescape()
+)
 
 mpl.use("Agg")
 mpl.rc("text", usetex=True)
@@ -90,6 +94,15 @@ def make_plots(result, config):
             f.write(f"{z:<2}     {abu:7.5f}\n")
 
     return file_obj
+
+
+def render(config, result, img_tags, doc):
+    if doc in ("webpage", "email"):
+        template = jinja_env.get_template(f"{doc}.html.jinja")
+    else:
+        raise RuntimeError("Bad choice of 'doc'")
+
+    return template.render(config=config, result=result, img_tags=img_tags)
 
 
 def send_email(config, body, imgfiles):
