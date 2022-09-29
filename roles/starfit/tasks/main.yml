@@ -26,6 +26,7 @@
       - jinja2
       - email-validator
       - rq
+      - cerberus
 
 - name: Install StarFit
   pip:
