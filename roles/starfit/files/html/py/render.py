@@ -6,10 +6,8 @@ env = j2.Environment(
 
 
 def render(config, result, img_tags, doc):
-    if doc == "webpage":
-        template = env.get_template("page.html.jinja")
-    elif doc == "email":
-        template = env.get_template("email.html.jinja")
+    if doc in ("webpage", "email"):
+        template = env.get_template(f"{doc}.html.jinja")
     else:
         raise RuntimeError("Bad choice of 'doc'")
 
