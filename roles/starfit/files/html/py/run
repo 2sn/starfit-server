@@ -3,19 +3,18 @@ print("Content-Type: text/html; charset=UTF-8\n")
 
 import cgi
 import cgitb
-
-cgitb.enable()
-
 import sys
 from datetime import datetime
+
+cgitb.enable()
 
 from job import compute_and_render, send_email
 from utils import Config
 
 start_time = datetime.now().strftime("%Y-%M-%d-%H-%M-%S")
 
-# Retrieve form fields
-c = Config(cgi.FieldStorage(), start_time)  # Get POST data and validate
+# Retrieve form fields and validate
+c = Config(cgi.FieldStorage(), start_time)
 
 page, body, imgfiles = compute_and_render(c, start_time)
 
