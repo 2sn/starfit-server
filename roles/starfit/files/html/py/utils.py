@@ -6,6 +6,7 @@ import starfit
 from cerberus import Validator
 from email_validator import EmailNotValidError, validate_email
 from starfit.autils.isotope import Ion
+from starfit.autils.time2human import time2human
 from starfit.dbtrim import TrimDB as StarDB
 from starfit.read import Star
 
@@ -104,7 +105,7 @@ class Config:
 
     def __init__(self, form, start_time):
         try:
-            self.stardata = form["stardata"]
+            stardata = form["stardata"]
         except:
             sys.exit()
 
@@ -128,13 +129,16 @@ class Config:
         ]
 
         # Save files to tmp
-        if self.stardata.filename:
-            filename = os.path.join("/tmp", self.stardata.filename + start_time)
-            with open(filename, "wb") as fstar:
-                fstar.write(self.stardata.file.read())
+        if stardata.filename:
+            filepath = os.path.join("/tmp", stardata.filename + start_time)
+            with open(filepath, "wb") as fstar:
+                fstar.write(stardata.file.read())
+            filename = stardata.filename
         else:
-            filename = os.path.join(starfit.DATA_DIR, "stars", "HE1327-2326.dat")
+            filename = "HE1327-2326.dat"
+            filepath = os.path.join(starfit.DATA_DIR, "stars", filename)
 
+        self.filepath = filepath
         self.filename = filename
         self.dbpath = os.path.join(starfit.DATA_DIR, "db", self.database)
         self.mail = self.email != ""
@@ -145,6 +149,16 @@ class Config:
             self.sol_size = 2
         elif self.algorithm == "single":
             self.sol_size = 1
+
+        # Override time limit for some algorithms
+        if self.algorithm == "double":
+            time_limit = 60 * 15
+        elif self.algorithm == "single":
+            time_limit = 0
+        self.time_limit = time_limit
+        self.time_eta = (
+            time2human(time_limit) if (time_limit < 600) else "the future..."
+        )
 
     def combine_elements(self):
         """Preset element combinations"""
@@ -204,11 +218,3 @@ class Config:
             errors += ["PDF plot format must be emailed."]
 
         return errors
-
-    def get_time_limit(self):
-        # Manually assign time_limit
-        if self.algorithm == "double":
-            time_limit = 60 * 15
-        elif self.algorithm == "single":
-            time_limit = 0
-        return time_limit

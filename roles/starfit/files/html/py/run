@@ -3,18 +3,48 @@ print("Content-Type: text/html; charset=UTF-8\n")
 
 import cgi
 import cgitb
+import time
 from datetime import datetime
+
+from redis import Redis
+from rq import Queue
 
 cgitb.enable()
 
-from job import compute_and_render
+from job_debug import compute_and_render, blah
+from render import render_page
 from utils import Config
 
 start_time = datetime.now().strftime("%Y-%M-%d-%H-%M-%S")
 
 forms = cgi.FieldStorage()  # Retrieve form fields
 config = Config(forms, start_time)  # Validate form fields and generate config
-page = compute_and_render(config, start_time)
+
+if config.mail or len(config.errors) > 0:
+    # Don't wait for j to finish, just display a message
+    page = render_page(config.mail, config.email, config.time_eta, config.errors)
+
+# Start the j if there are no errors
+if len(config.errors) == 0:
+    # Start background task
+    # q = Queue(connection=Redis(), default_timeout=3600)
+    q = Queue(connection=Redis())
+    # j = q.enqueue(compute_and_render, args=(config, start_time))
+    j = q.enqueue(blah)
+    print(j.id)
+    print(j.get_status())
+    if not config.mail:
+        # Wait for j to complete
+        while j.get_status() in ("queued", "started", "scheduled", "deferred"):
+            time.sleep(1)
+
+        print(j.get_status())
+        if j.get_status() == "finished":
+            page = j.result  # page = output of render_result()
+        else:
+            # TODO: convert into a user friendly error
+            print(j.exc_info)
+            raise RuntimeError(j.exc_info)
 
 # Print html to browser
 print(page)

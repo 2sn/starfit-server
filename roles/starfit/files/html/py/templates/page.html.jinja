@@ -12,8 +12,8 @@
       <a class="title" href="/index.html">STARFIT</a>
     </div>
 
-    {% if error %}
-      {% for line in error %}
+    {% if errors %}
+      {% for line in errors %}
         {{ line }} <br />
       {% endfor %}
     {% elif mail %}
