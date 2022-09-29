@@ -4,8 +4,10 @@ import sys
 
 import starfit
 from cerberus import Validator
-from error_check import check
+from email_validator import EmailNotValidError, validate_email
 from starfit.autils.isotope import Ion
+from starfit.dbtrim import TrimDB as StarDB
+from starfit.read import Star
 
 
 def method2human(
@@ -169,16 +171,39 @@ class Config:
         )
 
     def _check_for_errors(self):
-        return check(
-            self.filename,
-            self.dbpath,
-            self.sol_size,
-            self.pop_size,
-            self.time_limit,
-            self.plotformat,
-            self.mail,
-            self.email,
-        )
+        errors = []
+        try:
+            Star(self.filename)
+        except:
+            errors += ["There is something wrong with this stellar data."]
+
+        try:
+            StarDB(self.dbpath)
+        except:
+            errors += ["There is something wrong with this database."]
+
+        # Test if the input parameters are any good
+        if self.sol_size > 10:
+            errors += ["Gene sizes greater than 10 are not supported."]
+
+        if self.pop_size > 1000:
+            errors += ["Population sizes over 1000 are not supported."]
+
+        if self.time_limit > 60 and self.mail:
+            errors += ["Results must be emailed for time limit > 60s."]
+
+        if self.mail:
+            try:
+                # Check that the email address is valid.
+                validate_email(self.email, check_deliverability=True)
+
+            except EmailNotValidError:
+                errors += [f"{self.email} is not a valid email."]
+
+        if self.plotformat == "pdf" and not self.mail:
+            errors += ["PDF plot format must be emailed."]
+
+        return errors
 
     def get_time_limit(self):
         # Manually assign time_limit
