@@ -19,7 +19,7 @@ config = Config(forms)  # Validate form fields and generate config
 
 if config.mail or len(config.errors) > 0:
     # Render page immediately
-    page = render_page(config.mail, config.email, config.time_eta, config.errors)
+    page = render_page(config)
 
 # Start the job if there are no errors
 if len(config.errors) == 0:

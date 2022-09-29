@@ -34,6 +34,11 @@ def render_results(config, result, img_tags):
     )
 
 
-def render_page(mail, email, time_eta, errors):
+def render_page(config):
     template = env.get_template("page.html.jinja")
-    return template.render(mail=mail, email=email, time_eta=time_eta, errors=errors)
+    return template.render(
+        mail=config.mail,
+        email=config.email,
+        time_eta=config.time_eta,
+        errors=config.errors,
+    )
