@@ -14,7 +14,9 @@
   <br />
   <b>Method:</b>
   <br />
-  {{ config.get_method_string() }}
+  {% include 'method.html.jinja' %}
+  {% block method %}
+  {% endblock %}
   <br />
   <br />
   <b>Best fitting models:</b>
