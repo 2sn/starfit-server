@@ -9,7 +9,7 @@ from socket import gethostname
 
 import matplotlib as mpl
 import starfit
-from render import render_results
+from render import render
 from utils import convert_img_to_b64_tag
 
 mpl.use("Agg")
@@ -156,12 +156,16 @@ def run_job(config):
     result = compute(config)
     imgfiles = make_plots(result, config)
     img_tags = [convert_img_to_b64_tag(f, config.plotformat) for f in imgfiles]
-    body = render_results(config, result, img_tags)
 
     if config.mail:
-        if len(config.errors) == 0:
-            # Send an email with the results
-            send_email(config, body, imgfiles)
+        doc = "email"
     else:
-        # Return the page with results to be displayed immediately
-        return body
+        doc = "webpage"
+
+    page = render(config, result, img_tags, doc)
+
+    if config.mail:  # Send an email with the results
+        send_email(config, page, imgfiles)
+        return None
+    else:  # Return the page with results to be displayed immediately
+        return page
