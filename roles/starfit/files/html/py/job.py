@@ -1,12 +1,110 @@
+import os
+import smtplib
+from email import encoders as Encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from io import BytesIO
+from socket import gethostname
+
+import matplotlib as mpl
 import starfit
-from img_utils import convert_img_to_b64_tag
-from plot import make_plots
 from render import render
 from starfit.autils.isotope import Ion
 from starfit.autils.time2human import time2human
+from utils import convert_img_to_b64_tag
+
+mpl.use("Agg")
+mpl.rc("text", usetex=True)
 
 
-def process(config, start_time):
+def make_plots(result, algorithm, perfplot, plotformat, start_time):
+    # File objects
+    file_obj = []
+
+    if algorithm in ["single", "double"]:
+        plotrange = [0]
+    elif perfplot:
+        plotrange = [0, 1]
+    else:
+        plotrange = [0]
+
+    # Write plots to file objects
+    for i in plotrange:
+        result.plot(i + 1)
+        imgfile = BytesIO()
+        mpl.pyplot.savefig(imgfile, format=plotformat)
+        file_obj += [imgfile]
+
+    # Save plot data to ASCII file
+    plotdatafile = os.path.join("/tmp", "plotdata" + start_time)
+    with open(plotdatafile, mode="w") as f:
+        f.write("Z      log(X/X_sun)\n")
+        for z, abu in zip(result.plotdata[0], result.plotdata[1]):
+            f.write(f"{z:<2}     {abu:7.5f}\n")
+
+    return file_obj
+
+
+def send_email(config, body, imgfiles, start_time):
+    session = smtplib.SMTP(gethostname())
+    sender = f"results@{gethostname()}"
+
+    msg = MIMEMultipart()
+    msg["From"] = sender
+    msg["To"] = config.email
+    msg["Subject"] = "StarFit Results"
+
+    msg.attach(MIMEText(body, "html"))
+
+    # Attach images
+    for i, img in enumerate(imgfiles):
+        part = MIMEBase("application", "octet-stream")
+        part.set_payload(img.getvalue())
+        Encoders.encode_base64(part)
+        part.add_header(
+            "Content-Disposition",
+            f'attachment; filename="plot{i}.{config.plotformat}"',
+        )
+        msg.attach(part)
+
+    # Attach big numbers
+    if config.algorithm == "double":
+        part = MIMEBase("application", "octet-stream")
+        part.set_payload(open(os.path.join("/tmp", start_time), "rb").read())
+        Encoders.encode_base64(part)
+        part.add_header(
+            "Content-Disposition",
+            f'attachment; filename="{start_time}.txt"',
+        )
+        msg.attach(part)
+
+    # Attach plot data
+    part = MIMEBase("application", "octet-stream")
+    part.set_payload(open(os.path.join("/tmp", "plotdata" + start_time), "rb").read())
+    Encoders.encode_base64(part)
+    part.add_header(
+        "Content-Disposition",
+        f'attachment; filename="plotdata_{config.stardata.filename}_{start_time}.txt"',
+    )
+    msg.attach(part)
+
+    # Attach input data
+    if config.stardata.filename:
+        part = MIMEBase("application", "octet-stream")
+        part.set_payload(open(config.filename, "rb").read())
+        Encoders.encode_base64(part)
+        part.add_header(
+            "Content-Disposition",
+            f'attachment; filename="{config.stardata.filename}"',
+        )
+        msg.attach(part)
+
+    # Send!
+    session.sendmail(sender, config.email, msg.as_string())
+
+
+def compute_and_render(config, start_time):
     if len(config.errors) == 0:
 
         time_limit = config.get_time_limit()

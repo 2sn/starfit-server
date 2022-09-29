@@ -9,8 +9,7 @@ cgitb.enable()
 import sys
 from datetime import datetime
 
-from job import process
-from sendmail import send_email
+from job import compute_and_render, send_email
 from utils import Config
 
 start_time = datetime.now().strftime("%Y-%M-%d-%H-%M-%S")
@@ -18,7 +17,7 @@ start_time = datetime.now().strftime("%Y-%M-%d-%H-%M-%S")
 # Retrieve form fields
 c = Config(cgi.FieldStorage(), start_time)  # Get POST data and validate
 
-page, body, imgfiles = process(c, start_time)
+page, body, imgfiles = compute_and_render(c, start_time)
 
 print(page)
 
