@@ -5,7 +5,7 @@ env = j2.Environment(
 )
 
 
-def render(config, result, img_tags, doc="webpage"):
+def render(config, result, img_tags, doc):
     if doc == "webpage":
         template = env.get_template("page.html.jinja")
     elif doc == "email":
