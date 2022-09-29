@@ -230,3 +230,15 @@ class Config:
             errors += ["PDF plot format must be emailed."]
 
         return errors
+
+    def get_exc_string(self):
+        exc_string = ", ".join([Ion(x).element_symbol() for x in self.z_exclude])
+        if exc_string == "":
+            exc_string = "None"
+        return exc_string
+
+    def get_lol_string(self):
+        lol_string = ", ".join([Ion(x).element_symbol() for x in self.z_lolim])
+        if lol_string == "":
+            lol_string = "None"
+        return lol_string
