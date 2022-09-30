@@ -21,8 +21,8 @@
 
 - name: Create rq worker service template
   copy:
-    src: rq-worker-group@.service
-    dest: /etc/systemd/system/rq-worker-group@.service
+    src: rq-worker-default@.service
+    dest: /etc/systemd/system/rq-worker-default@.service
     owner: root
     group: root
     mode: 0644
@@ -33,7 +33,7 @@
 - name: Create rq.target.wants symlinks for email workers
   file:
     state: link
-    src: /etc/systemd/system/rq-worker-group@.service
+    src: /etc/systemd/system/rq-worker-default@.service
     dest: /etc/systemd/system/rq.target.wants/rq-worker-email@{{ '%02d' | format(item + 1) }}.service
   loop: "{{ range(5) }}"
   notify:
@@ -42,7 +42,7 @@
 - name: Create rq.target.wants symlinks for web workers
   file:
     state: link
-    src: /etc/systemd/system/rq-worker-group@.service
+    src: /etc/systemd/system/rq-worker-default@.service
     dest: /etc/systemd/system/rq.target.wants/rq-worker-web@{{ '%02d' | format(item + 1) }}.service
   loop: "{{ range(5) }}"
   notify:
