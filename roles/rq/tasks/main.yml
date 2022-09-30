@@ -1,0 +1,49 @@
+---
+- name: Start redis service
+  systemd:
+    state: started
+    name: redis
+    enabled: true
+
+- name: Create rq worker service template
+  copy:
+    src: rqworker@.service
+    dest: /etc/systemd/system/rqworker@.service
+    owner: root
+    group: root
+    mode: 0644
+  register: rqservice
+  notify:
+    - Restart rq.target
+
+- name: Create rq systemd target
+  copy:
+    src: rq.target
+    dest: /etc/systemd/system/rq.target
+  notify:
+    - Restart rq.target
+
+- name: Create rq.target.wants dir
+  file:
+    name: /etc/systemd/system/rq.target.wants
+    state: directory
+  notify:
+    - Restart rq.target
+
+- name: Create rq.target.wants symlinks
+  file:
+    state: link
+    src: /etc/systemd/system/rqworker@.service
+    dest: /etc/systemd/system/rq.target.wants/rqworker@{{ '%02d' | format(item + 1) }}.service
+  loop: "{{ range(10) }}"
+  notify:
+    - Restart rq.target
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Start rq.target services
+  systemd:
+    state: started
+    name: rq.target
+    enabled: true

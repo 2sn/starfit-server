@@ -1,0 +1,7 @@
+---
+- name: Restart rq.target
+  systemd:
+    state: restarted
+    name: rq.target
+    enabled: true
+    daemon_reload: true
