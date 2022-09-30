@@ -19,32 +19,25 @@
   notify:
     - Restart rq.target
 
-- name: Create rq worker service template
+- name: Create rq worker service templates
   copy:
     src: rq-worker-default@.service
-    dest: /etc/systemd/system/rq-worker-default@.service
+    dest: /etc/systemd/system/rq-worker-{{ item }}@.service
     owner: root
     group: root
     mode: 0644
-  register: rqservice
+  loop:
+    - email
+    - web
   notify:
     - Restart rq.target
 
-- name: Create rq.target.wants symlinks for email workers
+- name: Create rq.target.wants symlinks for workers
   file:
     state: link
-    src: /etc/systemd/system/rq-worker-default@.service
-    dest: /etc/systemd/system/rq.target.wants/rq-worker-email@{{ '%02d' | format(item + 1) }}.service
-  loop: "{{ range(5) }}"
-  notify:
-    - Restart rq.target
-
-- name: Create rq.target.wants symlinks for web workers
-  file:
-    state: link
-    src: /etc/systemd/system/rq-worker-default@.service
-    dest: /etc/systemd/system/rq.target.wants/rq-worker-web@{{ '%02d' | format(item + 1) }}.service
-  loop: "{{ range(5) }}"
+    src: /etc/systemd/system/rq-worker-{{ item[0] }}@.service
+    dest: /etc/systemd/system/rq.target.wants/rq-worker-{{ item[0] }}@{{ '%02d' | format(item[1] + 1) }}.service
+  loop: "{{ ['email', 'web'] | product(range(5)) | list }}"
   notify:
     - Restart rq.target
 
