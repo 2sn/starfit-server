@@ -84,17 +84,16 @@ class Config:
 
         # Override time limit for some algorithms
         if self.algorithm == "double":
-            time_limit = 60 * 15
+            self.time_limit = 60 * 15
         elif self.algorithm == "single":
-            time_limit = 0
-        self.time_limit = time_limit
+            self.time_limit = 0
 
-        if time_limit < 1:
+        if self.time_limit < 1:
             eta = "now"
-        elif time_limit > 600:
+        elif self.time_limit > 600:
             eta = "in more than 10 minutes"
         else:
-            eta = "in " + time2human(time_limit)
+            eta = "in " + time2human(self.time_limit)
         self.time_eta = eta
 
         if self.algorithm not in ("ga", "double", "single"):
