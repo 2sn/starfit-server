@@ -38,7 +38,6 @@ else:
         run_job,
         args=(config,),
         result_ttl=600,
-        ttl=600,
         failure_ttl=600,
         description=description,
         job_id=f"{config.start_time}__{str(uuid4())}",
