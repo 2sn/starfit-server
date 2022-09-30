@@ -38,6 +38,7 @@
   systemd:
     state: "{{ 'restarted' if apacheconf.changed else 'started' }}"
     name: httpd
+    enabled: true
 
 - name: Create custom "mplconfigdir"
   file:

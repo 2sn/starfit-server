@@ -3,9 +3,13 @@
   systemd:
     state: restarted
     name: opendkim
+    enabled: true
+    daemon_reload: true
   notify: Restart sendmail
 
 - name: Restart sendmail
   systemd:
     state: restarted
     name: sendmail
+    enabled: true
+    daemon_reload: true

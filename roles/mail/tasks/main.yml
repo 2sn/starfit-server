@@ -82,11 +82,13 @@
   systemd:
     state: started
     name: sendmail
+    enabled: true
 
 - name: Ensure sendmail service is up
   systemd:
     state: started
     name: sendmail
+    enabled: true
 
 - name: Add script for listing required recordsets
   template:
