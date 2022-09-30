@@ -5,17 +5,6 @@
     name: redis
     enabled: true
 
-- name: Create rq worker service template
-  copy:
-    src: rqworker@.service
-    dest: /etc/systemd/system/rqworker@.service
-    owner: root
-    group: root
-    mode: 0644
-  register: rqservice
-  notify:
-    - Restart rq.target
-
 - name: Create rq systemd target
   copy:
     src: rq.target
@@ -30,12 +19,32 @@
   notify:
     - Restart rq.target
 
-- name: Create rq.target.wants symlinks
+- name: Create rq worker service template
+  copy:
+    src: rq-worker-group@.service
+    dest: /etc/systemd/system/rq-worker-group@.service
+    owner: root
+    group: root
+    mode: 0644
+  register: rqservice
+  notify:
+    - Restart rq.target
+
+- name: Create rq.target.wants symlinks for email workers
   file:
     state: link
-    src: /etc/systemd/system/rqworker@.service
-    dest: /etc/systemd/system/rq.target.wants/rqworker@{{ '%02d' | format(item + 1) }}.service
-  loop: "{{ range(10) }}"
+    src: /etc/systemd/system/rq-worker-group@.service
+    dest: /etc/systemd/system/rq.target.wants/rq-worker-email@{{ '%02d' | format(item + 1) }}.service
+  loop: "{{ range(5) }}"
+  notify:
+    - Restart rq.target
+
+- name: Create rq.target.wants symlinks for web workers
+  file:
+    state: link
+    src: /etc/systemd/system/rq-worker-group@.service
+    dest: /etc/systemd/system/rq.target.wants/rq-worker-web@{{ '%02d' | format(item + 1) }}.service
+  loop: "{{ range(5) }}"
   notify:
     - Restart rq.target
 
