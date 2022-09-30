@@ -4,6 +4,7 @@ import sys
 from datetime import datetime
 
 import starfit
+import yaml
 from cerberus import Validator
 from email_validator import EmailNotValidError, validate_email
 from starfit.autils.isotope import Ion
@@ -41,6 +42,9 @@ class Config:
     )
 
     def __init__(self, form):
+
+        web_config = yaml.safe_load(open("config.yml"))
+
         try:
             stardata = form["stardata"]
         except:
@@ -79,22 +83,21 @@ class Config:
 
         self.filepath = filepath
         self.filename = filename
-        self.dbpath = os.path.join(starfit.DATA_DIR, "db", self.database)
+        self.dbpath = os.path.join(web_config["db_dir"], self.database)
         self.mail = self.email != ""
 
         # Override time limit for some algorithms
         if self.algorithm == "double":
-            time_limit = 60 * 15
+            self.time_limit = 60 * 15
         elif self.algorithm == "single":
-            time_limit = 0
-        self.time_limit = time_limit
+            self.time_limit = 0
 
-        if time_limit < 1:
+        if self.time_limit < 1:
             eta = "now"
-        elif time_limit > 600:
+        elif self.time_limit > 600:
             eta = "in more than 10 minutes"
         else:
-            eta = "in " + time2human(time_limit)
+            eta = "in " + time2human(self.time_limit)
         self.time_eta = eta
 
         if self.algorithm not in ("ga", "double", "single"):
