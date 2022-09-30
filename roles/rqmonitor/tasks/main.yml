@@ -16,3 +16,4 @@
   systemd:
     state: "{{ 'restarted' if rqmonitor.changed else 'started' }}"
     name: rqmonitor
+    enabled: true

@@ -65,6 +65,7 @@
   systemd:
     state: started
     name: redis
+    enabled: true
 
 - name: Create RQ service
   copy:
@@ -79,3 +80,4 @@
   systemd:
     state: "{{ 'restarted' if rqservice.changed else 'started' }}"
     name: rqworker
+    enabled: true
