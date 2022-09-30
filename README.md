@@ -15,7 +15,7 @@ ansible-playbook -i <user>@<ip-address>, -e "domain=<domain> email=<email>" play
 
 New model databases can be added to `/var/www/html/data/db`. Note that this path is publicly accessible at `https://<ip-address>/data`, but it won't be included in the PyPI build unless it is also added to the data download hashlist.
 
-The new database can then be added to the drop-down menu by adding an entry with the name and filename in `index.html`, under `<select name = "database">`. Only the filename needs to be included, not the full path. E.g.
+The new database can then be added to the drop-down menu by adding an entry with the name and filename in `roles/starfit/files/html/index.html`, under `<select name = "database">`. Only the filename needs to be included, not the full path. E.g.
 
 ```
 <select name = "database">
