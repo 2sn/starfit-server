@@ -95,7 +95,7 @@ def make_plots(result, config):
 
 
 def render(config, result, img_tags, doc):
-    if doc in ("error", "result", "sendmail"):
+    if doc in ("error", "resultpage", "sendmail"):
         template = jinja_env.get_template(f"{doc}.html")
     else:
         raise RuntimeError("Bad choice of 'doc'")
@@ -168,7 +168,7 @@ def run_job(config):
     imgfiles = make_plots(result, config)
     img_tags = [convert_img_to_b64_tag(f, config.plotformat) for f in imgfiles]
 
-    page = render(config, result, img_tags, doc="result")
+    page = render(config, result, img_tags, doc="resultpage")
 
     if config.mail:  # Send an email with the results
         send_email(config, page, imgfiles)
