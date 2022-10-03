@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+Sorry... Your job was unsuccessful 😔 <br />
+<br />
+Job status: {{ job.get_status() }} <br />
+<br />
+{{ job.exc_info | replace("\n", "<br />") }}
+{% endblock content %}

@@ -1,32 +1,7 @@
-{% if not config.mail %}{% extends "base.html" %}{% endif %}
+{% extends "base.html" %}
 {% block content %}
-<br />
-<div id="textWrapper">
-  <b>Star:</b>
-  <br />
-  {{ result.star.name }}
-  <br />
-  Max Z: {{ config.z_max }}
-  <br />
-  Excluded elements: {{ config.get_exc_string() }}
-  <br />
-  Model lower limits: {{ config.get_lol_string() }}
-  <br />
-  <br />
-  <b>Method:</b>
-  <br />
-  {% include 'method.html' %}
-  <br />
-  <br />
-  <b>Best fitting models:</b>
-  <br />
-  {% include 'table.html' %}
-</div>
-<br />
-{% if not mail %}
-  <br />
-  {% for img_tag in img_tags %}
-    {{ img_tag }}
-  {% endfor %}
-{% endif %}
+
+{% include 'result.html' %}
+<br /> {{ img_tags | join(" ") }}
+
 {% endblock content %}

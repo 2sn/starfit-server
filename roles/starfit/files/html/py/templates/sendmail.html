@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+This job is taking a while. <br />
 
-Results will be mailed to {{ config.email }} {{ config.time_eta }} (check your spam folder)
+{% if config.mail %}
+Results will be mailed to {{ config.email }} {{ config.time_eta }} (check your spam folder) <br />
+{% else %}
+Unfortunately, you did not give us an email, so we cannot send the results to you. <br />
+Please resubmit your job with an email. <br />
+{% endif %}
 
 {% endblock content %}

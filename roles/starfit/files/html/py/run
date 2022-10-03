@@ -37,15 +37,25 @@ else:
         description=description,
         job_id=f"{config.start_time}__{str(uuid4())}",
     )
-    if not config.mail:  # Wait for job to complete if not sending an email
-        while j.get_status() in ("queued", "started", "scheduled", "deferred"):
-            time.sleep(1)
-        if j.get_status() == "finished":
-            page = j.result
-        else:  # TODO: convert into a user friendly error
-            print(j.get_status(), j.exc_info)
-            raise RuntimeError(j.exc_info)
-    else:  # Render the 'sending email' page
+
+    # Wait for tmax seconds
+    tmax = 15
+    tstart = time.time()
+    while time.time() - tstart < tmax:
+        time.sleep(1)
+        jobstat = j.get_status()
+        if jobstat not in ("queued", "started", "scheduled", "deferred"):
+            break
+
+    j.refresh()
+
+    if jobstat == "finished":
+        page = j.result
+    elif jobstat in ("stopped", "canceled", "failed"):
+        page = render(config=config, result=None, img_tags=[], doc="jobfail", job=j)
+    else:
+        if not config.mail:
+            j.cancel()
         page = render(config=config, result=None, img_tags=[], doc="sendmail")
 
 # Display page
