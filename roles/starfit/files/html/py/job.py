@@ -85,7 +85,7 @@ def make_plots(result, config):
         file_obj += [imgfile]
 
     # Save plot data to ASCII file
-    plotdatafile = os.path.join("/tmp", "plotdata" + config.start_time)
+    plotdatafile = os.path.join("/tmp", "plot_data_points" + config.start_time)
     with open(plotdatafile, mode="w") as f:
         f.write("Z      log(X/X_sun)\n")
         for z, abu in zip(result.plotdata[0], result.plotdata[1]):
@@ -117,15 +117,14 @@ def send_email(config, body, imgfiles):
     msg.attach(MIMEText(body, "html"))
 
     # Attach images
-    for i, img in enumerate(imgfiles):
-        part = MIMEBase("application", "octet-stream")
-        part.set_payload(img.getvalue())
-        Encoders.encode_base64(part)
-        part.add_header(
-            "Content-Disposition",
-            f'attachment; filename="plot{i}.{config.plotformat}"',
-        )
-        msg.attach(part)
+    part = MIMEBase("application", "octet-stream")
+    part.set_payload(imgfiles[0].getvalue())
+    Encoders.encode_base64(part)
+    part.add_header(
+        "Content-Disposition",
+        f'attachment; filename="abundance_plot.{config.plotformat}"',
+    )
+    msg.attach(part)
 
     # Attach big numbers
     if config.algorithm == "double":
@@ -134,19 +133,19 @@ def send_email(config, body, imgfiles):
         Encoders.encode_base64(part)
         part.add_header(
             "Content-Disposition",
-            f'attachment; filename="{config.start_time}.txt"',
+            'attachment; filename="full_results.txt"',
         )
         msg.attach(part)
 
     # Attach plot data
     part = MIMEBase("application", "octet-stream")
     part.set_payload(
-        open(os.path.join("/tmp", "plotdata" + config.start_time), "rb").read()
+        open(os.path.join("/tmp", "plot_data_points" + config.start_time), "rb").read()
     )
     Encoders.encode_base64(part)
     part.add_header(
         "Content-Disposition",
-        f'attachment; filename="plotdata_{config.filename}_{config.start_time}.txt"',
+        f'attachment; filename="plot_data_points_{config.filename}.txt"',
     )
     msg.attach(part)
 
