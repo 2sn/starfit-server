@@ -12,9 +12,7 @@ import matplotlib as mpl
 import starfit
 from utils import convert_img_to_b64_tag
 
-jinja_env = j2.Environment(
-    loader=j2.FileSystemLoader("templates"), autoescape=j2.select_autoescape()
-)
+jinja_env = j2.Environment(loader=j2.FileSystemLoader("templates"))
 
 mpl.use("Agg")
 mpl.rc("text", usetex=True)
