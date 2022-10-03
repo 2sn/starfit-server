@@ -20,20 +20,15 @@ config = Config(forms)  # Validate form fields and generate config
 ip = os.environ["REMOTE_ADDR"]
 
 if len(config.errors) > 0:
-    # Render the error page
-    page = render(config=config, result=None, img_tags=[], doc="error")
+    # Render the configerror page
+    page = render(config=config, result=None, img_tags=[], doc="configerror")
 else:
-    # Start job in background
     description = f"""
         StarFit job from: {ip}
         (email: {str(config.email) if config.mail else 'None'},
         ETA: {config.time_eta})
         """
-    if config.mail:
-        queue_name = "email"
-    else:
-        queue_name = "web"
-    q = Queue(queue_name, connection=Redis(), default_timeout=86400)
+    q = Queue("web", connection=Redis(), default_timeout=86400)
     j = q.enqueue_call(
         run_job,
         args=(config,),

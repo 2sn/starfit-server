@@ -2,8 +2,6 @@
 
 {% block content %}
 
-  {% for line in config.errors %}
-    {{ line }} <br />
-  {% endfor %}
+{{ config.errors | join("<br />") }}
 
 {% endblock content %}

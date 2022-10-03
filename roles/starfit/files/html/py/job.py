@@ -95,7 +95,7 @@ def make_plots(result, config):
 
 
 def render(config, result, img_tags, doc):
-    if doc in ("error", "resultpage", "sendmail"):
+    if doc in ("configerror", "resultpage", "sendmail"):
         template = jinja_env.get_template(f"{doc}.html")
     else:
         raise RuntimeError("Bad choice of 'doc'")
