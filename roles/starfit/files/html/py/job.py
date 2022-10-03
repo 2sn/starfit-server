@@ -94,13 +94,15 @@ def make_plots(result, config):
     return file_obj
 
 
-def render(config, result, img_tags, doc, job=None):
+def render(config, result, img_tags, doc, jobinfo=None):
     if doc in ("configerror", "resultpage", "sendmail", "jobfail", "email"):
         template = jinja_env.get_template(f"{doc}.html")
     else:
         raise RuntimeError("Bad choice of 'doc'")
 
-    return template.render(config=config, result=result, img_tags=img_tags, job=job)
+    return template.render(
+        config=config, result=result, img_tags=img_tags, jobinfo=jobinfo
+    )
 
 
 def send_email(config, body, imgfiles):

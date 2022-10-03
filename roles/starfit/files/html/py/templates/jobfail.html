@@ -2,7 +2,7 @@
 {% block content %}
 Sorry... Your job was unsuccessful 😔 <br />
 <br />
-Job status: {{ job.get_status() }} <br />
+Job status: {{ jobinfo.status }} <br />
 <br />
-{{ job.exc_info | replace("\n", "<br />") }}
+{{ jobinfo.exc_info | replace("\n", "<br />") }}
 {% endblock content %}

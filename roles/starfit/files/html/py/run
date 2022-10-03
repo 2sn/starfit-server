@@ -49,10 +49,14 @@ else:
 
     j.refresh()
 
+    jobinfo = dict(status=jobstat, exc_info=j.exc_info)
+
     if jobstat == "finished":
         page = j.result
     elif jobstat in ("stopped", "canceled", "failed"):
-        page = render(config=config, result=None, img_tags=[], doc="jobfail", job=j)
+        page = render(
+            config=config, result=None, img_tags=[], doc="jobfail", jobinfo=jobinfo
+        )
     else:
         if not config.mail:
             j.cancel()
