@@ -12,17 +12,8 @@
       <a class="title" href="/index.html">STARFIT</a>
     </div>
 
-    {% if config.errors %}
-      {% for line in config.errors %}
-        {{ line }} <br />
-      {% endfor %}
-    {% elif config.mail %}
-      Results will be mailed to {{ config.email }} {{ config.time_eta }} (check your spam folder)
-    {% else %}
-      {% include 'results.html.jinja' %}
-      {% block results %}
-      {% endblock %}
-    {% endif %}
+    {% block content %}
+    {% endblock content %}
 
     <br />
     <br />

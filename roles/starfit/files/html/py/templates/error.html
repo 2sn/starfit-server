@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  {% for line in config.errors %}
+    {{ line }} <br />
+  {% endfor %}
+
+{% endblock content %}

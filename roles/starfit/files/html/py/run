@@ -21,7 +21,7 @@ ip = os.environ["REMOTE_ADDR"]
 
 if len(config.errors) > 0:
     # Render the error page
-    page = render(config=config, result=None, img_tags=[], doc="webpage")
+    page = render(config=config, result=None, img_tags=[], doc="error")
 else:
     # Start job in background
     description = f"""
@@ -51,7 +51,7 @@ else:
             print(j.get_status(), j.exc_info)
             raise RuntimeError(j.exc_info)
     else:  # Render the 'sending email' page
-        page = render(config=config, result=None, img_tags=[], doc="webpage")
+        page = render(config=config, result=None, img_tags=[], doc="sendmail")
 
 # Display page
 print(page)

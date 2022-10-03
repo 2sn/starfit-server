@@ -1,5 +1,3 @@
-{% block method %}
-
 Search method: {{ config.get_algorithm_description() }}<br />
 Match elements: up to Z={{ config.z_max }}<br />
 Combined element abundances: {{ config.combine_elements_str() }}<br />
@@ -28,5 +26,3 @@ Population size: {{ config.pop_size }}<br />
 Time limit: {{ config.time_limit }}<br />
 Gene size: {{ config.sol_size }}<br />
 {% endif %}
-
-{% endblock %}
