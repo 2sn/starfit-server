@@ -33,7 +33,7 @@ else:
         queue_name = "email"
     else:
         queue_name = "web"
-    q = Queue(queue_name, connection=Redis(), default_timeout=3600)
+    q = Queue(queue_name, connection=Redis(), default_timeout=86400)
     j = q.enqueue_call(
         run_job,
         args=(config,),
