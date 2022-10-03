@@ -1,0 +1,13 @@
+<table>
+    {% for line in result.text_result(10) %}
+    <tr>
+        {% if line == "" %}
+        <td></td>
+        {% else %}
+        {% for word in line %}
+        <td>{{ word }}</td>
+        {% endfor %}
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
