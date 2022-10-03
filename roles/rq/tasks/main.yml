@@ -37,7 +37,7 @@
     state: link
     src: /etc/systemd/system/rq-worker-{{ item[0] }}@.service
     dest: /etc/systemd/system/rq.target.wants/rq-worker-{{ item[0] }}@{{ '%02d' | format(item[1] + 1) }}.service
-  loop: "{{ ['email', 'web'] | product(range(5)) | list }}"
+  loop: "{{ ['default'] | product(range(10)) | list }}"
   notify:
     - Restart rq.target
 

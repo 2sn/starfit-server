@@ -28,7 +28,7 @@ else:
         (email: {str(config.email) if config.mail else 'None'},
         ETA: {config.time_eta})
         """
-    q = Queue("web", connection=Redis(), default_timeout=86400)
+    q = Queue("default", connection=Redis(), default_timeout=86400)
     j = q.enqueue_call(
         run_job,
         args=(config,),
