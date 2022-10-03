@@ -39,7 +39,7 @@ else:
     )
 
     # Wait for tmax seconds
-    tmax = 15
+    tmax = 55
     tstart = time.time()
     while time.time() - tstart < tmax:
         time.sleep(1)
