@@ -1,3 +1,10 @@
+Automatically deploy the StarFit web server to a remote host. 
+
+Prerequisites:
+- Ansible is installed on your local machine
+- Remote host is running Fedora (tested with NeCTAR Fedora 36 image)
+- Volume is attached (containing StarFit data files) to the remote host, labelled `starfit-data` (how to label volumes: https://supercomputing.swin.edu.au/rcdocs/volumes/#labels)
+
 # Usage
 
 ```
@@ -12,6 +19,15 @@ ansible-playbook -i <user>@<ip-address>, -e "domain=<domain> email=<email>" play
 ```
 
 This will use the latest version of StarFit from https://pypi.org/project/starfit/
+
+# Email authentication
+The StarFit webpage sends results to users via email. This may or may not work out of the box, depending on your domain name and the range that your IP address resides in. It is highly likely that the emails will be caught by spam filters. Email authentication should be configured to ensure deliverability and avoid spam filters.
+
+Run 
+```
+sudo show-recordsets
+```
+on the remote host to display the DNS records required to configure email authentication. This information is also displayed at the final step of the ansible playbook. Create the SPF, DKIM, and DMARC records with your domain name registrar. These records may take some time to propagate and take effect.
 
 # Adding new model databases
 
