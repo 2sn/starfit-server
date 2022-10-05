@@ -70,16 +70,14 @@ def make_plots(result, config):
     # File objects
     file_obj = []
 
-    if config.algorithm in ["single", "double"]:
-        plotrange = [0]
-    elif config.perfplot:
-        plotrange = [0, 1]
-    else:
-        plotrange = [0]
+    # Abundance plot
+    result.plot()
+    imgfile = BytesIO()
+    mpl.pyplot.savefig(imgfile, format=config.plotformat)
+    file_obj += [imgfile]
 
-    # Write plots to file objects
-    for i in plotrange:
-        result.plot(i + 1)
+    if config.algorithm == "ga":
+        result.plot_fitness()
         imgfile = BytesIO()
         mpl.pyplot.savefig(imgfile, format=config.plotformat)
         file_obj += [imgfile]
@@ -125,6 +123,16 @@ def send_email(config, body, imgfiles):
         f'attachment; filename="abundance_plot.{config.plotformat}"',
     )
     msg.attach(part)
+
+    if config.algorithm == "ga":
+        part = MIMEBase("application", "octet-stream")
+        part.set_payload(imgfiles[1].getvalue())
+        Encoders.encode_base64(part)
+        part.add_header(
+            "Content-Disposition",
+            f'attachment; filename="ga_fitness_plot.{config.plotformat}"',
+        )
+        msg.attach(part)
 
     # Attach big numbers
     if config.algorithm == "double":

@@ -35,7 +35,6 @@ class Config:
         database={"type": "string", "coerce": str},
         fixed={"type": "integer", "coerce": int},
         plotformat={"type": "string", "coerce": str},
-        perfplot={"type": "boolean", "coerce": bool},
         z_exclude={"type": "string", "coerce": str},
         z_lolim={"type": "string", "coerce": str},
         cdf={"type": "boolean", "coerce": bool},
