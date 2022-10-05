@@ -5,4 +5,4 @@
 
 - name: print required records
   debug:
-    msg: records.stdout
+    msg: "{{ records.stdout }}"
