@@ -11,6 +11,8 @@ You can skip the prompts by providing them as extra arguments
 ansible-playbook -i <user>@<ip-address>, -e "domain=<domain> email=<email>" playbook.yml
 ```
 
+This will use the latest version of StarFit from https://pypi.org/project/starfit/
+
 # Adding new model databases
 
 New model databases can be added to `/var/www/html/data/db`. Note that this path is publicly accessible at `https://<ip-address>/data`, but it won't be included in the PyPI build unless it is also added to the data download hashlist.
