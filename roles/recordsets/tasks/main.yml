@@ -1,0 +1,8 @@
+---
+- name: get required records
+  shell: /usr/local/sbin/show-recordsets
+  register: records
+
+- name: print required records
+  debug:
+    msg: records.stdout
