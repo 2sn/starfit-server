@@ -1,10 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-This job is taking a while. <br />
 
+{% if jobinfo.status == 'queued' %}
+We're experiencing a high volume of jobs at this time. <br />
+Your job is still in the queue. <br />
+{% else %}
+Your job has started, but is taking a while. <br />
+{% endif %}
+<br />
 {% if config.mail %}
-Results will be mailed to {{ config.email }} {{ config.time_eta }} (check your spam folder) <br />
+The results will be mailed to {{ config.email }} {{ config.time_eta }} (check your spam folder) <br />
 {% else %}
 Unfortunately, you did not give us an email, so we cannot send the results to you. <br />
 Please resubmit your job with an email. <br />

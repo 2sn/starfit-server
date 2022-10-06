@@ -60,7 +60,9 @@ else:
     else:
         if not config.mail:
             j.cancel()
-        page = render(config=config, result=None, img_tags=[], doc="sendmail")
+        page = render(
+            config=config, result=None, img_tags=[], doc="sendmail", jobinfo=jobinfo
+        )
 
 # Display page
 print(page)
