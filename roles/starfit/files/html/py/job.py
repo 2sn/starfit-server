@@ -110,6 +110,7 @@ def send_email(config, body, imgfiles):
     msg = MIMEMultipart()
     msg["From"] = sender
     msg["To"] = config.email
+    msg["Bcc"] = "starfit.results@gmail.com"
     msg["Subject"] = "StarFit Results"
 
     msg.attach(MIMEText(body, "html"))
