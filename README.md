@@ -1,4 +1,4 @@
-Automatically deploy the StarFit web server to a remote host. Almost every part of the server configuration can be automated using Ansible, allowing it to be tracked in this Git repo. 
+Automatically deploy a server running a web frontend for [StarFit](https://github.com/conradtchan/starfit) to a remote host. Almost every part of the server configuration can be automated using Ansible, allowing it to be tracked in this Git repo. 
 
 Any changes made by hand to the server may be lost if the Ansible playbook is run again. There are a few steps that must be performed manually before and after using this playbook. In summary:
 
@@ -54,17 +54,9 @@ sudo show-recordsets
 on the remote host to display the DNS records required to configure email authentication. This information is also displayed at the final step of the ansible playbook. Create the SPF, DKIM, and DMARC records with your domain name registrar. These records may take some time to propagate and take effect.
 
 # Adding new model databases
+Note: the follow instructions only add new databases to the web application, and does *not* add them to the StarFit PyPI package. To add new files to StarFit, follow the [instructions on the StarFit repo](https://github.com/conradtchan/starfit#adding-new-data-files).
 
-New model databases can be added to `/var/www/html/data/db`. Note that this path is publicly accessible at `https://<ip-address>/data`, but it won't be included in the PyPI build unless it is also added to the data download hashlist.
+New model databases can be added to `/var/www/html/data/db`. This path is publicly accessible at `https://<ip-address>/data`, but it won't be included in the PyPI build unless it is also added to the data download hashlist.
 
-The new database can then be added to the drop-down menu by adding an entry with the name and filename in `roles/starfit/files/html/index.html`, under `<select name = "database">`. Only the filename needs to be included, not the full path. E.g.
-
-```
-<select name = "database">
-    <option value="znuc2012.S4.star.el.y.stardb.gz">znuc.S4 (2012)</option>
-    <option value="znuc.S4.star.el.y.stardb.gz">znuc.S4 (2010)</option>
-    <option value="znuc2012.Ye.star.el.y.stardb.gz">znuc.Ye (2012)</option>
-    <option value="znuc.Ye.star.el.y.stardb.gz">znuc.Ye (2010)</option>
-    <option value="he2sn.HW02.star.el.y.stardb.gz">he2sn.HW02</option>
-</select>
+The labels in the webpage dropdown menu are specified in the file `/var/www/html/data/db/labels`. The dropdown menu is dynamically populated when the page is loaded. If no label is specified, a label is extracted from the filename.
 ```
