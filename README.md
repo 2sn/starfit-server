@@ -12,6 +12,23 @@ Any changes made by hand to the server may be lost if the Ansible playbook is ru
 - Remote host has ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) open
 - Volume is attached (containing StarFit data files) to the remote host, labelled `starfit-data` (how to label volumes: https://supercomputing.swin.edu.au/rcdocs/volumes/#labels)
 
+The data directory structure should look something like this:
+```
+.
+├── db
+│   ├── he2sn.HW02.star.el.y.stardb.gz
+│   ├── ...
+│   └── znuc2012.Ye.star.el.y.stardb.gz
+├── ref
+│   ├── bbnf02.dat
+│   ├── ...
+│   └── sollo09.dat
+└── stars
+    ├── BD_80_245.dat
+    ├── ...
+    └── SMSS_J031300-670839.dat
+ ```
+
 # Usage
 
 ```
