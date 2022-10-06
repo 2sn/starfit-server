@@ -22,11 +22,6 @@
   </script>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-  <script>
-    $(function () {
-      $("#includedContent").load("dblist");
-    });
-  </script>
 
   <title>StarFit&trade;</title>
 </head>
@@ -110,12 +105,20 @@
               Model database:
             </td>
             <td>
-              <select name="database">
-                <option value="znuc2012.S4.star.el.y.stardb.gz">znuc.S4 (2012)</option>
-                <option value="znuc.S4.star.el.y.stardb.gz">znuc.S4 (2010)</option>
-                <option value="znuc2012.Ye.star.el.y.stardb.gz">znuc.Ye (2012)</option>
-                <option value="znuc.Ye.star.el.y.stardb.gz">znuc.Ye (2010)</option>
-                <option value="he2sn.HW02.star.el.y.stardb.gz">he2sn.HW02</option>
+              <select id="db-dropdown" name="database">
+                <option value="loading"> Loading DB List...</option>
+                <!-- Populate dropdown list of DBs -->
+                <script>
+                  let dropdown = $('#db-dropdown');
+                  const url = './dblist';
+                  $.getJSON(url, function (data) {
+                    $.each(data, function (key, entry) {
+                      dropdown.append($('<option></option>').attr('value', entry.filename).text(entry.label));
+                    })
+                    // Remove loading message
+                    dropdown.find('option[value=loading]').remove();
+                  });
+                </script>
               </select>
             </td>
           </tr>
@@ -199,7 +202,8 @@
     </div>
     <br />
     <center>
-      <a href="https://www.monash.edu/science/schools/physics"><img src="images/Monash_University_logo.svg" width="120px"></a>
+      <a href="https://www.monash.edu/science/schools/physics"><img src="images/Monash_University_logo.svg"
+          width="120px"></a>
       &nbsp;
       <a href="https://adacs.org.au"><img src="images/adacs_logo_dark.svg" width="120px"></a>
       <br />
