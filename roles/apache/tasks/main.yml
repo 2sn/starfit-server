@@ -28,8 +28,18 @@
 
       # Python CGI
       <Directory /var/www/html/py>
-          Options ExecCGI
-          SetHandler cgi-script
+          <Files "run">
+              Options ExecCGI
+              SetHandler cgi-script
+          </Files>
+      </Directory>
+
+      # DB-list CGI
+      <Directory /var/www/html/>
+          <Files "dblist">
+              Options ExecCGI
+              SetHandler cgi-script
+          </Files>
       </Directory>
     mode: "0644"
   register: apacheconf
