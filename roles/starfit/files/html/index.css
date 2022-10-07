@@ -89,3 +89,24 @@ a.subtitle {
 #run {
     width: 600px;
 }
+
+#processing {
+    display: none;
+    height: 100vh;
+    width: 99vw;
+    position: fixed;
+    top: 0;
+    background-color: #00284f95;
+}
+
+#processing-popup {
+    display: table;
+    background-color: #FFFFFF;
+    margin: 22% auto;
+    width: 500px;
+    height: 100px;
+    padding: 20px;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 300;
+    text-align: center;
+}
