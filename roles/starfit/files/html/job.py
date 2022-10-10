@@ -99,7 +99,11 @@ def render(config, result, img_tags, doc, jobinfo=None):
         raise RuntimeError("Bad choice of 'doc'")
 
     return template.render(
-        config=config, result=result, img_tags=img_tags, jobinfo=jobinfo
+        config=config,
+        result=result,
+        img_tags=img_tags,
+        jobinfo=jobinfo,
+        hostname=gethostname(),
     )
 
 
