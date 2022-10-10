@@ -1,6 +1,7 @@
 import base64
 import os
 import sys
+import traceback
 from datetime import datetime
 
 import starfit
@@ -47,6 +48,7 @@ class Config:
         try:
             stardata = form["stardata"]
         except:
+            traceback.print_exc(file=sys.stderr)
             sys.exit()
 
         self.start_time = datetime.now().strftime("%Y-%M-%d-%H-%M-%S")
@@ -143,11 +145,13 @@ class Config:
         try:
             Star(self.filename)
         except:
+            traceback.print_exc(file=sys.stderr)
             errors += ["There is something wrong with this stellar data."]
 
         try:
             StarDB(self.dbpath)
         except:
+            traceback.print_exc(file=sys.stderr)
             errors += ["There is something wrong with this database."]
 
         # Test if the input parameters are any good
@@ -166,6 +170,7 @@ class Config:
                 validate_email(self.email, check_deliverability=True)
 
             except EmailNotValidError:
+                traceback.print_exc(file=sys.stderr)
                 errors += [f"{self.email} is not a valid email."]
 
         if self.plotformat == "pdf" and not self.mail:
