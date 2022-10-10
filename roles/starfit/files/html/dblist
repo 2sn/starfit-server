@@ -4,7 +4,15 @@ printf "Content-Type: application/json\n\n"
 set -ue
 
 files=$(find /var/www/html/data/db/ -maxdepth 1 -type f -name '*.stardb.gz' -printf '%f\n')
-labels=$(cat /var/www/html/data/db/labels | tr -s ' ' | sed 's/ = /=/g' | column -d -s '=' -J -N filename,label | jq .table)
+labels=""
+
+if [ -f /var/www/html/data/db/labels ]; then
+  labels=$(cat /var/www/html/data/db/labels | tr -s ' ' | sed 's/ = /=/g' | column -d -s '=' -J -N filename,label | jq .table)
+fi
+
+if [ -z "$labels" ]; then
+  labels="[]"
+fi
 
 for f in ${files}; do
   if ! echo $labels | jq .[] | jq .filename -r | grep "$f" > /dev/null; then
