@@ -106,6 +106,10 @@ def render(config, result, img_tags, doc, jobinfo=None):
 def send_email(config, body, imgfiles):
     session = smtplib.SMTP(gethostname())
     sender = f"results@{gethostname()}"
+    mailto = (
+        "starfit.results@gmail.com?subject=Unsubscribe&body=%5BAutomated"
+        "%20message%5D%0D%0APlease%20unsubscribe%20me%20from%20all%20future%20emails."
+    )
 
     msg = MIMEMultipart()
     msg["From"] = f"StarFit <{sender}>"
@@ -114,7 +118,7 @@ def send_email(config, body, imgfiles):
     msg["Subject"] = "StarFit Results"
     msg.add_header(
         "List-Unsubscribe",
-        f"<mailto: starfit.results@gmail.com?subject=unsubscribe>, <https://{gethostname()}/unsubscribe>",
+        f"<mailto:{mailto}>, <https://{gethostname()}/unsubscribe>",
     )
 
     msg.attach(MIMEText(body, "html"))
