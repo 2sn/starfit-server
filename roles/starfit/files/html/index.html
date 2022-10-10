@@ -28,7 +28,7 @@ for fpath in files:
 
 # Load jinja template
 jinja_env = j2.Environment(loader=j2.FileSystemLoader("templates"))
-template = jinja_env.get_template(f"home.html")
+template = jinja_env.get_template("home.html")
 
 # Render using DB list
 print(template.render(dblist=labels))
