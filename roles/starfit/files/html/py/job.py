@@ -112,6 +112,9 @@ def send_email(config, body, imgfiles):
     msg["To"] = config.email
     msg["Bcc"] = "starfit.results@gmail.com"
     msg["Subject"] = "StarFit Results"
+    msg.add_header(
+        "List-Unsubscribe", "<mailto: starfit.results@gmail.com?subject=unsubscribe>"
+    )
 
     msg.attach(MIMEText(body, "html"))
 
