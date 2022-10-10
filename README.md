@@ -1,4 +1,4 @@
-Automatically deploy a server running a web frontend for [StarFit](https://github.com/conradtchan/starfit) to a remote host. Almost every part of the server configuration can be automated using Ansible, allowing it to be tracked in this Git repo. 
+Automatically deploy a server running a web frontend for [StarFit](https://github.com/conradtchan/starfit) to a remote host. Almost every part of the server configuration can be automated using Ansible, allowing it to be tracked in this Git repo.
 
 Any changes made by hand to the server may be lost if the Ansible playbook is run again. There are a few steps that must be performed manually before and after using this playbook. In summary:
 
@@ -47,7 +47,7 @@ This will use the latest version of [StarFit from PyPI](https://pypi.org/project
 # Email authentication
 The StarFit webpage sends results to users via email. This may or may not work out of the box, depending on your domain name and the range that your IP address resides in. It is highly likely that the emails will be caught by spam filters. Email authentication should be configured to ensure deliverability and avoid spam filters.
 
-Run 
+Run
 ```
 sudo show-recordsets
 ```

@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 
+{% if config.mail %}
+<div id="textWrapper">
+<br />Success! Your results have been mailed to {{ config.email }} (check your spam folder if you didn't get them).<br />
+</div>
+{% endif %}
+
 {% include 'result.html' %}
 <br /> {{ img_tags | join(" ") }}
 

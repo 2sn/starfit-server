@@ -108,10 +108,14 @@ def send_email(config, body, imgfiles):
     sender = f"results@{gethostname()}"
 
     msg = MIMEMultipart()
-    msg["From"] = sender
+    msg["From"] = f"StarFit <{sender}>"
     msg["To"] = config.email
     msg["Bcc"] = "starfit.results@gmail.com"
     msg["Subject"] = "StarFit Results"
+    msg.add_header(
+        "List-Unsubscribe",
+        f"<mailto: starfit.results@gmail.com?subject=unsubscribe>, <https://{gethostname()}/unsubscribe>",
+    )
 
     msg.attach(MIMEText(body, "html"))
 
