@@ -10,10 +10,14 @@ Your job has started, but is taking a while. <br />
 {% endif %}
 <br />
 {% if config.mail %}
-The results will be mailed to {{ config.email }} {{ config.time_eta }} (check your spam folder) <br />
+  {% if jobinfo.status == 'queued' %}
+    The results will be mailed to {{ config.email }} when ready (check your spam folder if you don't get them) <br />
+  {% else %}
+    The results will be mailed to {{ config.email }} {{ config.time_eta }} (check your spam folder if you don't get them) <br />
+  {% endif %}
 {% else %}
-Unfortunately, you did not give us an email, so we cannot send the results to you. <br />
-Please resubmit your job with an email. <br />
+  Unfortunately, you did not give us an email, so we cannot send the results to you. <br />
+  Please resubmit your job with an email. <br />
 {% endif %}
 
 {% endblock content %}
