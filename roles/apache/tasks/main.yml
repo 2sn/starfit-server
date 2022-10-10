@@ -36,6 +36,10 @@
               Options ExecCGI
               SetHandler cgi-script
           </Files>
+          <Files "unsubscribe">
+              Options ExecCGI
+              SetHandler cgi-script
+          </Files>
       </Directory>
 
     mode: "0644"
