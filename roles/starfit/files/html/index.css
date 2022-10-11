@@ -110,16 +110,3 @@ a.subtitle {
     font-weight: 300;
     text-align: center;
 }
-
-#ifGa {
-    display: none
-}
-
-#ifNotSingle {
-    display: none
-}
-
-#loadingCircle {
-    display: table;
-    margin: auto;
-}

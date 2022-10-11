@@ -1,8 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-<script src="scripts.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    function buttonCheck() {
+        var boxes = document.getElementsByClassName('ifGa'),
+            i = boxes.length;
+        if (document.getElementById('ga').checked) { var hide = 'block' }
+        else { var hide = 'none' }
+        while (i--) { boxes[i].style.display = hide; }
+
+        var boxes = document.getElementsByClassName('ifNotSingle'),
+            i = boxes.length;
+        if (document.getElementById('single').checked) { var hide = 'none' }
+        else { var hide = 'block' }
+        while (i--) { boxes[i].style.display = hide; }
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("#run").click(function () {
+            $("#processing").css({ "display": "table" });
+        });
+    });
+</script>
 
 <div id="form">
     <form name="GAform" action="run" method="POST" enctype="multipart/form-data">
@@ -19,7 +41,7 @@
                 </td>
             </tr>
         </table>
-        <div class="ifGa">
+        <div class="ifGa" style="display:none">
             <table class="inputs">
                 <tr>
                     <td class="c1">
@@ -49,7 +71,7 @@
         </div>
         <br />
         <b>Fitting</b>
-        <div class="ifNotSingle">
+        <div class="ifNotSingle" style="display:none">
             <table class="inputs">
                 <tr>
                     <td colspan="2">
