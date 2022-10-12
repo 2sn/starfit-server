@@ -8,8 +8,8 @@ import starfit
 import yaml
 from cerberus import Validator
 from email_validator import EmailNotValidError, validate_email
+from starfit.autils.human import time2human
 from starfit.autils.isotope import Ion
-from starfit.autils.time2human import time2human
 from starfit.read import Star
 
 
