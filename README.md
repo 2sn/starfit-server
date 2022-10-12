@@ -59,4 +59,22 @@ Note: the follow instructions only add new databases to the web application, and
 New model databases can be added to `/var/www/html/data/db`. This path is publicly accessible at `https://<ip-address>/data`, but it won't be included in the PyPI build unless it is also added to the data download hashlist.
 
 The labels in the webpage dropdown menu are specified in the file `/var/www/html/data/db/labels`. The dropdown menu is dynamically populated when the page is loaded. If no label is specified, a label is extracted from the filename.
+
+# Troubleshooting jobs
+All user jobs are run via RQ (Redis Queue) workers in combination with a Redis database. If there are jobs failing for seemingly unknown reasons, try restarting the Redis and RQ workers services
 ```
+systemctl restart redis
+systemctl restart rq.target
+```
+
+You can also monitor the queues, workers and jobs via RQ Monitor. Just forward port 8899 to your local machine e.g.
+```
+ssh -L 8000:localhost:8899 <user>@<domain>
+```
+then go to `localhost:8000` in your browser. This can help you determine which worker a particular job ran on.
+You can then view the logs for that worker e.g.
+```
+journalctl -u rq-worker@07
+```
+
+RQ worker services are named `rq-worker@<N>` and are grouped together via the target `rq.target` for convenience when stopping/starting/restarting all of them at once.
