@@ -62,10 +62,16 @@
     - unsubscribe
     - run
 
+- name: Create mount point for data
+  file:
+    path: /srv/data
+    state: directory
+    mode: "0755"
+
 - name: Ensure starfit data is mounted and served
   mount:
     src: LABEL=starfit-data
-    path: /mnt
+    path: /srv/data
     fstype: ext4
     opts: defaults
     dump: 0
@@ -74,7 +80,7 @@
 
 - name: Link to data data
   file:
-    src: /mnt
+    src: /srv/data
     dest: /var/www/html/data
     state: link
 
