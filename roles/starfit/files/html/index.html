@@ -6,6 +6,11 @@ import glob
 from os import path
 import jinja2 as j2
 
+try:
+    from starfit import __version__ as starfit_version
+except ImportError:
+    starfit_version = 'unknown'
+
 # Find DB files
 files = glob.glob('/var/www/html/data/db/*.stardb.*')
 
@@ -32,4 +37,4 @@ jinja_env = j2.Environment(loader=j2.FileSystemLoader("templates"))
 template = jinja_env.get_template("home.html")
 
 # Render using DB list
-print(template.render(dblist=labels))
+print(template.render(dblist=labels, starfit_version=starfit_version))

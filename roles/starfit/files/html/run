@@ -15,7 +15,7 @@ from rq import Queue
 cgitb.enable()
 
 from job import render, run_job
-from utils import Config
+from utils import Config, JobInfo
 
 forms = cgi.FieldStorage()  # Retrieve form fields
 config = Config(forms)  # Validate form fields and generate config
@@ -23,7 +23,9 @@ ip = os.environ["REMOTE_ADDR"]
 
 if len(config.errors) > 0:
     # Render the configerror page
-    page = render(config=config, result=None, img_tags=[], doc="configerror")
+    page = render(
+        config=config, result=None, img_tags=[], doc="configerror", jobinfo=JobInfo()
+    )
 else:
     description = f"""
         StarFit job from: {ip}
@@ -51,7 +53,7 @@ else:
 
     j.refresh()
 
-    jobinfo = dict(status=jobstat, exc_info=j.exc_info)
+    jobinfo = JobInfo(jobstat, j.exc_info)
 
     if jobstat == "finished":
         page = j.result

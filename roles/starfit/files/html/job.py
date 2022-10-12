@@ -10,7 +10,7 @@ from socket import gethostname
 import jinja2 as j2
 import matplotlib as mpl
 import starfit
-from utils import convert_img_to_b64_tag
+from utils import JobInfo, convert_img_to_b64_tag
 
 jinja_env = j2.Environment(loader=j2.FileSystemLoader("templates"))
 
@@ -92,7 +92,7 @@ def make_plots(result, config):
     return file_obj
 
 
-def render(config, result, img_tags, doc, jobinfo=None):
+def render(config, result, img_tags, doc, jobinfo):
     if doc in ("configerror", "resultpage", "sendmail", "jobfail", "email"):
         template = jinja_env.get_template(f"{doc}.html")
     else:
@@ -189,9 +189,10 @@ def run_job(config):
     result = compute(config)
     imgfiles = make_plots(result, config)
     img_tags = [convert_img_to_b64_tag(f, config.plotformat) for f in imgfiles]
+    jobinfo = JobInfo()
 
-    page = render(config, result, img_tags, doc="resultpage")
-    email = render(config, result, img_tags, doc="email")
+    page = render(config, result, img_tags, doc="resultpage", jobinfo=jobinfo)
+    email = render(config, result, img_tags, doc="email", jobinfo=jobinfo)
 
     if config.mail:  # Send an email with the results
         send_email(config, email, imgfiles)

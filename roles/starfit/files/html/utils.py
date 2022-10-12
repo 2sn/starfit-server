@@ -12,6 +12,11 @@ from starfit.autils.human import time2human
 from starfit.autils.isotope import ion as I
 from starfit.read import Star
 
+try:
+    from starfit import __version__ as starfit_version
+except ImportError:
+    starfit_version = "unknown"
+
 
 def convert_img_to_b64_tag(file, format):
     plot_b64 = str(base64.b64encode(file.getvalue()))[2:-1]
@@ -180,3 +185,10 @@ class Config:
         if lol_string == "":
             lol_string = "None"
         return lol_string
+
+
+class JobInfo:
+    def __init__(self, status=None, exc_info=None):
+        self.status = status
+        self.exc_info = exc_info
+        self.starfit_version = starfit_version
