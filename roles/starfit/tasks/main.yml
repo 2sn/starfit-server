@@ -62,21 +62,21 @@
     - unsubscribe
     - run
 
-- name: Create mount point for data
-  file:
-    path: /var/www/html/data
-    state: directory
-    mode: "0755"
-
 - name: Ensure starfit data is mounted and served
   mount:
     src: LABEL=starfit-data
-    path: /var/www/html/data
+    path: /mnt
     fstype: ext4
     opts: defaults
     dump: 0
     passno: 2
     state: mounted
+
+- name: Link to data data
+  file:
+    src: /mnt
+    dest: /var/www/html/data
+    state: link
 
 - name: Run code to generate matplotlib and tex caches
   shell:
