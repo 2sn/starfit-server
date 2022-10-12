@@ -35,12 +35,32 @@
     state: latest
 
 - name: Add html content
-  copy:
+  synchronize:
     src: html
     dest: /var/www/
-    mode: preserve
-    group: root
+    group: false
+    owner: false
+    perms: false
+    rsync_opts:
+      - --executability
+      - --chmod==rw,+X
+
+- name: Ensure root owns html content
+  file:
+    path: /var/www/html/
     owner: root
+    group: root
+    state: directory
+    recurse: true
+
+- name: Ensure executables are executable
+  file:
+    path: /var/www/html/{{ item }}
+    mode: 0755
+  loop:
+    - index.html
+    - unsubscribe
+    - run
 
 - name: Create mount point for data
   file:
