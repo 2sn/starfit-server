@@ -1,3 +1,4 @@
+// Show extra options depending on which algorithm is chosen
 function buttonCheck() {
   var boxes = document.getElementsByClassName('ifGa'),
     i = boxes.length;
@@ -13,7 +14,16 @@ function buttonCheck() {
 }
 
 $(document).ready(function () {
+
+  // Detect clicks on the algorithm radio buttons
+  const algoButtons = document.getElementsByClassName('algoButton');
+  for (let i = 0; i < algoButtons.length; i++) {
+    algoButtons[i].addEventListener("click", buttonCheck)
+  }
+
+  // Show loading popup when the "run" button has been clicked
   $("#run").click(function () {
     $("#processing").css({ "display": "table" });
   });
+
 });

@@ -111,11 +111,11 @@ a.subtitle {
     text-align: center;
 }
 
-#ifGa {
-    display: none
+.ifGa {
+    display: none;
 }
 
-#ifNotSingle {
+.ifNotSingle {
     display: none
 }
 
