@@ -9,7 +9,7 @@ import yaml
 from cerberus import Validator
 from email_validator import EmailNotValidError, validate_email
 from starfit.autils.human import time2human
-from starfit.autils.isotope import Ion
+from starfit.autils.isotope import ion as I
 from starfit.read import Star
 
 
@@ -65,11 +65,9 @@ class Config:
             self.__setattr__(key, value)
 
         self.z_exclude = [
-            z for z in [Ion(i).Z for i in self.z_exclude.split(",")] if z != 0
+            z for z in [I(i).Z for i in self.z_exclude.split(",")] if z != 0
         ]
-        self.z_lolim = [
-            z for z in [Ion(i).Z for i in self.z_lolim.split(",")] if z != 0
-        ]
+        self.z_lolim = [z for z in [I(i).Z for i in self.z_lolim.split(",")] if z != 0]
 
         # Save files to tmp
         if stardata.filename:
@@ -125,7 +123,7 @@ class Config:
     def combine_elements_str(self):
         group_strings = []
         for group in self.combine_elements():
-            group_strings += ["+".join([Ion(i).element_symbol() for i in group])]
+            group_strings += ["+".join([I(i).element_symbol() for i in group])]
         output = ", ".join(group_strings)
         if output == "":
             output = "None"
@@ -172,13 +170,13 @@ class Config:
         return errors
 
     def get_exc_string(self):
-        exc_string = ", ".join([Ion(x).element_symbol() for x in self.z_exclude])
+        exc_string = ", ".join([I(x).element_symbol() for x in self.z_exclude])
         if exc_string == "":
             exc_string = "None"
         return exc_string
 
     def get_lol_string(self):
-        lol_string = ", ".join([Ion(x).element_symbol() for x in self.z_lolim])
+        lol_string = ", ".join([I(x).element_symbol() for x in self.z_lolim])
         if lol_string == "":
             lol_string = "None"
         return lol_string
