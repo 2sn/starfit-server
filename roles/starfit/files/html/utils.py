@@ -33,6 +33,7 @@ class Config:
         email={"type": "string", "coerce": str},
         algorithm={"type": "string", "coerce": str},
         sol_size={"type": "integer", "coerce": int},
+        z_min={"type": "integer", "coerce": int},
         z_max={"type": "integer", "coerce": int},
         combine_mode={"type": "integer", "coerce": int},
         pop_size={"type": "integer", "coerce": int},
