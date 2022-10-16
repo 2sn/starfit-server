@@ -31,6 +31,7 @@ DATA FORMAT
   4 log X/Si + 6 (by number), norm is assumeed log(Si) + 6 (mol/g)
   5 log mole fraction (REALLY PREFERRED)
   6 [X/H] - provide [H] as norm, otherwise BBN value is assumed
+  7 X/Si * 1e6 (by number), norm is Si/Si_sun, error is absolute
 
 The first number is the data, the second is the error in dex.
 Use negative values to indicate upper limits; all need to be non-zero.
