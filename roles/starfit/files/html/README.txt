@@ -28,7 +28,7 @@ DATA FORMAT
   1 log epsilon (PREFERRED DUE TO DIFFERENT SOLAR ABUNDANCES, give H!)
   2 [ ]
   3 [X/Y] Y = norm element, provide [Y/H] in column for Y
-  4 log X/Si + 6 (by number)
+  4 log X/Si + 6 (by number), norm is assumeed log(Si) + 6 (mol/g)
   5 log mole fraction (REALLY PREFERRED)
   6 [X/H] - assume H_sun = 7.148276E-01,
             norm field is used to provide [H] value
