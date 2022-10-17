@@ -44,6 +44,17 @@ ansible-playbook -i <user>@<ip-address>, -e "domain=<domain> email=<email>" play
 
 This will use the latest version of [StarFit from PyPI](https://pypi.org/project/starfit/)
 
+There are also two other playbooks: `update-starfit.yml` and `update-webpage.yml`, which do as their names suggest.
+These run only the `starfit` and `starfitweb` roles, respectively, and do not prompt you for a domain and email
+```
+ansible-playbook -i <user>@<ip-address>, update-webpage.yml
+```
+
+By default, `starfit` is installed from PyPI. For development and testing you can choose to install from source or from Test PyPI e.g.
+```
+ansible-playbook -i <user>@<ip-address>, -e "install_from=testpypi" update-webpage.yml
+```
+The role variable `install_from` can be one of `source`, `pypi` or `testpypi`.
 # Email authentication
 The StarFit webpage sends results to users via email. This may or may not work out of the box, depending on your domain name and the range that your IP address resides in. It is highly likely that the emails will be caught by spam filters. Email authentication should be configured to ensure deliverability and avoid spam filters.
 
