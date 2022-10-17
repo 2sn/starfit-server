@@ -1,0 +1,14 @@
+---
+- name: Clone starfit repo
+  become: false
+  git:
+    repo: https://github.com/conradtchan/starfit.git
+    dest: /tmp/starfit
+    single_branch: true
+    version: master
+
+- name: Install dev starfit
+  shell: |
+    cd /tmp/starfit
+    ./download-data.sh
+    pip install .

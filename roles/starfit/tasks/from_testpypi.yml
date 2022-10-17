@@ -1,0 +1,11 @@
+---
+- name: Install StarFit from test PyPI
+  shell: >
+    python -m pip uninstall -y starfit;
+    python -m pip install -i https://test.pypi.org/simple/
+    --use-deprecated=legacy-resolver
+    --no-build-isolation
+    --no-deps
+    --no-cache-dir
+    -U --pre
+    starfit
