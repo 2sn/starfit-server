@@ -1,5 +1,5 @@
 ---
-- name: Update StarFit
+- name: Update StarFit python package
   hosts: all
   gather_facts: false
   become: true
