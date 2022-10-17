@@ -29,7 +29,7 @@ def compute(config):
             pop_size=config.pop_size,
             sol_size=config.sol_size,
             local_search=True,
-            z_min=1,
+            z_min=config.z_min,
             z_max=config.z_max,
             z_exclude=config.z_exclude,
             z_lolim=config.z_lolim,
@@ -48,7 +48,7 @@ def compute(config):
             save=True,
             webfile=config.start_time,
             cdf=config.cdf,
-            z_min=1,
+            z_min=config.z_min,
         )
     elif config.algorithm == "single":
         result = starfit.Single(
@@ -56,7 +56,7 @@ def compute(config):
             db=config.dbpath,
             silent=True,
             combine=combine,
-            z_min=1,
+            z_min=config.z_min,
             z_max=config.z_max,
             z_exclude=config.z_exclude,
             z_lolim=config.z_lolim,
