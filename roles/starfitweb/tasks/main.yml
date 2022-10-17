@@ -43,7 +43,7 @@
     passno: 2
     state: mounted
 
-- name: Link to data data
+- name: Add soft link to data
   file:
     src: /srv/data
     dest: /var/www/html/data
