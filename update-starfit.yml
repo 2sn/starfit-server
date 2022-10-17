@@ -1,0 +1,10 @@
+---
+- name: Update StarFit python package
+  hosts: all
+  gather_facts: false
+  become: true
+  vars:
+    mplconfigdir: /usr/share/httpd/mplconfig.d
+
+  roles:
+    - starfit
