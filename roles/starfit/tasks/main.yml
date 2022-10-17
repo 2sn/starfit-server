@@ -29,64 +29,14 @@
       - cerberus
       - pyyaml
 
+- name: Check install_from variable
+  assert:
+    that:
+      - install_from is in ['pypi','testpypi','source']
+
 - name: Install StarFit
-  pip:
-    name: starfit
-    state: latest
-
-- name: Add html content
-  synchronize:
-    src: html
-    dest: /var/www/
-    group: false
-    owner: false
-    perms: false
-    rsync_opts:
-      - --executability
-      - --chmod=u=rwX,g=rX,o=rX
-
-- name: Ensure root owns html content and group is apache
-  file:
-    path: /var/www/html/
-    owner: root
-    group: apache
-    state: directory
-    recurse: true
-
-- name: Ensure executables are executable
-  file:
-    path: /var/www/html/{{ item }}
-    mode: 0755
-  loop:
-    - index.html
-    - unsubscribe
-    - run
-
-- name: Create mount point for data
-  file:
-    path: /srv/data
-    state: directory
-    mode: "0755"
-
-- name: Ensure starfit data is mounted and served
-  mount:
-    src: LABEL=starfit-data
-    path: /srv/data
-    fstype: ext4
-    opts: defaults
-    dump: 0
-    passno: 2
-    state: mounted
-
-- name: Link to data data
-  file:
-    src: /srv/data
-    dest: /var/www/html/data
-    state: link
+  import_tasks: from_{{ install_from }}.yml
 
 - name: Run code to generate matplotlib and tex caches
   shell:
     cmd: sudo -u apache MPLCONFIGDIR={{ mplconfigdir }} python -c "import starfit; starfit.Single('HE1327-2326.dat').plot()"
-
-- name: deploy info
-  import_tasks: deploy_info.yml
