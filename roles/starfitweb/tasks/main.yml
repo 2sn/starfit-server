@@ -29,10 +29,10 @@
       - cerberus
       - pyyaml
 
-- name: Install StarFit
-  pip:
-    name: starfit
-    state: latest
+# - name: Install StarFit
+#   pip:
+#     name: starfit
+#     state: latest
 
 - name: Add html content
   synchronize:
