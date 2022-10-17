@@ -45,11 +45,11 @@
       - --executability
       - --chmod==rw,+X
 
-- name: Ensure root owns html content
+- name: Ensure root owns html content and group is apache
   file:
     path: /var/www/html/
     owner: root
-    group: root
+    group: apache
     state: directory
     recurse: true
 
