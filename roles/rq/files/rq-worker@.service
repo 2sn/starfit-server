@@ -9,6 +9,7 @@ WorkingDirectory=/var/www/html
 Environment=LANG=en_US.UTF-8
 Environment=LC_ALL=en_US.UTF-8
 Environment=LC_LANG=en_US.UTF-8
+Environment=STARFIT_DATA=/var/www/html/data
 ExecStart=/usr/local/bin/rq worker -n StarFit-%i default
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
