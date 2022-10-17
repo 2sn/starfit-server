@@ -87,3 +87,6 @@
 - name: Run code to generate matplotlib and tex caches
   shell:
     cmd: sudo -u apache MPLCONFIGDIR={{ mplconfigdir }} python -c "import starfit; starfit.Single('HE1327-2326.dat').plot()"
+
+- name: deploy info
+  import_tasks: deploy_info.yml

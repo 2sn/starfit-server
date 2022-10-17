@@ -1,0 +1,29 @@
+<html>
+
+<head>
+{% include './files/html/templates/head.html' %}
+</head>
+
+<body>
+  <div id="contentWrapper">
+    <b>Last deployment:</b> {{ deploy_info.timestamp }}
+    <br />
+    <br />
+    <b>URL:</b> <a href="{{ deploy_info.remote_url }}commit/{{ deploy_info.shasum }}">link</a>
+    <br />
+    <br />
+    <b>Commit:</b> {{ deploy_info.shasum }}
+    <br />
+    <br />
+    <b>Branch:</b> {{ deploy_info.branch}}
+    <br />
+    <br />
+    <b>Git status:</b>
+    <br />
+    {{ deploy_info.git_status | replace("\n", "<br />") }}
+    <br />
+    <br />
+  </div>
+</body>
+
+</html>

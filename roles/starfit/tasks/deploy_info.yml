@@ -1,0 +1,53 @@
+---
+- name: Get git branch
+  become: false
+  shell: |
+    git rev-parse --abbrev-ref HEAD
+  delegate_to: localhost
+  register: git_branch
+
+- name: Get git sha
+  become: false
+  shell: |
+    git rev-parse HEAD
+  delegate_to: localhost
+  register: shasum
+
+- name: Git status
+  become: false
+  shell: |
+    git status --porcelain=v1
+  delegate_to: localhost
+  register: git_status
+
+- name: Get git remote_url
+  become: false
+  shell: |
+    set -o pipefail
+    git config --get remote.origin.url | sed 's|git@github.com:|https://github.com//|g' | sed 's|\.git|/|g'
+  delegate_to: localhost
+  register: remote_url
+
+- name: Get date
+  command: date '+%Y-%m-%d %H:%M %Z'
+  become: false
+  register: timestamp
+  environment:
+    TZ: Australia/Melbourne
+
+- name: Construct deploy info
+  set_fact:
+    deploy_info:
+      timestamp: "{{ timestamp.stdout }}"
+      remote_url: "{{ remote_url.stdout }}"
+      shasum: "{{ shasum.stdout }}"
+      git_status: "{{ git_status.stdout }}"
+      branch: "{{ git_branch.stdout }}"
+
+- name: Write deploy info
+  template:
+    src: deploy_info.j2
+    dest: /var/www/html/deploy_info
+    mode: 0644
+    owner: root
+    group: root
