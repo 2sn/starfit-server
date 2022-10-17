@@ -2,6 +2,7 @@
 - name: get required records
   shell: /usr/local/sbin/show-recordsets
   register: records
+  changed_when: false
 
 - name: print required records
   debug:
