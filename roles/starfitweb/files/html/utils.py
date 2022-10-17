@@ -5,7 +5,6 @@ import traceback
 from datetime import datetime
 
 import starfit
-import yaml
 from cerberus import Validator
 from email_validator import EmailNotValidError, validate_email
 from starfit.autils.human import time2human
@@ -48,8 +47,6 @@ class Config:
 
     def __init__(self, form):
 
-        web_config = yaml.safe_load(open("config.yml"))
-
         try:
             stardata = form["stardata"]
         except:
@@ -87,7 +84,7 @@ class Config:
 
         self.filepath = filepath
         self.filename = filename
-        self.dbpath = os.path.join(web_config["db_dir"], self.database)
+        self.dbpath = os.path.join(os.getenv("STARFIT_DATA"), "db", self.database)
         self.mail = self.email != ""
 
         # Override time limit for some algorithms
