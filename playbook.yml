@@ -17,6 +17,7 @@
   roles:
     - apache
     - certbot
+    - starfit
     - starfitweb
     - rq
     - rqmonitor
