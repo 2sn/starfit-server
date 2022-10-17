@@ -43,7 +43,7 @@
     perms: false
     rsync_opts:
       - --executability
-      - --chmod==rw,+X
+      - --chmod=u=rwX,g=rX,o=rX
 
 - name: Ensure root owns html content and group is apache
   file:

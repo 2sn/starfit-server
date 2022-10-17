@@ -5,6 +5,7 @@
     git rev-parse --abbrev-ref HEAD
   delegate_to: localhost
   register: git_branch
+  changed_when: false
 
 - name: Get git sha
   become: false
@@ -12,6 +13,7 @@
     git rev-parse HEAD
   delegate_to: localhost
   register: shasum
+  changed_when: false
 
 - name: Git status
   become: false
@@ -19,6 +21,7 @@
     git status --porcelain=v1
   delegate_to: localhost
   register: git_status
+  changed_when: false
 
 - name: Get git remote_url
   become: false
@@ -27,11 +30,13 @@
     git config --get remote.origin.url | sed 's|git@github.com:|https://github.com//|g' | sed 's|\.git|/|g'
   delegate_to: localhost
   register: remote_url
+  changed_when: false
 
 - name: Get date
   command: date '+%Y-%m-%d %H:%M %Z'
   become: false
   register: timestamp
+  changed_when: false
   environment:
     TZ: Australia/Melbourne
 
@@ -50,4 +55,4 @@
     dest: /var/www/html/deploy_info
     mode: 0644
     owner: root
-    group: root
+    group: apache
