@@ -1,0 +1,5 @@
+---
+- name: Install StarFit from PyPI
+  pip:
+    name: starfit
+    state: latest

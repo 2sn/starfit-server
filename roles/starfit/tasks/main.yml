@@ -29,10 +29,13 @@
       - cerberus
       - pyyaml
 
+- name: Check install_from variable
+  assert:
+    that:
+      - install_from is in ['pypi','testpypi','source']
+
 - name: Install StarFit
-  pip:
-    name: starfit
-    state: latest
+  import_tasks: from_{{ install_from }}.yml
 
 - name: Run code to generate matplotlib and tex caches
   shell:
