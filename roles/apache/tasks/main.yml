@@ -17,6 +17,7 @@
     create: true
     block: |
       SetEnv MPLCONFIGDIR {{ mplconfigdir }}
+      SetEnv STARFIT_DATA /var/www/html/data
 
       <VirtualHost *:80>
           ServerName {{ domain }}
