@@ -2,6 +2,7 @@
 Description="RQ Worker %I"
 After=network.target
 PartOf=rq.target
+JoinsNamespaceOf=httpd.service
 
 [Service]
 Type=simple
@@ -13,7 +14,7 @@ Environment=STARFIT_DATA=/var/www/html/data
 ExecStart=/usr/local/bin/rq worker -n StarFit-%i default
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
-PrivateTmp=false
+PrivateTmp=true
 Restart=always
 
 [Install]
