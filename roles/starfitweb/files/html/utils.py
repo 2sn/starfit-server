@@ -19,11 +19,15 @@ except ImportError:
 
 def convert_img_to_b64_tag(file, format):
     plot_b64 = str(base64.b64encode(file.getvalue()))[2:-1]
-    typestr = format
-    if format == "svg":
-        typestr += "+xml"
-    img_tag = f'<object data="data:image/{typestr};base64,{plot_b64}" type="image/{typestr}" width="700"></object>'
-
+    if format == "pdf":
+        typestr = "application/pdf"
+        heightstr = 'height="60%"'
+    else:
+        typestr = f"image/{format}"
+        heightstr = ""
+        if format == "svg":
+            typestr += "+xml"
+    img_tag = f'<object data="data:{typestr};base64,{plot_b64}" type="{typestr}" width="100%" {heightstr}></object>'
     return img_tag
 
 
@@ -166,9 +170,6 @@ class Config:
             except EmailNotValidError:
                 traceback.print_exc(file=sys.stderr)
                 errors += [f"{self.email} is not a valid email."]
-
-        if self.plotformat == "pdf" and not self.mail:
-            errors += ["PDF plot format must be emailed."]
 
         return errors
 
