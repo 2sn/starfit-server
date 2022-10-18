@@ -13,7 +13,7 @@ Environment=STARFIT_DATA=/var/www/html/data
 ExecStart=/usr/local/bin/rq worker -n StarFit-%i default
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
-PrivateTmp=true
+PrivateTmp=false
 Restart=always
 
 [Install]
