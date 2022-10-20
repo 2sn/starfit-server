@@ -21,13 +21,12 @@ def convert_img_to_b64_tag(file, format):
     plot_b64 = str(base64.b64encode(file.getvalue()))[2:-1]
     if format == "pdf":
         typestr = "application/pdf"
-        heightstr = 'height="60%"'
+        img_tag = f'<iframe src="data:{typestr};base64,{plot_b64}" type="{typestr}" width="100%" height="70%"></iframe>'
     else:
         typestr = f"image/{format}"
-        heightstr = ""
         if format == "svg":
             typestr += "+xml"
-    img_tag = f'<object data="data:{typestr};base64,{plot_b64}" type="{typestr}" width="100%" {heightstr}></object>'
+        img_tag = f'<object data="data:{typestr};base64,{plot_b64}" type="{typestr}" width="100%"></object>'
     return img_tag
 
 
