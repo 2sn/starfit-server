@@ -52,7 +52,7 @@ ansible-playbook -i <user>@<ip-address>, update-webpage.yml
 
 By default, `starfit` is installed from PyPI. For development and testing you can choose to install from source or from Test PyPI e.g.
 ```
-ansible-playbook -i <user>@<ip-address>, -e "install_from=testpypi" update-webpage.yml
+ansible-playbook -i <user>@<ip-address>, -e "install_from=testpypi" update-starfit.yml
 ```
 The role variable `install_from` can be one of `source`, `pypi` or `testpypi`.
 # Email authentication

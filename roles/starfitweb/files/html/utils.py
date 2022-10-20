@@ -146,7 +146,7 @@ class Config:
     def _check_for_errors(self):
         errors = []
         try:
-            Star(self.filename, silent=True)
+            Star(self.filepath, silent=True)
         except:
             traceback.print_exc(file=sys.stderr)
             errors += ["There is something wrong with this stellar data."]
