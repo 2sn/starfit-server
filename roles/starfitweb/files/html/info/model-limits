@@ -1,0 +1,14 @@
+Model lower limits
+==================
+
+In some case it is known that the models in the database do
+underproduce a given species.  This may be due to production processes
+not included in the modelling, other sources, or other nuclear physics
+uncertainties.
+
+In this case model data is considered a lower limit.
+
+This is treated the same was as an upper limit for the observed data,
+usingbthe error bar form the observational data.
+
+In the plots, these are shown as hollow symbols for the model data.

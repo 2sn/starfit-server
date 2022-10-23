@@ -1,0 +1,25 @@
+Combine Elements
+================
+
+This is intended for elements for which the currently observed element
+abundaces do not reflect the production, but the total abundace of the
+elements is conserved to good approximation.
+
+For example, the CN cycle first converts C to N, at higher temperature
+or after nonger tme, also O is participating in the cycle.  Assuming
+there is no break-out, the total number of nuclei is conserved in
+these reactions.  Hence, even if not knowing the amount of processing,
+we can still match the total.
+
+Here we provide the options for C+N and C+N+O.
+
+In the plots, the averate Z is used to locate the data point on the
+x-axis.
+
+The error bars are combined appropriately, with weight of the abundaces.
+
+Currently, only data points can eb combined, not upper limits.
+
+Please let us know if you ever get into a situation where you'd need
+combinations for other limits for an astrophysically motivated use
+case.
