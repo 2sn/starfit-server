@@ -1,0 +1,10 @@
+Exclude Elements
+================
+
+Elements for which data exists but should not be used for matching.
+
+This way, the povided dat file does not need to be adjusted to explore
+the dependence of specific elements.
+
+These elements are still plotted, but observed data points are shown
+as hollow circiles.
