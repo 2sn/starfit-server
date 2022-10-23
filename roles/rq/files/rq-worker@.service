@@ -2,6 +2,7 @@
 Description="RQ Worker %I"
 After=network.target
 PartOf=rq.target
+JoinsNamespaceOf=httpd.service
 
 [Service]
 Type=simple
