@@ -1,5 +1,5 @@
 ---
-- name: Install StarFit from test PyPI
+- name: Install StarFit from Test PyPI
   shell: >
     python -m pip uninstall -y starfit;
     python -m pip install -i https://test.pypi.org/simple/

@@ -9,7 +9,7 @@ from socket import gethostname
 
 import jinja2 as j2
 import matplotlib as mpl
-import starfit
+from starfit import Ga, Multi, Single
 from utils import JobInfo, convert_img_to_b64_tag
 
 jinja_env = j2.Environment(loader=j2.FileSystemLoader("templates"))
@@ -22,7 +22,7 @@ def compute(config):
     combine = config.combine_elements()
     if config.algorithm == "ga":
         # Run the fitting algorithm
-        result = starfit.Ga(
+        result = Ga(
             filename=config.filepath,
             db=config.dbpath,
             time_limit=config.time_limit,
@@ -38,7 +38,7 @@ def compute(config):
             cdf=config.cdf,
         )
     elif config.algorithm == "double":
-        result = starfit.Double(
+        result = Multi(
             filename=config.filepath,
             db=config.dbpath,
             silent=True,
@@ -49,9 +49,11 @@ def compute(config):
             webfile=config.start_time,
             cdf=config.cdf,
             z_min=config.z_min,
+            z_max=config.z_max,
+            sol_size=2,
         )
     elif config.algorithm == "single":
-        result = starfit.Single(
+        result = Single(
             filename=config.filepath,
             db=config.dbpath,
             silent=True,
