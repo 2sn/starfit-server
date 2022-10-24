@@ -1,15 +1,15 @@
 import base64
-import os
 import sys
 import traceback
 from datetime import datetime
+from os import getenv
+from pathlib import Path
 
-import starfit
 from cerberus import Validator
 from email_validator import EmailNotValidError, validate_email
+from starfit import DATA_DIR, DB, STARS, Star
 from starfit.autils.human import time2human
 from starfit.autils.isotope import ion as I
-from starfit.read import Star
 
 try:
     from starfit import __version__ as starfit_version
@@ -77,17 +77,17 @@ class Config:
 
         # Save files to tmp
         if stardata.filename:
-            filepath = os.path.join("/tmp", stardata.filename + self.start_time)
+            filepath = Path("/tmp") / (stardata.filename + self.start_time)
             with open(filepath, "wb") as fstar:
                 fstar.write(stardata.file.read())
             filename = stardata.filename
         else:
             filename = "HE1327-2326.dat"
-            filepath = os.path.join(starfit.DATA_DIR, "stars", filename)
+            filepath = Path(DATA_DIR) / STARS / filename
 
         self.filepath = filepath
         self.filename = filename
-        self.dbpath = os.path.join(os.getenv("STARFIT_DATA"), "db", self.database)
+        self.dbpath = Path(getenv("STARFIT_DATA")) / DB / self.database
         self.mail = self.email != ""
 
         # Override time limit for some algorithms
