@@ -39,4 +39,4 @@
 
 - name: Run code to generate matplotlib and tex caches
   shell:
-    cmd: sudo -u apache MPLCONFIGDIR={{ mplconfigdir }} python -c "import starfit; starfit.Single('HE1327-2326.dat').plot()"
+    cmd: sudo -u apache MPLCONFIGDIR={{ mplconfigdir }} python -c "import starfit; starfit.Single(filename='HE1327-2326.dat',db='znuc2012.S4.star.el.y.stardb.gz').plot()"
