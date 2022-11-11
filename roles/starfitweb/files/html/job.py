@@ -76,9 +76,9 @@ def make_plots(result, config):
     file_obj = []
 
     # Abundance plot
-    labels, plotdata = result.plot(return_plot_data=True)
     imgfile = BytesIO()
-    mpl.pyplot.savefig(imgfile, format=config.plotformat)
+    labels, plotdata = result.plot(save=imgfile, save_format=config.plotformat, return_plot_data=True)
+    # mpl.pyplot.savefig(imgfile, format=config.plotformat)
     file_obj += [imgfile]
 
     if config.algorithm == "ga":
