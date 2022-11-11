@@ -76,7 +76,7 @@ def make_plots(result, config):
     file_obj = []
 
     # Abundance plot
-    result.plot()
+    labels, plotdata = result.plot(return_plot_data=True)
     imgfile = BytesIO()
     mpl.pyplot.savefig(imgfile, format=config.plotformat)
     file_obj += [imgfile]
@@ -90,8 +90,11 @@ def make_plots(result, config):
     # Save plot data to ASCII file
     plotdatafile = os.path.join("/tmp", "plot_data_points" + config.start_time)
     with open(plotdatafile, mode="w") as f:
+        for l in labels:
+            f.write(f"{l}\n")
+        f.write("\n")
         f.write("Z      log(X/X_sun)\n")
-        for z, abu in zip(result.plotdata[0], result.plotdata[1]):
+        for z, abu in zip(plotdata[0], plotdata[1]):
             f.write(f"{z:<2}     {abu:7.5f}\n")
 
     return file_obj
