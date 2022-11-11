@@ -44,7 +44,7 @@ def compute(config):
             silent=True,
             n_top=1000,
             combine=combine,
-            fixed=config.fixed,
+            fixed_offsets=config.fixed,
             save=True,
             webfile=config.start_time,
             cdf=config.cdf,
