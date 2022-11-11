@@ -35,8 +35,8 @@ class Config:
         email={"type": "string", "coerce": str},
         algorithm={"type": "string", "coerce": str},
         sol_size={"type": "integer", "coerce": int},
-        z_min={"type": "integer", "coerce": int},
-        z_max={"type": "integer", "coerce": int},
+        z_min={"type": "string", "coerce": str},
+        z_max={"type": "string", "coerce": str},
         combine_mode={"type": "integer", "coerce": int},
         pop_size={"type": "integer", "coerce": int},
         time_limit={"type": "integer", "coerce": int},
@@ -69,6 +69,9 @@ class Config:
 
         for key, value in v.document.items():
             self.__setattr__(key, value)
+            
+        self.z_min = I(self.z_min).Z
+        self.z_max = I(self.z_min).Z
 
         self.z_exclude = [
             z for z in [I(i).Z for i in self.z_exclude.split(",")] if z != 0
