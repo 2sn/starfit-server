@@ -69,9 +69,9 @@ class Config:
 
         for key, value in v.document.items():
             self.__setattr__(key, value)
-            
-        self.z_min = I(self.z_min).Z
-        self.z_max = I(self.z_max).Z
+
+        self.z_min = I(self.z_min).Name()
+        self.z_max = I(self.z_max).Name()
 
         self.z_exclude = [
             z for z in [I(i).Z for i in self.z_exclude.split(",")] if z != 0
