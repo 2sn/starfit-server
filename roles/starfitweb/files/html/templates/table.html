@@ -1,5 +1,5 @@
 <table>
-    {% for line in result.text_result(10) %}
+    {% for line in result.text_result(10, format="html") %}
     <tr>
         {% if line == "" %}
         <td></td>
