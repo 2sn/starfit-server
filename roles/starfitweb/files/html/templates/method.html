@@ -34,11 +34,13 @@ Model lower limits:
 <br />
 {% endif %}
 
+{% if config.n_database == "1" %}
 Model database:
 <span class="method">
-{{ config.database }}
+{{ config.database_string }}
 </span>
 <br />
+{% endif %}
 
 {% if config.algorithm != "single" %}
 Dilution factors:

@@ -6,6 +6,12 @@ function buttonCheck() {
   else { var hide = 'none' }
   while (i--) { boxes[i].style.display = hide; }
 
+  var boxes = document.getElementsByClassName('ifDouble'),
+    i = boxes.length;
+  if (document.getElementById('double').checked) { var hide = 'block' }
+  else { var hide = 'none' }
+  while (i--) { boxes[i].style.display = hide; }
+
   var boxes = document.getElementsByClassName('ifNotSingle'),
     i = boxes.length;
   if (document.getElementById('single').checked) { var hide = 'none' }

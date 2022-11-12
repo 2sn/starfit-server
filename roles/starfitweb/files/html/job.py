@@ -97,6 +97,12 @@ def set_star_values(result, config):
     config.star_reference = result.star.source
     config.star_notes = result.star.comment
 
+
+def set_result_values(result, config):
+    config.text_result =  result.text_result(10, format="html")
+    config.text_db = result.text_db()
+    config.text_db_n_columns = str(len(config.text_db[0]))
+
 def make_plots(result, config):
 
     # File objects
@@ -222,6 +228,7 @@ def send_email(config, body, imgfiles):
 def run_job(config):
     result = compute(config)
     set_star_values(result, config)
+    set_result_values(result, config)
     imgfiles = make_plots(result, config)
     img_tags = [convert_img_to_b64_tag(f, config.plotformat) for f in imgfiles]
     jobinfo = JobInfo()

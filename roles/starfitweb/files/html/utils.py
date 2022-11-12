@@ -30,7 +30,7 @@ def convert_img_to_b64_tag(file, format):
     return img_tag
 
 
-class Config:
+class Config(object):
     schema = dict(
         email={"type": "string", "coerce": str},
         algorithm={"type": "string", "coerce": str},
@@ -40,7 +40,7 @@ class Config:
         combine_mode={"type": "integer", "coerce": int},
         pop_size={"type": "integer", "coerce": int},
         time_limit={"type": "integer", "coerce": int},
-        database={"type": "string", "coerce": str},
+        # database={"type": "string", "coerce": str},
         fixed={"type": "boolean", "coerce": bool},
         plotformat={"type": "string", "coerce": str},
         z_exclude={"type": "string", "coerce": str},
@@ -74,6 +74,11 @@ class Config:
         for key, value in v.document.items():
             self.__setattr__(key, value)
 
+        dbx = form.getlist("database")
+        if len(dbx) == 0:
+            raise RuntimeError("Require at lest one database selection")
+        self.database = dbx
+
         self.z_min = I(self.z_min).Name()
         self.z_max = I(self.z_max).Name()
 
@@ -94,7 +99,7 @@ class Config:
 
         self.filepath = filepath
         self.filename = filename
-        self.dbpath = Path(getenv("STARFIT_DATA")) / DB / self.database
+        self.dbpath = [Path(getenv("STARFIT_DATA")) / DB / db for db in self.database]
         self.mail = self.email != ""
 
         # Override time limit for some algorithms
@@ -128,6 +133,8 @@ class Config:
         self.algorithm_description = self.get_algorithm_description()
         self.exclude_string = self.get_exclude_string()
         self.lolim_string = self.get_lolim_string()
+        self.database_string = ", ".join(self.database)
+        self.n_database = str(len(self.database))
 
     def combine_elements(self):
         """Preset element combinations"""

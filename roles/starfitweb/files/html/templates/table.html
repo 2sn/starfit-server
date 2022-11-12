@@ -1,5 +1,13 @@
 <table>
-    {% for line in result.text_result(10, format="html") %}
+  {% for line in config.text_result[:2] %}
+  <tr>
+    {% for word in line %}
+    <td class="resultsHead">{{ word }}</td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+  <td></td>
+  {% for line in config.text_result[2:] %}
     <tr>
         {% if line == "" %}
         <td></td>
@@ -11,3 +19,28 @@
     </tr>
     {% endfor %}
 </table>
+
+{% if config.n_database != "1" %}
+<br />
+<table>
+    {% for line in config.text_db[:1] %}
+    <tr>
+        <td class="DBHeadNum">{{ line[0] }}</td>
+	{% if config.text_db_n_columns == "3" %}
+        <td class="DBHeadName">{{ line[1] }}</td>
+	{% endif %}
+        <td class="DBHeadText">{{ line[-1] }}</td>
+    </tr>
+    {% endfor %}
+    {% for line in config.text_db[1:] %}
+    <tr>
+        <td class="DBNum">{{ line[0] }}</td>
+	{% if config.text_db_n_columns == "3" %}
+        <td class="DBName">{{ line[1] }}</td>
+	{% endif %}
+        <td class="DBText">{{ line[-1] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endif %}

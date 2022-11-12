@@ -13,6 +13,11 @@ td {
     padding: 5px;
 }
 
+th {
+    overflow: hidden;
+    padding: 5px;
+}
+
 td.c1 {
     width: 380px;
 }
@@ -21,8 +26,41 @@ td.c2 {
     width: 220px;
 }
 
+td.resultsHead {
+    padding: 0px;
+    text-align: right;
+    font-weight: 500;
+}
+
 td.resultsRow {
     padding: 0px;
+    text-align: right;
+    color: #00284F;
+}
+
+td.DBNum, td.DBHeadNum {
+    padding: 0px;
+    padding-right: 10px;
+    text-align: right;
+    width: 5%;
+}
+
+td.DBName, td.DBHeadName {
+    padding: 0px;
+    padding-right: 10px;
+    text-align: left;
+    width: 10%;
+}
+
+td.DBText,td.DBHeadText {
+    padding: 0px;
+    text-align: left;
+    width: 80%;
+}
+
+td.DBNum, td.DBName, td.DBText {
+    color: #00284F;
+    font-weight: 500;
 }
 
 a {
@@ -127,11 +165,17 @@ a.subtitle {
 span.method {
     color: #0000ff;
     font-weight: 400;
-    font-family: courier;
+    font-family: "Courier New", monospace;
 }
 
 span.star {
     color: #009f00;
     font-weight: 400;
-    font-family: courier;
+    font-family: "Courier New", monospace;
+}
+
+span.section {
+    color: #000000;
+    font-weight: 600;
+    font-family: 'Exo 2', sans-serif;
 }

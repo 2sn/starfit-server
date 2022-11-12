@@ -11,6 +11,18 @@
 
 <div id="form">
     <form name="GAform" action="run" method="POST" enctype="multipart/form-data">
+        <b>Star</b>
+        <table class="inputs">
+            <tr>
+                <td class="c1">
+                    <a href="/info/stellar-data" target="_blank">Stellar data</a> (Leave blank for HE1327-2326):
+                </td>
+                <td>
+                    <input name="stardata" type="file">
+                </td>
+            </tr>
+        </table>
+	<br />
         <b>Algorithm</b>
         <table class="inputs">
             <tr>
@@ -57,18 +69,10 @@
         <table class="inputs">
             <tr>
                 <td class="c1">
-                    <a href="/info/stellar-data" target="_blank">Stellar data</a> (Leave blank for HE1327-2326):
-                </td>
-                <td>
-                    <input name="stardata" type="file">
-                </td>
-            </tr>
-            <tr>
-                <td>
                     <a href="/data/db/databases" target="_blank">Model database:</a>
                 </td>
                 <td>
-                    <select id="db-dropdown" name="database">
+                    <select id="db-dropdown" name="database" size="8" require multiple>
                         {% for db in dblist %}
                         <option value="{{ db }}"> {{ dblist[db] }}</option>
                         {% endfor %}
