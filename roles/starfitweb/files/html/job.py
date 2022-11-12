@@ -27,6 +27,7 @@ def compute(config):
             time_limit=config.time_limit,
             pop_size=config.pop_size,
             sol_size=config.sol_size,
+            spread=config.spread,
             local_search=True,
             z_min=config.z_min,
             z_max=config.z_max,

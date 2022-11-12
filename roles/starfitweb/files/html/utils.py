@@ -50,6 +50,7 @@ class Config(object):
         cov={"type": "boolean", "coerce": bool},
         limit_solution={"type": "boolean", "coerce": bool},
         limit_solver={"type": "boolean", "coerce": bool},
+        spread={"type": "boolean", "coerce": bool},
     )
 
     def __init__(self, form):

@@ -13,7 +13,7 @@ Match elements:
 {% if config.combined_elements_string != "" %}
 Combined element abundances:
 <span class="method">
-  {{ config.combined_elements_string() }}
+  {{ config.combined_elements_string }}
 </span>
 <br />
 {% endif %}
@@ -93,7 +93,7 @@ Ignored
 Limit solver:
 <span class="method">
 {% if config.limit_solver %}
-Yes
+&#x2713;
 {% else %}
 Each contribution may exceed 100 %
 {% endif %}
@@ -103,7 +103,7 @@ Each contribution may exceed 100 %
 Limit solution:
 <span class="method">
 {% if config.limit_solution %}
-Yes
+&#x2713;
 {% else %}
 Total may exceed 100 %
 {% endif %}
@@ -112,7 +112,7 @@ Total may exceed 100 %
 
 {% if config.algorithm == "ga" %}
 <br />
-Genetic algorithm parameters:
+ <span class="section">Genetic algorithm parameters:</span>
 <br />
 
 Population size:
@@ -130,6 +130,16 @@ Time limit:
 Gene size:
 <span class="method">
   {{ config.sol_size }}
+</span>
+<br />
+
+Spread search:
+<span class="method">
+  {% if config.spread %}
+&#x2713;
+{% else %}
+No
+{% endif %}
 </span>
 <br />
 {% endif %}
