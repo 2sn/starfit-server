@@ -5,21 +5,11 @@
   <br />
   <b>Star:</b>
   <br />
-  {{ result.star.name }}
-  <br />
-  Min: {{ config.z_min }}
-  <br />
-  Max: {{ config.z_max }}
-  <br />
-  Excluded elements: {{ config.get_exc_string() }}
-  <br />
-  Model lower limits: {{ config.get_lol_string() }}
-  <br />
+  {% include 'star.html' %}
   <br />
   <b>Method:</b>
   <br />
   {% include 'method.html' %}
-  <br />
   <br />
   <b>Best fitting models:</b>
   <br />

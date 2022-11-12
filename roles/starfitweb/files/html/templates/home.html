@@ -54,16 +54,6 @@
         </div>
         <br />
         <b>Fitting</b>
-        <div class="ifNotSingle">
-            <table class="inputs">
-                <tr>
-                    <td colspan="2">
-                        <input type="radio" name="fixed" value="0" checked="checked">Free fitting
-                        <input type="radio" name="fixed" value="1">Fixed offsets
-                    </td>
-                </tr>
-            </table>
-        </div>
         <table class="inputs">
             <tr>
                 <td class="c1">
@@ -138,13 +128,57 @@
             </tr>
             <tr>
                 <td>
-                    <a href="/info/upper-limits" target="_blank">Upper limits CDF</a>
+                    <a href="/info/upper-limits" target="_blank">Upper limits CDF</a> (recommended)
                 </td>
                 <td>
-                    <input type="checkbox" name="cdf" value="True">
+                    <input type="checkbox" name="cdf" value="true" checked>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="/info/detection-thresholds" target="_blank">Detection thresholds</a> (experimental)
+                </td>
+                <td>
+                    <input type="checkbox" name="det" value="True">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="/info/error-covariances" target="_blank">Error covariances</a> (experimental)
+                </td>
+                <td>
+                    <input type="checkbox" name="cov" value="True">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="/info/limit-solver" target="_blank">Limit solver</a> (expert, recommended)
+                </td>
+                <td>
+                    <input type="checkbox" name="limit_solver" value="True" checked>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="/info/limit-solution" target="_blank">Limit solution</a> (expert, recommended)
+                </td>
+                <td>
+                    <input type="checkbox" name="limit_solution" value="True" checked>
                 </td>
             </tr>
         </table>
+        <div class="ifNotSingle">
+            <table class="inputs">
+                <tr>
+                    <td class="c1">
+                        <a href="/info/fixed-offsets" target="_blank">Fixed offsets</a> (expert)
+                    </td>
+                    <td>
+                        <input type="checkbox" name="fixed" value="True">
+                    </td>
+                </tr>
+            </table>
+        </div>
         <br />
         <b>Output</b>
         <table class="inputs">

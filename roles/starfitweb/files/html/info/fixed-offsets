@@ -1,0 +1,21 @@
+Fixed Offsets
+=============
+
+If checked, use fixed ratios of ejecta, weighted by the mass of ejcta.
+
+If unchecked, allow free floating ejecta ratios.
+
+Backgtound
+----------
+
+In a binary system, e.g., you may want to assume bith stars contribute
+equally.  In most cases, however, contributions may vary, e.g., if the
+contribution of r-process from a binary neutron star merger may depend
+a lot on GCE mixing with large dilution; for a collapsar, it may be
+rather fixed, if known.
+
+Note
+----
+
+Some data sets do not provide ejecta masses.  In this case, a standard
+ejecta mass of 1 solar mass is assumed.

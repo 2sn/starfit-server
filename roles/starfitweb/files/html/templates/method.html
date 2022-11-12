@@ -1,28 +1,133 @@
-Search method: {{ config.get_algorithm_description() }}<br />
-Match elements: From {{ config.z_min }} to {{ config.z_max }}<br />
-Combined element abundances: {{ config.combine_elements_str() }}<br />
-Model database: {{ config.database }}<br />
+Search method:
+<span class="method">
+  {{ config.algorithm_description }}
+</span>
+<br />
 
+Match elements:
+<span class="method">
+{{ config.z_min }} &mdash; {{ config.z_max }}
+</span>
+<br />
+
+{% if config.combined_elements_string != "" %}
+Combined element abundances:
+<span class="method">
+  {{ config.combined_elements_string() }}
+</span>
+<br />
+{% endif %}
+
+{% if config.exclude_string != "" %}
+Excluded elements:
+<span class="method">
+  {{ config.exclude_string }}
+</span>
+<br />
+{% endif %}
+
+{% if config.lolim_string != "" %}
+Model lower limits:
+<span class="method">
+  {{ config.lolim_string }}
+</span>
+<br />
+{% endif %}
+
+Model database:
+<span class="method">
+{{ config.database }}
+</span>
+<br />
+
+{% if config.algorithm != "single" %}
 Dilution factors:
+<span class="method">
 {% if config.fixed %}
 Fixed
 {% else %}
 Free
 {% endif %}
+</span>
 <br />
+{% endif %}
 
+{% if config.star_upper_limits != "" %}
 Upper limit treatment:
+<span class="method">
 {% if config.cdf %}
 Cumulative distribution function
 {% else %}
-One-sided chi-squared
+One-sided &#x1D6D8;&sup2;
 {% endif %}
+</span>
+<br />
+{% endif %}
+
+{% if config.star_detection_thresholds != "" %}
+Detection thresholds:
+<span class="method">
+{% if config.det %}
+Used if provided
+{% else %}
+Ignored
+{% endif %}
+</span>
+<br />
+{% endif %}
+
+{% if config.star_covariances != "" %}
+Error covariances:
+<span class="method">
+{% if config.cov %}
+Used if provided
+{% else %}
+Ignored
+{% endif %}
+</span>
+<br />
+{% endif %}
+
+Limit solver:
+<span class="method">
+{% if config.limit_solver %}
+Yes
+{% else %}
+Each contribution may exceed 100 %
+{% endif %}
+</span>
+<br />
+
+Limit solution:
+<span class="method">
+{% if config.limit_solution %}
+Yes
+{% else %}
+Total may exceed 100 %
+{% endif %}
+</span>
 <br />
 
 {% if config.algorithm == "ga" %}
 <br />
-Genetic algorithm parameters:<br />
-Population size: {{ config.pop_size }}<br />
-Time limit: {{ config.time_limit }}<br />
-Gene size: {{ config.sol_size }}<br />
+Genetic algorithm parameters:
+<br />
+
+Population size:
+<span class="method">
+  {{ config.pop_size }}
+</span>
+<br />
+
+Time limit:
+<span class="method">
+  {{ config.time_limit }}
+</span>
+<br />
+
+Gene size:
+<span class="method">
+  {{ config.sol_size }}
+</span>
+<br />
 {% endif %}

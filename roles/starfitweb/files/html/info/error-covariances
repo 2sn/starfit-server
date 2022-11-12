@@ -1,0 +1,8 @@
+Error Covariances
+=================
+
+If checked, use error covariances.
+
+If unchecked, ignore error covariance.  All error is assuemd to be
+random, and the all the uncertainies for each element are added in
+square, as usual.

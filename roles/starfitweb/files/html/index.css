@@ -123,3 +123,15 @@ a.subtitle {
     display: table;
     margin: auto;
 }
+
+span.method {
+    color: #0000ff;
+    font-weight: 400;
+    font-family: courier;
+}
+
+span.star {
+    color: #009f00;
+    font-weight: 400;
+    font-family: courier;
+}

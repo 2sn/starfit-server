@@ -5,7 +5,7 @@ If checked, use an cummulative distribution function based on a
 Gaussion error distribution.
 
 If unchecked, use a truncated chi-squared model for upper limits.
-[See https://ui.adsabs.harvard.edu/abs/2010ApJ...724..341H]
-This approach is much faster - e.g., for GA or full multi-star
-searches, and usually gives very similar relative ranking of models or
-model combinations.
+[See https://ui.adsabs.harvard.edu/abs/2010ApJ...724..341H] This
+approach is much faster for single star matches, but may not make a
+huge difference for GA and full multi-star searches It and usually
+gives very similar relative ranking of models or model combinations.

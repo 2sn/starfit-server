@@ -1,0 +1,87 @@
+Name:
+<span class="star">
+  {{ config.star_name }}
+</span>
+<br />
+
+Data Version:
+<span class="star">
+  {{ config.star_version }}
+</span>
+<br />
+
+Data Format:
+<span class="star">
+  {{ config.star_input_data_format }}
+</span>
+<br />
+
+{% if config.star_abundance_norm != "" %}
+Norm:
+<span class="star">
+  {{ config.star_abundance_norm }}
+</span>
+<br />
+{% endif %}
+
+{% if config.star_solar != "" %}
+Solar:
+<span class="star">
+  {{ config.star_solar }}
+</span>
+<br />
+{% endif %}
+
+{% if config.star_measured != "" %}
+Measured:
+<span class="star">
+  {{ config.star_measured }}
+</span>
+<br />
+{% endif %}
+
+{% if config.star_upper_limits != "" %}
+Upper Limits:
+<span class="star">
+  {{ config.star_upper_limits }}
+</span>
+<br />
+{% endif %}
+
+{% if config.star_detection_thresholds != "" %}
+Detection_thresholds:
+<span class="star">
+  {{ config.star_detection_thresholds }}
+</span>
+<br />
+{% endif %}
+
+{% if config.star_covariances != "" %}
+Error covariances:
+<span class="star">
+  {{ config.star_covariances }}
+</span>
+<br />
+
+Error covariances vectors:
+<span class="star">
+  {{ config.star_n_covariances }}
+</span>
+<br />
+{% endif %}
+
+{% if result.star.source != "" %}
+Reference:
+<span class="star">
+  {{ result.star.source }}
+</span>
+<br />
+{% endif %}
+
+{% if config.star_notes != "" %}
+Notes:
+<span class="star">
+  {{ config.star_notes }}
+</span>
+<br />
+{% endif %}

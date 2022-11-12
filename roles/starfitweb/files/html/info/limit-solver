@@ -1,0 +1,20 @@
+Limit Solver
+============
+
+If checked, each contribution will be limited to 100% mass
+fraction. (recommended)
+
+If unchecked, the sum of mass fractions may exceed 100%.
+
+Background
+----------
+
+For some yield data bases no "mass" is provided.  Hence, by default
+one solar mass is assumed.  For most cases, such as novae and
+r-process, this should be a fairly conservative upper limit.
+
+If only some elements are measured, matching these best may, however,
+result in a formal contribution of a star of more than 100%, e.g.,
+if calcium is matched but the star ejects a bunch of hydrogen and
+helium.  You'd have to argue that you only mix with some inner part of
+the star, which could be desirable, e.g., for grains and star dust.

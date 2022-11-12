@@ -1,0 +1,14 @@
+Limit Solution
+==============
+
+If checked, the total solution will be limited to 100% mass
+fraction, rescaled if needed. (recommended)
+
+If unchecked, the sum of mass fractions may exceed 100%.
+
+Background
+----------
+
+Whereas each of the solutions may be less than 100%, their sum might
+not.  After an optimal solution is found, each contribution will be
+scaled by the same factor.

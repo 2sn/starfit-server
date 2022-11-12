@@ -41,11 +41,15 @@ class Config:
         pop_size={"type": "integer", "coerce": int},
         time_limit={"type": "integer", "coerce": int},
         database={"type": "string", "coerce": str},
-        fixed={"type": "integer", "coerce": int},
+        fixed={"type": "boolean", "coerce": bool},
         plotformat={"type": "string", "coerce": str},
         z_exclude={"type": "string", "coerce": str},
         z_lolim={"type": "string", "coerce": str},
         cdf={"type": "boolean", "coerce": bool},
+        det={"type": "boolean", "coerce": bool},
+        cov={"type": "boolean", "coerce": bool},
+        limit_solution={"type": "boolean", "coerce": bool},
+        limit_solver={"type": "boolean", "coerce": bool},
     )
 
     def __init__(self, form):
@@ -118,6 +122,13 @@ class Config:
         # Check for errors after all the config has been handled
         self.errors = self._check_for_errors()
 
+        # set vales so we can access rather than call functions
+        self.combine = self.combine_elements()
+        self.combined_elements_string = self.combine_elements_str(self.combine)
+        self.algorithm_description = self.get_algorithm_description()
+        self.exclude_string = self.get_exclude_string()
+        self.lolim_string = self.get_lolim_string()
+
     def combine_elements(self):
         """Preset element combinations"""
         if self.combine_mode == 1:
@@ -129,13 +140,11 @@ class Config:
 
         return combine
 
-    def combine_elements_str(self):
+    def combine_elements_str(self, combine):
         group_strings = []
-        for group in self.combine_elements():
+        for group in combine:
             group_strings += ["+".join([I(i).element_symbol() for i in group])]
         output = ", ".join(group_strings)
-        if output == "":
-            output = "None"
         return output
 
     def get_algorithm_description(self):
@@ -175,18 +184,13 @@ class Config:
 
         return errors
 
-    def get_exc_string(self):
+    def get_exclude_string(self):
         exc_string = ", ".join([I(x).element_symbol() for x in self.z_exclude])
-        if exc_string == "":
-            exc_string = "None"
         return exc_string
 
-    def get_lol_string(self):
+    def get_lolim_string(self):
         lol_string = ", ".join([I(x).element_symbol() for x in self.z_lolim])
-        if lol_string == "":
-            lol_string = "None"
         return lol_string
-
 
 class JobInfo:
     def __init__(self, status=None, exc_info=None):

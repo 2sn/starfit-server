@@ -19,7 +19,6 @@ mpl.rc("text", usetex=True)
 
 
 def compute(config):
-    combine = config.combine_elements()
     if config.algorithm == "ga":
         # Run the fitting algorithm
         result = Ga(
@@ -33,9 +32,13 @@ def compute(config):
             z_max=config.z_max,
             z_exclude=config.z_exclude,
             z_lolim=config.z_lolim,
-            combine=combine,
+            combine=config.combine,
             fixed_offsets=config.fixed,
             cdf=config.cdf,
+            det=config.det,
+            cov=config.cov,
+            limit_solution=config.limit_solution,
+            limit_solver=config.limit_solver,
         )
     elif config.algorithm == "double":
         result = Multi(
@@ -43,32 +46,56 @@ def compute(config):
             db=config.dbpath,
             silent=True,
             n_top=1000,
-            combine=combine,
+            combine=config.combine,
             fixed_offsets=config.fixed,
             save=True,
             webfile=config.start_time,
             cdf=config.cdf,
+            det=config.det,
+            cov=config.cov,
             z_min=config.z_min,
             z_max=config.z_max,
             sol_size=2,
+            limit_solution=config.limit_solution,
+            limit_solver=config.limit_solver,
         )
     elif config.algorithm == "single":
         result = Single(
             filename=config.filepath,
             db=config.dbpath,
             silent=True,
-            combine=combine,
+            combine=config.combine,
             z_min=config.z_min,
             z_max=config.z_max,
             z_exclude=config.z_exclude,
             z_lolim=config.z_lolim,
             cdf=config.cdf,
+            det=config.det,
+            cov=config.cov,
+            limit_solution=config.limit_solution,
+            limit_solver=config.limit_solver,
         )
     else:
         result = None
 
     return result
 
+def set_star_values(result, config):
+    config.star_name = result.star.name
+    config.star_version = int(result.star.version)
+    config.star_abundance_norm = result.star.get_norm()
+    config.star_input_data_format = result.star.get_input_data_format()
+    config.star_n_covariances = result.star.get_n_covariances()
+    config.star_covariances = ", ".join(result.star.get_covariances())
+    config.star_detection_thresholds = ", ".join(result.star.get_detection_thresholds())
+    config.star_upper_limits = ", ".join(result.star.get_upper_limits())
+    config.star_elements = ", ".join(result.star.get_elements())
+    config.star_measured = ", ".join(result.star.get_measured())
+    config.star_solar = result.star.solar_ref
+    if config.star_solar is None:
+        config.star_solar = ""
+    config.star_reference = result.star.source
+    config.star_notes = result.star.comment
 
 def make_plots(result, config):
 
@@ -194,6 +221,7 @@ def send_email(config, body, imgfiles):
 
 def run_job(config):
     result = compute(config)
+    set_star_values(result, config)
     imgfiles = make_plots(result, config)
     img_tags = [convert_img_to_b64_tag(f, config.plotformat) for f in imgfiles]
     jobinfo = JobInfo()

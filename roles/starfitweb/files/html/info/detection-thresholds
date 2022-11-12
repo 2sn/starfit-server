@@ -1,0 +1,7 @@
+Detection Tresholds
+===================
+
+If checked, use detection thresholds.  The form of the errer
+distribution is set by the cdf flag.
+
+If unchecked, ignore detection thresholds.
