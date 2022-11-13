@@ -1,0 +1,14 @@
+Grouping
+========
+
+For multi-star evaluation, databases can be put in groups (field
+`Group`) , e.g., different r-process sources.  Within each group, one
+or several stars can be chosen (field `Number of Stars`).
+
+If not grouping is provided, all stars are drawn from the full
+distribution.
+
+Grouping can cut down computational cost significantly, and also
+provide a better representation of the desired astrophysics, e.g., one
+massive star from models from different groups to be paired with an
+r-process contributions from different sources.
