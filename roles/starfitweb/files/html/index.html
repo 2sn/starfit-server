@@ -42,4 +42,5 @@ print(template.render(
     dblist=labels,
     starfit_version=starfit_version,
     db_listing_size=str(min(30, len(labels))),
+    db_select=next(iter(labels)),
 ))

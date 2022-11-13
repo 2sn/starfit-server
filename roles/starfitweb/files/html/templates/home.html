@@ -216,7 +216,7 @@
         <td>
           <select name="plotformat">
             <option value="png">PNG</option>
-            <option value="svg" checked="checked">SVG</option>
+            <option value="svg" selected>SVG</option>
             <option value="pdf">PDF</option>
           </select>
         </td>
@@ -229,9 +229,12 @@
 	<br /><span class="warn">(required)</span>
 	</center>
 	<br />
-          <select id="db-dropdown" name="database" size="{{ db_listing_size }}" multiple>
+        <select id="db-dropdown" name="database" size="{{ db_listing_size }}"
+		multiple>
             {% for db in dblist %}
-            <option value="{{ db }}"> {{ dblist[db] }}</option>
+            <option value="{{ db }}"
+		    {% if db == db_select %} selected {% endif %}
+		    >{{ dblist[db] }}</option>
             {% endfor %}
           </select>
       </div>
