@@ -4,6 +4,7 @@ import traceback
 from datetime import datetime
 from os import getenv
 from pathlib import Path
+from itertools import chain
 
 from cerberus import Validator
 from email_validator import EmailNotValidError, validate_email
@@ -35,12 +36,12 @@ class Config(object):
         email={"type": "string", "coerce": str},
         algorithm={"type": "string", "coerce": str},
         sol_size={"type": "integer", "coerce": int},
+        sol_sizes={"type": "string", "coerce": str},
         z_min={"type": "string", "coerce": str},
         z_max={"type": "string", "coerce": str},
         combine_mode={"type": "integer", "coerce": int},
         pop_size={"type": "integer", "coerce": int},
         time_limit={"type": "integer", "coerce": int},
-        # database={"type": "string", "coerce": str},
         fixed={"type": "boolean", "coerce": bool},
         plotformat={"type": "string", "coerce": str},
         z_exclude={"type": "string", "coerce": str},
@@ -51,6 +52,7 @@ class Config(object):
         limit_solution={"type": "boolean", "coerce": bool},
         limit_solver={"type": "boolean", "coerce": bool},
         spread={"type": "boolean", "coerce": bool},
+        group={"type": "string", "coerce": str},
     )
 
     def __init__(self, form):
@@ -77,16 +79,26 @@ class Config(object):
 
         dbx = form.getlist("database")
         if len(dbx) == 0:
-            raise RuntimeError("Require at lest one database selection")
+            self.errors = ["Require at least one database selection."]
+            return
+
         self.database = dbx
 
-        self.z_min = I(self.z_min).Name()
-        self.z_max = I(self.z_max).Name()
+        self.z_min = I(self.z_min)
+        if not self.z_min.is_element:
+            self.z_min = 'H'
+        else:
+            self.z_min = self.z_min.Name()
+        self.z_max = I(self.z_max)
+        if not self.z_max.is_element:
+            self.z_max = 'U'
+        else:
+            self.z_max = self.z_max.Name()
 
         self.z_exclude = [
-            z for z in [I(i).Z for i in self.z_exclude.split(",")] if z != 0
-        ]
-        self.z_lolim = [z for z in [I(i).Z for i in self.z_lolim.split(",")] if z != 0]
+            z for z in [I(i).Z for i in self.z_exclude.split(",")] if z != 0]
+        self.z_lolim = [
+            z for z in [I(i).Z for i in self.z_lolim.split(",")] if z != 0]
 
         # Save files to tmp
         if stardata.filename:
@@ -104,7 +116,7 @@ class Config(object):
         self.mail = self.email != ""
 
         # Override time limit for some algorithms
-        if self.algorithm == "double":
+        if self.algorithm == "multi":
             self.time_limit = 60 * 15
         elif self.algorithm == "single":
             self.time_limit = 0
@@ -117,16 +129,93 @@ class Config(object):
             eta = "in " + time2human(self.time_limit)
         self.time_eta = eta
 
-        if self.algorithm not in ("ga", "double", "single"):
-            raise RuntimeError('Bad choice of "algorithm"')
+        if self.algorithm not in ("ga", "multi", "single"):
+            self.errors = [f"Bad choice of algorithm='{self.algorithm}'"]
+            return
 
-        if self.algorithm == "double":
-            self.sol_size = 2
+        if self.algorithm == "multi":
+            sol_sizes = self.sol_sizes.strip()
+            try:
+                sol_sizes = [int(i) for i in sol_sizes.split(';') if len(i) > 0]
+            except:
+                self.errors = [f"Error translating string to list of integers: {sol_sizes}"]
+                return
+            nsol_sizes = len(sol_sizes)
+            sol_size = sum(sol_sizes)
+
+            ndb = len(self.database)
+            groups = self.group.strip()
+            if len(groups) > 0:
+                try:
+                    groups = [[int(d) for d in g.split(",") if len(d) > 0] for g in groups.split(';')]
+                except:
+                    self.errors = [f"Error translating string to nested list of integers: {groups}."]
+                    return
+                groups = [g for g in groups if len(g) > 0]
+                gdb = list(chain(*groups))
+                ngdb = len(gdb)
+                for g in groups:
+                    if len(g) <= 0:
+                        self.errors = ["Group sizes must be larger than 0."]
+                        return
+                    if len(g) >= 10:
+                        self.errors = ["Group sizes must be less than 10."]
+                        return
+
+                if len(set(gdb)) != ngdb:
+                    self.errors = ["Require unique group entries."]
+                    return
+                if min(gdb) < 0:
+                    self.errors = ["Require positive group entries."]
+                    return
+                if max(gdb) >= ndb:
+                    self.errors = ["Require group entries in range."]
+                    return
+                ngroup = len(groups)
+                if ngdb < ndb:
+                    if ((nsol_sizes == ngroup + 1) or (
+                            (nsol_size == 1) and (sol_size == ngroup + 1))):
+                        # add remaining in one group
+                        groups.append([d for d in range(ndb) if d not in gdb])
+                        ngdb += 1
+                    elif ((nsol_sizes == ngroup + ndb - ngdb) or (
+                            (nsol_size == 1) and (sol_size ==  ngroup + ndb - ngdb))):
+                        # add remaining as separate groups
+                        groups.extend([d for d in range(ndb) if d not in gdb])
+                        ngdb = len(groups)
+                    else:
+                        # ignore nsol_size and put remaining in one group anyway
+                        groups.append([d for d in range(ndb) if d not in gdb])
+                        ngdb += 1
+                        if nsol_size < ngdb:
+                            sol_sizes.append([1] * (ngdb - nsol_size))
+                        else:
+                            sol_sizes = sol_sizes[:ngdb]
+                        nsol_sizes = len(sol_sizes)
+                        sol_size = sum(sol_sizes)
+                if (nsol_size == 0) or (nsol_sizes == 1 and ngdb == sol_size):
+                    sol_sizes = [1] * ngdb
+            else:
+                if nsol_sizes == 0:
+                    groups = [[i] for i in range(ndb)]
+                    sol_sizes = [1] * ndb
+                    sol_size = ndb
+                elif nsol_sizes == 1:
+                    groups = [[i for i in range(ndb)]]
+                elif nsol_sizes == ndb:
+                    groups = [[i] for i in range(ndb)]
+                elif nsol_sizes > ndb:
+                    sol_sizes = sol_sizes[:ndb]
+                    sol_size = sum(sol_sizes)
+                else:
+                    groups = groups[:nsol_sizes]
+
+            self.group = groups
+            self.sol_size = sol_size
+            self.sol_sizes = sol_sizes
+
         elif self.algorithm == "single":
             self.sol_size = 1
-
-        # Check for errors after all the config has been handled
-        self.errors = self._check_for_errors()
 
         # set vales so we can access rather than call functions
         self.combine = self.combine_elements()
@@ -136,6 +225,14 @@ class Config(object):
         self.lolim_string = self.get_lolim_string()
         self.database_string = ", ".join(self.database)
         self.n_database = str(len(self.database))
+        if self.algorithm == "multi":
+            self.group_string = '; '.join([', '.join([str(d) for d in g]) for g in self.group])
+            self.sol_sizes_string = '; '.join([str(i) for i in self.sol_sizes])
+            self.grouping_string = '; '.join([f"{s} of ({', '.join([str(d) for d in g])})" for s,g in zip(self.sol_sizes, self.group)])
+
+        # Check for errors after all the config has been handled
+        self.errors = self._check_for_errors()
+
 
     def combine_elements(self):
         """Preset element combinations"""
@@ -160,8 +257,8 @@ class Config(object):
             return "Genetic Algorithm (approximate best solution)"
         elif self.algorithm == "single":
             return "Complete search: single stars"
-        elif self.algorithm == "double":
-            return "Complete search: combinations of two stars"
+        elif self.algorithm == "multi":
+            return "Complete multitstar search"
 
     def _check_for_errors(self):
         errors = []

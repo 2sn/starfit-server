@@ -5,6 +5,11 @@ body {
 
 table {
     table-layout: fixed;
+    width: 800px;
+}
+
+table.inputs {
+    table-layout: fixed;
     width: 600px;
 }
 
@@ -70,15 +75,19 @@ a {
 #contentWrapper {
     background-color: #FFFFFF;
     margin: 0 auto;
-    width: 700px;
+    width: 900px;
     padding: 10px;
     padding-bottom: 20px;
     font-family: 'Exo 2', sans-serif;
     font-weight: 300;
 }
 
+#versionWrapper {
+    text-align: center;
+}
+
 #textWrapper {
-    padding-left: 50px;
+    text-align: left;
 }
 
 #starfit {
@@ -117,7 +126,7 @@ a.subtitle {
 
 #form {
     margin: 0 auto;
-    width: 600px;
+    width: 850px;
 }
 
 #results {
@@ -125,7 +134,7 @@ a.subtitle {
 }
 
 #run {
-    width: 600px;
+    width: 850px;
 }
 
 #processing {
@@ -134,7 +143,7 @@ a.subtitle {
     width: 99vw;
     position: fixed;
     top: 0;
-    background-color: #00284f95;
+    background-color: #00284F;
 }
 
 #processing-popup {
@@ -163,19 +172,48 @@ a.subtitle {
 }
 
 span.method {
-    color: #0000ff;
+    color: #0000FF;
     font-weight: 400;
-    font-family: "Courier New", monospace;
+    font-family: "Courier New", Courier, monospace;
 }
 
 span.star {
-    color: #009f00;
+    color: #009F00;
     font-weight: 400;
-    font-family: "Courier New", monospace;
+    font-family: "Courier New", Courier, monospace;
+}
+
+span.output {
+    color: #00284F;
+    font-weight: 400;
+    font-family: "Courier New", Courier, monospace;
 }
 
 span.section {
     color: #000000;
     font-weight: 600;
     font-family: 'Exo 2', sans-serif;
+}
+
+span.warn {
+    color: #bf0000;
+    font-weight: 500;
+    font-family: inherit
+}
+
+.row {
+    display: flex;
+    column-gap: 32px
+}
+
+.column {
+  float: left;
+}
+
+.left {
+  width: 75%;
+}
+
+.right {
+    width: 25%;
 }

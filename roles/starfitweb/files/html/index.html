@@ -4,6 +4,7 @@ header.http()
 
 import glob
 from os import path
+
 import jinja2 as j2
 
 try:
@@ -37,4 +38,8 @@ jinja_env = j2.Environment(loader=j2.FileSystemLoader("templates"))
 template = jinja_env.get_template("home.html")
 
 # Render using DB list
-print(template.render(dblist=labels, starfit_version=starfit_version))
+print(template.render(
+    dblist=labels,
+    starfit_version=starfit_version,
+    db_listing_size=str(min(30, len(labels))),
+))

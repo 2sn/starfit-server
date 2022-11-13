@@ -143,3 +143,41 @@ No
 </span>
 <br />
 {% endif %}
+
+{% if config.algorithm == "multi" %}
+<br />
+<span class="section">Multistar search parameters:</span>
+<br />
+
+Sizes:
+<span class="method">
+  {{ config.sol_sizes_string }}
+</span>
+<br />
+
+Groups:
+<span class="method">
+  {{ config.group_string }}
+</span>
+<br />
+
+Selections:
+<span class="output">
+  {{ config.grouping_string }}
+</span>
+<br />
+
+Effort:
+<span class="output">
+  {{ config.multi_combinations }}
+</span>
+<br />
+
+{% if config.multi_partitions != "" %}
+Partititons:
+<span class="output">
+  {{ config.multi_partitions }}
+</span>
+<br />
+{% endif %}
+{% endif %}

@@ -3,223 +3,242 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 <script src="scripts.js" type="text/javascript"></script>
 
-<div id="textWrapper">
-<b>Version:</b> {{ starfit_version }}
+<div id="versionWrapper">
+<span class="section">Version:</span> {{ starfit_version }}
 <br />
 <br />
 </div>
 
 <div id="form">
-    <form name="GAform" action="run" method="POST" enctype="multipart/form-data">
-        <b>Star</b>
-        <table class="inputs">
-            <tr>
-                <td class="c1">
-                    <a href="/info/stellar-data" target="_blank">Stellar data</a> (Leave blank for HE1327-2326):
-                </td>
-                <td>
-                    <input name="stardata" type="file">
-                </td>
-            </tr>
-        </table>
+  <form name="GAform" action="run" method="POST" enctype="multipart/form-data">
+    <span class="section">Star</span>
+    <table class="inputs">
+      <tr>
+        <td class="c1">
+          <a href="/info/stellar-data" target="_blank">Stellar data</a> (Leave blank for HE1327-2326):
+        </td>
+        <td>
+          <input name="stardata" type="file">
+        </td>
+      </tr>
+    </table>
+    <br />
+    <div class="row">
+      <div class="column">
+    <span class="section">Algorithm</span>
+    <table class="inputs">
+      <tr>
+        <td colspan="2">
+          <input class="algoButton" type="radio" name="algorithm" value="single" id="single"
+                 checked="checked">Single Star
+          <input class="algoButton" type="radio" name="algorithm" value="ga" id="ga">Genetic
+          Algorithm
+          <input class="algoButton" type="radio" name="algorithm" value="multi" id="multi">Complete Multistar
+          Search (expert)
+        </td>
+      </tr>
+    </table>
+    <div class="ifGa">
+      <table class="inputs">
+        <tr>
+          <td class="c1">
+            Time limit (s):
+          </td>
+          <td class="c2">
+            <input name="time_limit" type="number" min="1" max="60" value="5" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Population size:
+          </td>
+          <td>
+            <input name="pop_size" type="number" min="20" max="1000" value="200" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Gene size (number of stars):
+          </td>
+          <td>
+            <input name="sol_size" type="number" min="1" max="9" value="2" />
+          </td>
+        </tr>
+	<tr>
+          <td>
+            <a href="/info/spread" target="_blank">Spread</a>
+            (expert)
+          </td>
+          <td>
+            <input type="checkbox" name="spread" value="True" checked>
+          </td>
+	</tr>
+      </table>
+    </div>
+    <div class="ifMulti">
+      <table class="inputs">
+        <tr>
+          <td class="c1">
+            <a href="/info/group" target="_blank">Number(s) of stars:</a>
+	    (expert)<br />
+	    (separate groups by semicolon)
+          </td>
+          <td class="c2">
+            <input name="sol_sizes" type="text" value="" placeholder="1; 1" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="/info/group" target="_blank">Group</a> (expert)<br />
+            &#x2022; 0-based database index<br />
+	    &#x2022; separate group members by comma<br />
+	    &#x2022; separate groups by semicolon
+          </td>
+          <td>
+            <input type="text" name="group" value="" placeholder="0; 1, 2">
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br />
+    <span class="section">Fitting</span>
+    <table class="inputs">
+      <tr>
+        <td class="c1">
+          <a href="/info/model-limits" target="_blank">Model lower limits:</a><br />
+          (comma-separated list of elements)
+        </td>
+        <td class="c2">
+          <input type="text" name="z_lolim" maxlength="100" value="Sc, Cu" placeholder="Scandium, Copper"><br>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <a href="/info/combine-elements" target="_blank">Combine elements:</a>
+        </td>
+        <td>
+          <select name="combine_mode">
+            <option value="0" checked="checked">None</option>
+            <option value="1">C+N</option>
+            <option value="2">C+N+O</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <a href="/info/z-limits" target="_blank">Fit element range:</a><br />
+          (element symbol, name, or charge number):
+        </td>
+        <td>
+          <input type="text" name="z_min" value="H" placeholder="Hydrogen" size="6" maxlength="12" />
+	  &mdash;
+          <input type="text" name="z_max" value="Zn" placeholder="Uranium" size="6" maxlength="12" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <a href="/info/exclude-elements" target="_blank">Exclude elements:</a><br />
+          (comma-separated list of elements)
+        </td>
+        <td>
+          <input type="text" name="z_exclude" value="Li, Cr, Zn" placeholder="Li, Cr, Zn" ><br>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <a href="/info/upper-limits" target="_blank">Upper limits CDF</a> (recommended)
+        </td>
+        <td>
+          <input type="checkbox" name="cdf" value="true" checked>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <a href="/info/detection-thresholds" target="_blank">Detection thresholds</a> (experimental)
+        </td>
+        <td>
+          <input type="checkbox" name="det" value="True">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <a href="/info/error-covariances" target="_blank">Error covariances</a> (experimental)
+        </td>
+        <td>
+          <input type="checkbox" name="cov" value="True">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <a href="/info/limit-solver" target="_blank">Limit solver</a> (expert, recommended)
+        </td>
+        <td>
+          <input type="checkbox" name="limit_solver" value="True" checked>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <a href="/info/limit-solution" target="_blank">Limit solution</a> (expert, recommended)
+        </td>
+        <td>
+          <input type="checkbox" name="limit_solution" value="True" checked>
+        </td>
+      </tr>
+    </table>
+    <div class="ifNotSingle">
+      <table class="inputs">
+        <tr>
+          <td class="c1">
+            <a href="/info/fixed-offsets" target="_blank">Fixed offsets</a> (expert)
+          </td>
+          <td>
+            <input type="checkbox" name="fixed" value="True">
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br />
+    <span class="section">Output</span>
+    <table class="inputs">
+      <tr>
+        <td class="c1">
+          Email (necessary for jobs longer than 1 minute):<br />
+          Includes data for plots.
+        </td>
+        <td class="c2">
+          <input name="email" type="text" placeholder="help@starfit.org"/>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Plot format
+        </td>
+        <td>
+          <select name="plotformat">
+            <option value="png">PNG</option>
+            <option value="svg" checked="checked">SVG</option>
+            <option value="pdf">PDF</option>
+          </select>
+        </td>
+      </tr>
+    </table>
+      </div>
+      <div class="column">
+	<center>
+        <span class="section"><a href="/data/db/databases" target="_blank">Model database:</a></span>
+	<br /><span class="warn">(required)</span>
+	</center>
 	<br />
-        <b>Algorithm</b>
-        <table class="inputs">
-            <tr>
-                <td colspan="2">
-                    <input class="algoButton" type="radio" name="algorithm" value="single" id="single"
-                        checked="checked">Single Star
-                    <input class="algoButton" type="radio" name="algorithm" value="ga" id="ga">Genetic
-                    Algorithm
-                    <input class="algoButton" type="radio" name="algorithm" value="double" id="double">Complete Binary
-                    Search
-                </td>
-            </tr>
-        </table>
-        <div class="ifGa">
-            <table class="inputs">
-                <tr>
-                    <td class="c1">
-                        Time limit (s):
-                    </td>
-                    <td class="c2">
-                        <input name="time_limit" type="number" value="5" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Population size:
-                    </td>
-                    <td>
-                        <input name="pop_size" type="number" value="200" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Gene size (number of stars):
-                    </td>
-                    <td>
-                        <input name="sol_size" type="number" value="2" />
-                    </td>
-                </tr>
-             <tr>
-                <td>
-                    <a href="/info/spread" target="_blank">Spread</a>
-                    (expert)
-                </td>
-                <td>
-                    <input type="checkbox" name="spread" value="True" checked>
-                </td>
-            </tr>
-           </table>
-        </div>
-        <br />
-        <b>Fitting</b>
-        <table class="inputs">
-            <tr>
-                <td class="c1">
-                    <a href="/data/db/databases" target="_blank">Model database:</a>
-                </td>
-                <td>
-                    <select id="db-dropdown" name="database" size="8" require multiple>
-                        {% for db in dblist %}
-                        <option value="{{ db }}"> {{ dblist[db] }}</option>
-                        {% endfor %}
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="/info/model-limits" target="_blank">Model lower limits:</a><br />
-                    (comma separated element symbols)
-                </td>
-                <td>
-                    <input type="text" name="z_lolim" value="Sc, Cu"><br>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="/info/combine-elements" target="_blank">Combine elements:</a>
-                </td>
-                <td>
-                    <select name="combine_mode">
-                        <option value="0" checked="checked">None</option>
-                        <option value="1">C+N</option>
-                        <option value="2">C+N+O</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="/info/z-limits" target="_blank">Z limits:</a>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Min element (symbol or charge number):
-                </td>
-                <td>
-                    <input name="z_min" type="text" value="H" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Max element (symbol or charge number):
-                </td>
-                <td>
-                    <input name="z_max" type="text" value="Zn" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="/info/exclude-elements" target="_blank">Exclude elements:</a><br />
-                    (comma separated element symbols)
-                </td>
-                <td>
-                    <input type="text" name="z_exclude" value="Li, Cr, Zn"><br>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="/info/upper-limits" target="_blank">Upper limits CDF</a> (recommended)
-                </td>
-                <td>
-                    <input type="checkbox" name="cdf" value="true" checked>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="/info/detection-thresholds" target="_blank">Detection thresholds</a> (experimental)
-                </td>
-                <td>
-                    <input type="checkbox" name="det" value="True">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="/info/error-covariances" target="_blank">Error covariances</a> (experimental)
-                </td>
-                <td>
-                    <input type="checkbox" name="cov" value="True">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="/info/limit-solver" target="_blank">Limit solver</a> (expert, recommended)
-                </td>
-                <td>
-                    <input type="checkbox" name="limit_solver" value="True" checked>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="/info/limit-solution" target="_blank">Limit solution</a> (expert, recommended)
-                </td>
-                <td>
-                    <input type="checkbox" name="limit_solution" value="True" checked>
-                </td>
-            </tr>
-        </table>
-        <div class="ifNotSingle">
-            <table class="inputs">
-                <tr>
-                    <td class="c1">
-                        <a href="/info/fixed-offsets" target="_blank">Fixed offsets</a> (expert)
-                    </td>
-                    <td>
-                        <input type="checkbox" name="fixed" value="True">
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <br />
-        <b>Output</b>
-        <table class="inputs">
-            <tr>
-                <td class="c1">
-                    Email (necessary for jobs longer than 1 minute):<br />
-                    Includes data for plots.
-
-                </td>
-                <td>
-                    <input name="email" type="text" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Plot format
-                </td>
-                <td>
-                    <select name="plotformat">
-                        <option value="png" checked="checked">PNG</option>
-                        <option value="svg">SVG</option>
-                        <option value="pdf">PDF</option>
-                    </select>
-                </td>
-            </tr>
-        </table>
-        <br />
-        <input type="submit" id="run" value="Run">
-    </form>
+          <select id="db-dropdown" name="database" size="{{ db_listing_size }}" multiple>
+            {% for db in dblist %}
+            <option value="{{ db }}"> {{ dblist[db] }}</option>
+            {% endfor %}
+          </select>
+      </div>
+    </div>
+    <br />
+    <br />
+    <input type="submit" id="run" value="Run">
+  </form>
 </div>
 {% endblock content %}

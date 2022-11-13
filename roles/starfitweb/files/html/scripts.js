@@ -6,9 +6,9 @@ function buttonCheck() {
   else { var hide = 'none' }
   while (i--) { boxes[i].style.display = hide; }
 
-  var boxes = document.getElementsByClassName('ifDouble'),
+  var boxes = document.getElementsByClassName('ifMulti'),
     i = boxes.length;
-  if (document.getElementById('double').checked) { var hide = 'block' }
+  if (document.getElementById('multi').checked) { var hide = 'block' }
   else { var hide = 'none' }
   while (i--) { boxes[i].style.display = hide; }
 
