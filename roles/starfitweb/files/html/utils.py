@@ -194,8 +194,18 @@ class Config(object):
                             sol_sizes = sol_sizes[:ngdb]
                         nsol_sizes = len(sol_sizes)
                         sol_size = sum(sol_sizes)
-                if (nsol_size == 0) or (nsol_sizes == 1 and ngdb == sol_size):
-                    sol_sizes = [1] * ngdb
+                if (nsol_sizes == 0) or (nsol_sizes == 1 and ngroup == sol_size):
+                    sol_sizes = [1] * ngroup
+                    sol_size = sum(sol_sizes)
+                    nsol_sizes = ngroup
+                if nsol_sizes > ngroup:
+                    sol_sizes = sol_sizes[:ngroup]
+                    sol_size = sum(sol_sizes)
+                    nsol_sizes = ngroup
+                if nsol_sizes < ngroup:
+                    sol_sizes = sol_sizes.append([1] * (ngroup - nsol_sizes))
+                    sol_size = sum(sol_sizes)
+                    nsol_sizes = ngroup
             else:
                 if nsol_sizes == 0:
                     groups = [[i] for i in range(ndb)]
