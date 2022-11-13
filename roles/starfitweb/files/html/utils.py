@@ -175,23 +175,23 @@ class Config(object):
                 ngroup = len(groups)
                 if ngdb < ndb:
                     if ((nsol_sizes == ngroup + 1) or (
-                            (nsol_size == 1) and (sol_size == ngroup + 1))):
+                            (nsol_sizes == 1) and (sol_size == ngroup + 1))):
                         # add remaining in one group
                         groups.append([d for d in range(ndb) if d not in gdb])
-                        ngdb += 1
+                        ngroup += 1
                     elif ((nsol_sizes == ngroup + ndb - ngdb) or (
-                            (nsol_size == 1) and (sol_size ==  ngroup + ndb - ngdb))):
+                            (nsol_sizes == 1) and (sol_size ==  ngroup + ndb - ngdb))):
                         # add remaining as separate groups
                         groups.extend([d for d in range(ndb) if d not in gdb])
-                        ngdb = len(groups)
+                        ngroup = len(groups)
                     else:
                         # ignore nsol_size and put remaining in one group anyway
                         groups.append([d for d in range(ndb) if d not in gdb])
-                        ngdb += 1
-                        if nsol_size < ngdb:
-                            sol_sizes.append([1] * (ngdb - nsol_size))
+                        ngroup += 1
+                        if nsol_sizes < ngroup:
+                            sol_sizes.extend([1] * (ngroup - nsol_sizes))
                         else:
-                            sol_sizes = sol_sizes[:ngdb]
+                            sol_sizes = sol_sizes[:ngroup]
                         nsol_sizes = len(sol_sizes)
                         sol_size = sum(sol_sizes)
                 if (nsol_sizes == 0) or (nsol_sizes == 1 and ngroup == sol_size):
@@ -203,7 +203,7 @@ class Config(object):
                     sol_size = sum(sol_sizes)
                     nsol_sizes = ngroup
                 if nsol_sizes < ngroup:
-                    sol_sizes = sol_sizes.append([1] * (ngroup - nsol_sizes))
+                    sol_sizes = sol_sizes.extend([1] * (ngroup - nsol_sizes))
                     sol_size = sum(sol_sizes)
                     nsol_sizes = ngroup
             else:
