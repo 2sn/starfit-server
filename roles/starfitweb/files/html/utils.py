@@ -44,6 +44,7 @@ class Config(object):
         time_limit={"type": "integer", "coerce": int},
         fixed={"type": "boolean", "coerce": bool},
         plotformat={"type": "string", "coerce": str},
+        stardefault={"type": "string", "coerce": str},
         z_exclude={"type": "string", "coerce": str},
         z_lolim={"type": "string", "coerce": str},
         cdf={"type": "boolean", "coerce": bool},
@@ -107,7 +108,7 @@ class Config(object):
                 fstar.write(stardata.file.read())
             filename = stardata.filename
         else:
-            filename = "HE1327-2326.dat"
+            filename = self.stardefault
             filepath = Path(DATA_DIR) / STARS / filename
 
         self.filepath = filepath

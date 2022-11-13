@@ -79,8 +79,8 @@ def compute(config):
         )
     else:
         result = None
-
     return result
+
 
 def set_star_values(result, config):
     config.star_name = result.star.name
@@ -96,7 +96,10 @@ def set_star_values(result, config):
     config.star_solar = result.star.solar_ref
     if config.star_solar is None:
         config.star_solar = ""
-    config.star_reference = result.star.source
+    if hasattr(result.star, "source"):
+        config.star_reference = result.star.source
+    if config.star_reference is None:
+        config.star_reference = ""
     config.star_notes = result.star.comment
 
 

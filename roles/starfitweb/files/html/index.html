@@ -13,25 +13,46 @@ except ImportError:
     starfit_version = 'unknown'
 
 # Find DB files
-files = glob.glob('/var/www/html/data/db/*.stardb.*')
+db_files = glob.glob('/var/www/html/data/db/*.stardb.*')
 
 # Dict of labels of DB files
-labels = {}
+db_labels = {}
 
 # Look for labels file
-labels_file = '/var/www/html/data/db/labels'
-if path.isfile(labels_file):
-    with open(labels_file, 'r') as f:
+db_labels_file = '/var/www/html/data/db/labels'
+if path.isfile(db_labels_file):
+    with open(db_labels_file, 'r') as f:
         # Read each line, and put the filename and label in the dict
         for line in f.readlines():
             cols = line.split('=')
-            labels[cols[0].strip()] = cols[1].strip()
+            db_labels[cols[0].strip()] = cols[1].strip()
 
 # If there are files that do not have a label, generate one for them based on the filename
-for fpath in files:
+for fpath in db_files:
     fname = path.basename(fpath)
-    if fname not in labels:
-        labels[fname] = fname.split('.stardb.')[0]
+    if fname not in db_labels:
+        db_labels[fname] = fname.split('.stardb.')[0]
+
+# Find Star files
+star_files = glob.glob('/var/www/html/data/stars/*.dat')
+
+# Dict of labels of star files
+star_labels = {}
+
+# Look for labels file
+star_labels_file = '/var/www/html/data/stars/labels'
+if path.isfile(star_labels_file):
+    with open(star_labels_file, 'r') as f:
+        # Read each line, and put the filename and label in the dict
+        for line in f.readlines():
+            cols = line.split('=')
+            star_labels[cols[0].strip()] = cols[1].strip()
+
+# If there are files that do not have a label, generate one for them based on the filename
+for fpath in star_files:
+    fname = path.basename(fpath)
+    if fname not in star_labels:
+        star_labels[fname] = fname[:-4]
 
 # Load jinja template
 jinja_env = j2.Environment(loader=j2.FileSystemLoader("templates"))
@@ -39,8 +60,10 @@ template = jinja_env.get_template("home.html")
 
 # Render using DB list
 print(template.render(
-    dblist=labels,
+    dblist=db_labels,
     starfit_version=starfit_version,
-    db_listing_size=str(min(30, len(labels))),
-    db_select=next(iter(labels)),
+    db_listing_size=str(min(30, len(db_labels))),
+    db_select=next(iter(db_labels)),
+    starlist=star_labels,
+    star_select=next(iter(star_labels))
 ))

@@ -15,7 +15,14 @@
     <table class="inputs">
       <tr>
         <td class="c1">
-          <a href="/info/stellar-data" target="_blank">Stellar data</a> (Leave blank for HE1327-2326):
+          <a href="/info/stellar-data" target="_blank">Stellar data</a>
+        (default <select id="star-dropdown" name="stardefault">
+            {% for star in starlist %}
+            <option value="{{ star }}"
+		    {% if star == star_select %} selected {% endif %}
+		    >{{ starlist[star] }}</option>
+            {% endfor %}
+          </select>)
         </td>
         <td>
           <input name="stardata" type="file">
