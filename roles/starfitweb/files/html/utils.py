@@ -2,9 +2,9 @@ import base64
 import sys
 import traceback
 from datetime import datetime
+from itertools import chain
 from os import getenv
 from pathlib import Path
-from itertools import chain
 
 from cerberus import Validator
 from email_validator import EmailNotValidError, validate_email
@@ -87,19 +87,19 @@ class Config(object):
 
         self.z_min = I(self.z_min)
         if not self.z_min.is_element:
-            self.z_min = 'H'
+            self.z_min = "H"
         else:
             self.z_min = self.z_min.Name()
         self.z_max = I(self.z_max)
         if not self.z_max.is_element:
-            self.z_max = 'U'
+            self.z_max = "U"
         else:
             self.z_max = self.z_max.Name()
 
         self.z_exclude = [
-            z for z in [I(i).Z for i in self.z_exclude.split(",")] if z != 0]
-        self.z_lolim = [
-            z for z in [I(i).Z for i in self.z_lolim.split(",")] if z != 0]
+            z for z in [I(i).Z for i in self.z_exclude.split(",")] if z != 0
+        ]
+        self.z_lolim = [z for z in [I(i).Z for i in self.z_lolim.split(",")] if z != 0]
 
         # Save files to tmp
         if stardata.filename:
@@ -137,9 +137,11 @@ class Config(object):
         if self.algorithm == "multi":
             sol_sizes = self.sol_sizes.strip()
             try:
-                sol_sizes = [int(i) for i in sol_sizes.split(';') if len(i) > 0]
+                sol_sizes = [int(i) for i in sol_sizes.split(";") if len(i) > 0]
             except:
-                self.errors = [f"Error translating string to list of integers: {sol_sizes}"]
+                self.errors = [
+                    f"Error translating string to list of integers: {sol_sizes}"
+                ]
                 return
             nsol_sizes = len(sol_sizes)
             sol_size = sum(sol_sizes)
@@ -148,9 +150,14 @@ class Config(object):
             groups = self.group.strip()
             if len(groups) > 0:
                 try:
-                    groups = [[int(d) for d in g.split(",") if len(d) > 0] for g in groups.split(';')]
+                    groups = [
+                        [int(d) for d in g.split(",") if len(d) > 0]
+                        for g in groups.split(";")
+                    ]
                 except:
-                    self.errors = [f"Error translating string to nested list of integers: {groups}."]
+                    self.errors = [
+                        f"Error translating string to nested list of integers: {groups}."
+                    ]
                     return
                 groups = [g for g in groups if len(g) > 0]
                 gdb = list(chain(*groups))
@@ -174,13 +181,15 @@ class Config(object):
                     return
                 ngroup = len(groups)
                 if ngdb < ndb:
-                    if ((nsol_sizes == ngroup + 1) or (
-                            (nsol_sizes == 1) and (sol_size == ngroup + 1))):
+                    if (nsol_sizes == ngroup + 1) or (
+                        (nsol_sizes == 1) and (sol_size == ngroup + 1)
+                    ):
                         # add remaining in one group
                         groups.append([d for d in range(ndb) if d not in gdb])
                         ngroup += 1
-                    elif ((nsol_sizes == ngroup + ndb - ngdb) or (
-                            (nsol_sizes == 1) and (sol_size ==  ngroup + ndb - ngdb))):
+                    elif (nsol_sizes == ngroup + ndb - ngdb) or (
+                        (nsol_sizes == 1) and (sol_size == ngroup + ndb - ngdb)
+                    ):
                         # add remaining as separate groups
                         groups.extend([d for d in range(ndb) if d not in gdb])
                         ngroup = len(groups)
@@ -237,13 +246,19 @@ class Config(object):
         self.database_string = ", ".join(self.database)
         self.n_database = str(len(self.database))
         if self.algorithm == "multi":
-            self.group_string = '; '.join([', '.join([str(d) for d in g]) for g in self.group])
-            self.sol_sizes_string = '; '.join([str(i) for i in self.sol_sizes])
-            self.grouping_string = '; '.join([f"{s} of ({', '.join([str(d) for d in g])})" for s,g in zip(self.sol_sizes, self.group)])
+            self.group_string = "; ".join(
+                [", ".join([str(d) for d in g]) for g in self.group]
+            )
+            self.sol_sizes_string = "; ".join([str(i) for i in self.sol_sizes])
+            self.grouping_string = "; ".join(
+                [
+                    f"{s} of ({', '.join([str(d) for d in g])})"
+                    for s, g in zip(self.sol_sizes, self.group)
+                ]
+            )
 
         # Check for errors after all the config has been handled
         self.errors = self._check_for_errors()
-
 
     def combine_elements(self):
         """Preset element combinations"""
@@ -307,6 +322,7 @@ class Config(object):
     def get_lolim_string(self):
         lol_string = ", ".join([I(x).element_symbol() for x in self.z_lolim])
         return lol_string
+
 
 class JobInfo:
     def __init__(self, status=None, exc_info=None):

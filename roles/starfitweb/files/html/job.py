@@ -104,13 +104,17 @@ def set_star_values(result, config):
 
 
 def set_result_values(result, config):
-    config.text_result =  result.text_result(10, format="html")
+    config.text_result = result.text_result(10, format="html")
     config.text_db = result.text_db(filename=True)
     config.text_db_n_columns = str(len(config.text_db[0]))
     if config.algorithm == "multi":
-        config.multi_combinations = f"{result.n_combinations:,d} combinations of {result.sol_size} stars"
+        config.multi_combinations = (
+            f"{result.n_combinations:,d} combinations of {result.sol_size} stars"
+        )
         if len(result.group) > 1:
-            config.multi_partitions = f"{' &#xd7; '.join(str(i) for i in result.group_comb)}"
+            config.multi_partitions = (
+                f"{' &#xd7; '.join(str(i) for i in result.group_comb)}"
+            )
         else:
             config.multi_partitions = ""
 
@@ -122,7 +126,9 @@ def make_plots(result, config):
 
     # Abundance plot
     imgfile = BytesIO()
-    labels, plotdata = result.plot(save=imgfile, save_format=config.plotformat, return_plot_data=True)
+    labels, plotdata = result.plot(
+        save=imgfile, save_format=config.plotformat, return_plot_data=True
+    )
     file_obj += [imgfile]
 
     if config.algorithm == "ga":
