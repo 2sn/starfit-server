@@ -316,11 +316,11 @@ class Config(object):
         return errors
 
     def get_exclude_string(self):
-        exc_string = ", ".join([I(x).element_symbol() for x in self.z_exclude])
+        exc_string = ", ".join([I(x).Name() for x in self.z_exclude])
         return exc_string
 
     def get_lolim_string(self):
-        lol_string = ", ".join([I(x).element_symbol() for x in self.z_lolim])
+        lol_string = ", ".join([I(x).Name() for x in self.z_lolim])
         return lol_string
 
 

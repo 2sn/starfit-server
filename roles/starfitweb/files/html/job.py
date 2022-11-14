@@ -6,9 +6,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from io import BytesIO
 from socket import gethostname
+from pathlib import Path
 
 import jinja2 as j2
 import matplotlib as mpl
+import numpy as np
 from starfit import Ga, Multi, Single
 from utils import JobInfo, convert_img_to_b64_tag
 
@@ -101,7 +103,7 @@ def set_star_values(result, config):
     if config.star_reference is None:
         config.star_reference = ""
     config.star_notes = result.star.comment
-
+    config.star_filename = config.filename
 
 def set_result_values(result, config):
     config.text_result = result.text_result(10, format="html")
@@ -117,6 +119,14 @@ def set_result_values(result, config):
             )
         else:
             config.multi_partitions = ""
+    config.text_detection_thresholds = ", ".join([
+        x.element.Name() for x in
+        result.eval_data if x.detection > -80.0 and
+        x.element.Z not in config.z_exclude])
+    config.text_covariances = ", ".join([
+        x.element.Name() for x in
+        result.eval_data if np.any(x.covariance != 0.0) and
+        x.element.Z not in config.z_exclude])
 
 
 def make_plots(result, config):

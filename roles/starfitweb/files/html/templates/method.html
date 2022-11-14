@@ -70,7 +70,7 @@ One-sided &#x1D6D8;&sup2;
 Detection thresholds:
 <span class="method">
 {% if config.det %}
-Used if provided
+{{ config.text_detection_thresholds }}
 {% else %}
 Ignored
 {% endif %}
@@ -82,7 +82,7 @@ Ignored
 Error covariances:
 <span class="method">
 {% if config.cov %}
-Used if provided
+{{ config.text_covariances }}
 {% else %}
 Ignored
 {% endif %}
