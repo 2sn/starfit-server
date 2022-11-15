@@ -31,6 +31,24 @@ def convert_img_to_b64_tag(file, format):
     return img_tag
 
 
+def convert_element_string_to_charge_numbers(string):
+    elements = list()
+    for i in string.split(","):
+        if len(ii := i.split("-")) > 1:
+            ii = [I(k).Z for k in ii]
+            if ii[0] == 0:
+                ii[0] = 1
+            if ii[1] == 0:
+                ii[1] = 92
+                ii = sorted(ii)
+            elements.extend(list(range(ii[0], ii[1] + 1)))
+        else:
+            k = I(i).Z
+            if k > 0:
+                elements.append(k)
+    return sorted(set(elements))
+
+
 class Config(object):
     schema = dict(
         email={"type": "string", "coerce": str},
@@ -96,10 +114,8 @@ class Config(object):
         else:
             self.z_max = self.z_max.Name()
 
-        self.z_exclude = [
-            z for z in [I(i).Z for i in self.z_exclude.split(",")] if z != 0
-        ]
-        self.z_lolim = [z for z in [I(i).Z for i in self.z_lolim.split(",")] if z != 0]
+        self.z_exclude = convert_element_string_to_charge_numbers(self.z_exclude)
+        self.z_lolim = convert_element_string_to_charge_numbers(self.z_lolim)
 
         # Save files to tmp
         if stardata.filename:
@@ -241,8 +257,6 @@ class Config(object):
         self.combine = self.combine_elements()
         self.combined_elements_string = self.combine_elements_str(self.combine)
         self.algorithm_description = self.get_algorithm_description()
-        self.exclude_string = self.get_exclude_string()
-        self.lolim_string = self.get_lolim_string()
         self.database_string = ", ".join(self.database)
         self.n_database = str(len(self.database))
         if self.algorithm == "multi":
@@ -314,14 +328,6 @@ class Config(object):
                 errors += [f"{self.email} is not a valid email."]
 
         return errors
-
-    def get_exclude_string(self):
-        exc_string = ", ".join([I(x).Name() for x in self.z_exclude])
-        return exc_string
-
-    def get_lolim_string(self):
-        lol_string = ", ".join([I(x).Name() for x in self.z_lolim])
-        return lol_string
 
 
 class JobInfo:

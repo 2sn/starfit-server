@@ -8,3 +8,7 @@ the dependence of specific elements.
 
 These elements are still plotted, but observed data points are shown
 as hollow circiles.
+
+Data entry is elements name, symbol, or charge number, separated by
+commas.  Ranges can be specified using a dash (minus sign).  Open
+ranges extend from H or to U.

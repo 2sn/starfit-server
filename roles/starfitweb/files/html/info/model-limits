@@ -9,6 +9,10 @@ uncertainties.
 In this case model data is considered a lower limit.
 
 This is treated the same was as an upper limit for the observed data,
-usingbthe error bar form the observational data.
+using the error bar form the observational data.
 
 In the plots, these are shown as hollow symbols for the model data.
+
+Data entry is elements name, symbol, or charge number, separated by
+commas.  Ranges can be specified using a dash (minus sign).  Open
+ranges extend from H or to U.

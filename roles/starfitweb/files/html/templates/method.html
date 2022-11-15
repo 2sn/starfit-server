@@ -4,11 +4,13 @@ Search method:
 </span>
 <br />
 
-Match elements:
+{% if config.matched_elements_string != "" %}
+Matched elements:
 <span class="method">
-{{ config.z_min }} &mdash; {{ config.z_max }}
+{{ config.matched_elements_string }}
 </span>
 <br />
+{% endif %}
 
 {% if config.combined_elements_string != "" %}
 Combined element abundances:
@@ -30,6 +32,14 @@ Excluded elements:
 Model lower limits:
 <span class="method">
   {{ config.lolim_string }}
+</span>
+<br />
+{% endif %}
+
+{% if config.upper_limits_string != "" %}
+Included upper limits:
+<span class="method">
+  {{ config.upper_limits_string }}
 </span>
 <br />
 {% endif %}

@@ -11,6 +11,7 @@ import jinja2 as j2
 import matplotlib as mpl
 import numpy as np
 from starfit import Ga, Multi, Single
+from starfit.autils.isotope import ion as I
 from utils import JobInfo, convert_img_to_b64_tag
 
 jinja_env = j2.Environment(loader=j2.FileSystemLoader("templates"))
@@ -83,17 +84,49 @@ def compute(config):
     return result
 
 
+def compressed_ion_list(string):
+    if len(string.strip()) == 0:
+        return ""
+    zz = sorted([I(x).Z for x in string.split(",")])
+    out = list()
+    z0 = z1 = zz[0]
+    for z in zz[1:]:
+        if z == z1 + 1:
+            z1 = z
+        else:
+            if z1 == z0:
+                out.append(I(z1).Name())
+            elif z1 == z0 + 1:
+                out.extend([I(z0).Name(), I(z1).Name()])
+            else:
+                out.append(f"{I(z0).Name()} &mdash; {I(z1).Name()}")
+            z0 = z1 = z
+    if z1 == z0:
+        out.append(I(z1).Name())
+    elif z1 == z0 + 1:
+        out.extend([I(z0).Name(), I(z1).Name()])
+    else:
+        out.append(f"{I(z0).Name()} &mdash; {I(z1).Name()}")
+    return ", ".join(out)
+
+
 def set_star_values(result, config):
     config.star_name = result.star.name
     config.star_version = int(result.star.version)
     config.star_abundance_norm = result.star.get_norm()
     config.star_input_data_format = result.star.get_input_data_format()
     config.star_n_covariances = result.star.get_n_covariances()
-    config.star_covariances = ", ".join(result.star.get_covariances())
-    config.star_detection_thresholds = ", ".join(result.star.get_detection_thresholds())
-    config.star_upper_limits = ", ".join(result.star.get_upper_limits())
-    config.star_elements = ", ".join(result.star.get_elements())
-    config.star_measured = ", ".join(result.star.get_measured())
+    config.star_covariances = compressed_ion_list(
+        ", ".join(result.star.get_covariances())
+    )
+    config.star_detection_thresholds = compressed_ion_list(
+        ", ".join(result.star.get_detection_thresholds())
+    )
+    config.star_upper_limits = compressed_ion_list(
+        ", ".join(result.star.get_upper_limits())
+    )
+    config.star_elements = compressed_ion_list(", ".join(result.star.get_elements()))
+    config.star_measured = compressed_ion_list(", ".join(result.star.get_measured()))
     config.star_solar = result.star.solar_ref
     if config.star_solar is None:
         config.star_solar = ""
@@ -126,6 +159,9 @@ def set_result_values(result, config):
             if x.detection > -80.0 and x.element.Z not in config.z_exclude
         ]
     )
+    config.text_detection_thresholds = compressed_ion_list(
+        config.text_detection_thresholds
+    )
     if len(config.text_detection_thresholds) == 0:
         config.text_detection_thresholds = "None"
     config.text_covariances = ", ".join(
@@ -135,8 +171,49 @@ def set_result_values(result, config):
             if np.any(x.covariance != 0.0) and x.element.Z not in config.z_exclude
         ]
     )
+    config.text_covariances = compressed_ion_list(config.text_covariances)
     if len(config.text_covariances) == 0:
         config.text_covariances = "None"
+
+    star_elements = [x.element.Z for x in result.eval_data]
+    config.lolim_string = ", ".join(
+        [
+            I(x).Name()
+            for x in config.z_lolim
+            if x in star_elements and x not in config.z_exclude
+        ]
+    )
+    config.lolim_string = compressed_ion_list(config.lolim_string)
+
+    star_elements = [I(x).Z for x in result.star.get_elements()]
+    star_elements = [
+        z for z in star_elements if z >= I(config.z_min).Z and z <= I(config.z_max).Z
+    ]
+    config.exclude_string = ", ".join(
+        [I(x).Name() for x in config.z_exclude if x in star_elements]
+    )
+    config.exclude_string = compressed_ion_list(config.exclude_string)
+
+    upper_limits = [I(x).Z for x in result.star.get_upper_limits()]
+    config.matched_elements_string = ", ".join(
+        [
+            I(x).Name()
+            for x in star_elements
+            if not (
+                (x in config.z_exclude) or (x in config.z_lolim) or (x in upper_limits)
+            )
+        ]
+    )
+    config.matched_elements_string = compressed_ion_list(config.matched_elements_string)
+
+    config.upper_limits_string = ", ".join(
+        [
+            I(x).Name()
+            for x in upper_limits
+            if x not in config.z_exclude and x in star_elements
+        ]
+    )
+    config.upper_limits_string = compressed_ion_list(config.upper_limits_string)
 
 
 def make_plots(result, config):
