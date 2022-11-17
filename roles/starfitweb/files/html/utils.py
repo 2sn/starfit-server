@@ -59,6 +59,7 @@ class Config(object):
         z_max={"type": "string", "coerce": str},
         combine_mode={"type": "integer", "coerce": int},
         pop_size={"type": "integer", "coerce": int},
+        yscale={"type": "integer", "coerce": int},
         time_limit={"type": "integer", "coerce": int},
         fixed={"type": "boolean", "coerce": bool},
         plotformat={"type": "string", "coerce": str},

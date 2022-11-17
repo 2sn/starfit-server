@@ -6,6 +6,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from io import BytesIO
 from socket import gethostname
+from pathlib import Path
 
 import jinja2 as j2
 import matplotlib as mpl
@@ -130,6 +131,8 @@ def set_star_values(result, config):
     config.star_solar = result.star.solar_ref
     if config.star_solar is None:
         config.star_solar = ""
+    if isinstance(config.star_solar, Path):
+        config.star_solar = config.star_solar.name
     if hasattr(result.star, "source"):
         config.star_reference = result.star.source
     if config.star_reference is None:
@@ -224,7 +227,8 @@ def make_plots(result, config):
     # Abundance plot
     imgfile = BytesIO()
     labels, plotdata = result.plot(
-        save=imgfile, save_format=config.plotformat, return_plot_data=True
+        save=imgfile, save_format=config.plotformat, return_plot_data=True,
+        yscale=config.yscale, ynorm='Fe',
     )
     file_obj += [imgfile]
 
