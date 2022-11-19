@@ -177,6 +177,16 @@ span.method {
     font-family: "Courier New", Courier, monospace;
 }
 
+span.ignored {
+    color: #6F6F6F;
+}
+
+span.ignored_method {
+    color: #6F6FFF;
+    font-weight: 400;
+    font-family: "Courier New", Courier, monospace;
+}
+
 span.star {
     color: #009F00;
     font-weight: 400;

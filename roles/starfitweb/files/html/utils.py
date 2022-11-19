@@ -1,6 +1,7 @@
 import base64
 import sys
 import traceback
+from collections import Counter
 from datetime import datetime
 from itertools import chain
 from os import getenv
@@ -61,18 +62,28 @@ class Config(object):
         pop_size={"type": "integer", "coerce": int},
         yscale={"type": "integer", "coerce": int},
         time_limit={"type": "integer", "coerce": int},
+        gen={"type": "integer", "coerce": int},
+        tour_size={"type": "integer", "coerce": int},
+        frac_mating_pool={"type": "integer", "coerce": int},
+        frac_elite={"type": "integer", "coerce": int},
+        mut_rate_index={"type": "integer", "coerce": int},
+        mut_rate_offset={"type": "integer", "coerce": int},
+        mut_offset_magnitude={"type": "integer", "coerce": int},
         fixed={"type": "boolean", "coerce": bool},
         plotformat={"type": "string", "coerce": str},
         stardefault={"type": "string", "coerce": str},
         z_exclude={"type": "string", "coerce": str},
         z_lolim={"type": "string", "coerce": str},
+        upper_lim={"type": "boolean", "coerce": bool},
         cdf={"type": "boolean", "coerce": bool},
         det={"type": "boolean", "coerce": bool},
         cov={"type": "boolean", "coerce": bool},
         limit_solution={"type": "boolean", "coerce": bool},
         limit_solver={"type": "boolean", "coerce": bool},
         spread={"type": "boolean", "coerce": bool},
+        local_search={"type": "boolean", "coerce": bool},
         group={"type": "string", "coerce": str},
+        pin={"type": "string", "coerce": str},
     )
 
     def __init__(self, form):
@@ -118,6 +129,13 @@ class Config(object):
         self.z_exclude = convert_element_string_to_charge_numbers(self.z_exclude)
         self.z_lolim = convert_element_string_to_charge_numbers(self.z_lolim)
 
+        if self.algorithm == "ga":
+            self.frac_mating_pool = self.frac_mating_pool * 0.01
+            self.frac_elite = self.frac_elite * 0.01
+            self.mut_rate_index = self.mut_rate_index * 0.01
+            self.mut_rate_offset = self.mut_rate_offset * 0.01
+            self.mut_offset_magnitude = self.mut_offset_magnitude * 0.01
+
         # Save files to tmp
         if stardata.filename:
             filepath = Path("/tmp") / (stardata.filename + self.start_time)
@@ -151,21 +169,14 @@ class Config(object):
             self.errors = [f"Bad choice of algorithm='{self.algorithm}'"]
             return
 
-        if self.algorithm == "multi":
-            sol_sizes = self.sol_sizes.strip()
-            try:
-                sol_sizes = [int(i) for i in sol_sizes.split(";") if len(i) > 0]
-            except:
-                self.errors = [
-                    f"Error translating string to list of integers: {sol_sizes}"
-                ]
-                return
-            nsol_sizes = len(sol_sizes)
-            sol_size = sum(sol_sizes)
-
+        if self.algorithm in (
+            "ga",
+            "multi",
+        ):
             ndb = len(self.database)
             groups = self.group.strip()
-            if len(groups) > 0:
+            ngroup = len(groups)
+            if ngroup > 0:
                 try:
                     groups = [
                         [int(d) for d in g.split(",") if len(d) > 0]
@@ -173,7 +184,7 @@ class Config(object):
                     ]
                 except:
                     self.errors = [
-                        f"Error translating string to nested list of integers: {groups}."
+                        f"Group: Error translating string to nested list of integers: {groups}."
                     ]
                     return
                 groups = [g for g in groups if len(g) > 0]
@@ -197,6 +208,22 @@ class Config(object):
                     self.errors = ["Require group entries in range."]
                     return
                 ngroup = len(groups)
+
+        if self.algorithm == "multi":
+            sol_sizes = self.sol_sizes.strip()
+            try:
+                sol_sizes = [int(i) for i in sol_sizes.split(";") if len(i) > 0]
+            except:
+                self.errors = [
+                    f"Sizes: Error translating string to list of integers: {sol_sizes}"
+                ]
+                return
+            nsol_sizes = len(sol_sizes)
+            sol_size = sum(sol_sizes)
+
+            ndb = len(self.database)
+            groups = self.group.strip()
+            if ngroup > 0:
                 if ngdb < ndb:
                     if (nsol_sizes == ngroup + 1) or (
                         (nsol_sizes == 1) and (sol_size == ngroup + 1)
@@ -251,6 +278,31 @@ class Config(object):
             self.sol_size = sol_size
             self.sol_sizes = sol_sizes
 
+        elif self.algorithm == "ga":
+            if ngroup > 0:
+                if ngdb < ndb:
+                    # add remaining as separate groups
+                    groups.extend([d for d in range(ndb) if d not in gdb])
+                    ngroup = len(groups)
+            else:
+                groups = None
+                ngroup = ndb
+
+            pin = self.pin.strip()
+            try:
+                pin = [int(i) for i in pin.split(";") if len(i) > 0]
+            except:
+                self.errors = [
+                    f"Pin: Error translating string to list of integers: {pin}"
+                ]
+                return
+            pin = [p for p in pin if p >= 0 and p < ngroup]
+            if len(pin) > self.sol_size:
+                pin = pin[: self.sol_size]
+
+            self.group = groups
+            self.pin = pin
+
         elif self.algorithm == "single":
             self.sol_size = 1
 
@@ -260,10 +312,17 @@ class Config(object):
         self.algorithm_description = self.get_algorithm_description()
         self.database_string = ", ".join(self.database)
         self.n_database = str(len(self.database))
+        if self.algorithm in (
+            "multi",
+            "ga",
+        ):
+            if self.group is None:
+                self.group_string = ""
+            else:
+                self.group_string = "; ".join(
+                    [", ".join([str(d) for d in g]) for g in self.group]
+                )
         if self.algorithm == "multi":
-            self.group_string = "; ".join(
-                [", ".join([str(d) for d in g]) for g in self.group]
-            )
             self.sol_sizes_string = "; ".join([str(i) for i in self.sol_sizes])
             self.grouping_string = "; ".join(
                 [
@@ -271,6 +330,10 @@ class Config(object):
                     for s, g in zip(self.sol_sizes, self.group)
                 ]
             )
+        if self.algorithm == "ga":
+            self.pin_string = "; ".join([str(p) for p in self.pin])
+            c = Counter(self.pin)
+            self.pinning_string = "; ".join([f"{k}:{v}" for k, v in c.items()])
 
         # Check for errors after all the config has been handled
         self.errors = self._check_for_errors()

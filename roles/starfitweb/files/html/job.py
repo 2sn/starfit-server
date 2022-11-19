@@ -5,13 +5,14 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from io import BytesIO
-from socket import gethostname
 from pathlib import Path
+from socket import gethostname
 
 import jinja2 as j2
 import matplotlib as mpl
 import numpy as np
 from starfit import Ga, Multi, Single
+from starfit.autils.human import time2human
 from starfit.autils.isotope import ion as I
 from utils import JobInfo, convert_img_to_b64_tag
 
@@ -31,18 +32,28 @@ def compute(config):
             pop_size=config.pop_size,
             sol_size=config.sol_size,
             spread=config.spread,
-            local_search=True,
             z_min=config.z_min,
             z_max=config.z_max,
             z_exclude=config.z_exclude,
             z_lolim=config.z_lolim,
             combine=config.combine,
             fixed_offsets=config.fixed,
+            upper_lim=config.upper_lim,
             cdf=config.cdf,
             det=config.det,
             cov=config.cov,
+            group=config.group,
+            pin=config.pin,
             limit_solution=config.limit_solution,
             limit_solver=config.limit_solver,
+            local_search=config.local_search,
+            gen=config.gen,
+            tour_size=config.tour_size,
+            frac_mating_pool=config.frac_mating_pool,
+            frac_elite=config.frac_elite,
+            mut_rate_index=config.mut_rate_index,
+            mut_rate_offset=config.mut_rate_offset,
+            mut_offset_magnitude=config.mut_offset_magnitude,
         )
     elif config.algorithm == "multi":
         result = Multi(
@@ -54,6 +65,7 @@ def compute(config):
             fixed_offsets=config.fixed,
             save=True,
             webfile=config.start_time,
+            upper_lim=config.upper_lim,
             cdf=config.cdf,
             det=config.det,
             cov=config.cov,
@@ -74,6 +86,7 @@ def compute(config):
             z_max=config.z_max,
             z_exclude=config.z_exclude,
             z_lolim=config.z_lolim,
+            upper_lim=config.upper_lim,
             cdf=config.cdf,
             det=config.det,
             cov=config.cov,
@@ -139,12 +152,22 @@ def set_star_values(result, config):
         config.star_reference = ""
     config.star_notes = result.star.comment
     config.star_filename = config.filename
+    if config.algorithm == "ga":
+        config.text_tour_size = str(config.tour_size)
+        config.text_frac_mating_pool = f"{config.frac_mating_pool:4.2f}"
+        config.text_frac_elite = f"{config.frac_elite:4.2f}"
+        config.text_mut_rate_index = f"{config.mut_rate_index:4.2f}"
+        config.text_mut_rate_offset = f"{config.mut_rate_offset:4.2f}"
+        config.text_mut_offset_magnitude = f"{config.mut_offset_magnitude:4.2f}"
 
 
 def set_result_values(result, config):
     config.text_result = result.text_result(10, format="html")
     config.text_db = result.text_db(filename=True)
     config.text_db_n_columns = str(len(config.text_db[0]))
+    if config.algorithm == "ga":
+        config.text_generations = str(result.gen)
+        config.text_time = time2human(result.elapsed)
     if config.algorithm == "multi":
         config.multi_combinations = (
             f"{result.n_combinations:,d} combinations of {result.sol_size} stars"
@@ -178,30 +201,37 @@ def set_result_values(result, config):
     if len(config.text_covariances) == 0:
         config.text_covariances = "None"
 
-    star_elements = [x.element.Z for x in result.eval_data]
+    eval_elements = [x.element.Z for x in result.eval_data]
     config.lolim_string = ", ".join(
         [
             I(x).Name()
             for x in config.z_lolim
-            if x in star_elements and x not in config.z_exclude
+            if x in eval_elements and x not in config.z_exclude
         ]
     )
     config.lolim_string = compressed_ion_list(config.lolim_string)
 
-    star_elements = [I(x).Z for x in result.star.get_elements()]
+    star_elements_full = [I(x).Z for x in result.star.get_elements()]
     star_elements = [
-        z for z in star_elements if z >= I(config.z_min).Z and z <= I(config.z_max).Z
+        z
+        for z in star_elements_full
+        if z >= I(config.z_min).Z and z <= I(config.z_max).Z
     ]
     config.exclude_string = ", ".join(
         [I(x).Name() for x in config.z_exclude if x in star_elements]
     )
     config.exclude_string = compressed_ion_list(config.exclude_string)
 
+    config.ignored_string = ", ".join(
+        [I(x).Name() for x in star_elements_full if x not in star_elements]
+    )
+    config.ignored_string = compressed_ion_list(config.ignored_string)
+
     upper_limits = [I(x).Z for x in result.star.get_upper_limits()]
     config.matched_elements_string = ", ".join(
         [
             I(x).Name()
-            for x in star_elements
+            for x in eval_elements
             if not (
                 (x in config.z_exclude) or (x in config.z_lolim) or (x in upper_limits)
             )
@@ -213,10 +243,21 @@ def set_result_values(result, config):
         [
             I(x).Name()
             for x in upper_limits
-            if x not in config.z_exclude and x in star_elements
+            if x not in config.z_exclude and x in eval_elements
         ]
     )
     config.upper_limits_string = compressed_ion_list(config.upper_limits_string)
+
+    if config.upper_lim is False:
+        config.upper_exclude_string = ", ".join(
+            [
+                I(x).Name()
+                for x in star_elements
+                if not (x in config.z_exclude or x in eval_elements)
+            ]
+        )
+    else:
+        config.upper_exclude_string = ""
 
 
 def make_plots(result, config):
@@ -227,8 +268,11 @@ def make_plots(result, config):
     # Abundance plot
     imgfile = BytesIO()
     labels, plotdata = result.plot(
-        save=imgfile, save_format=config.plotformat, return_plot_data=True,
-        yscale=config.yscale, ynorm='Fe',
+        save=imgfile,
+        save_format=config.plotformat,
+        return_plot_data=True,
+        yscale=config.yscale,
+        ynorm="Fe",
     )
     file_obj += [imgfile]
 

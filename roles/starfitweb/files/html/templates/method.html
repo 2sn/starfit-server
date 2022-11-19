@@ -20,14 +20,6 @@ Combined element abundances:
 <br />
 {% endif %}
 
-{% if config.exclude_string != "" %}
-Excluded elements:
-<span class="method">
-  {{ config.exclude_string }}
-</span>
-<br />
-{% endif %}
-
 {% if config.lolim_string != "" %}
 Model lower limits:
 <span class="method">
@@ -40,6 +32,36 @@ Model lower limits:
 Included upper limits:
 <span class="method">
   {{ config.upper_limits_string }}
+</span>
+<br />
+{% endif %}
+
+{% if config.exclude_string != "" %}
+<span class = "ignored">
+  Excluded elements:
+</span>
+<span class="ignored_method">
+  {{ config.exclude_string }}
+</span>
+<br />
+{% endif %}
+
+{% if config.ignored_string != "" %}
+<span class = "ignored">
+  Ignored elements:
+</span>
+<span class="ignored_method">
+  {{ config.ignored_string }}
+</span>
+<br />
+{% endif %}
+
+{% if config.upper_exclude_string != "" %}
+<span class = "ignored">
+  Ignored upper limits:
+  </span>
+<span class="ignored_method">
+  {{ config.upper_exclude_string }}
 </span>
 <br />
 {% endif %}
@@ -64,8 +86,8 @@ Free
 <br />
 {% endif %}
 
-{% if config.star_upper_limits != "" %}
-Upper limit treatment:
+{% if config.star_detection_thresholds != "" or config.upper_limits_string != "" %}
+Limit treatment:
 <span class="method">
 {% if config.cdf %}
 Cumulative distribution function
@@ -131,9 +153,9 @@ Population size:
 </span>
 <br />
 
-Time limit:
+Time used:
 <span class="method">
-  {{ config.time_limit }}
+  {{ config.text_time }}
 </span>
 <br />
 
@@ -143,9 +165,83 @@ Gene size:
 </span>
 <br />
 
+Generations
+<span class="method">
+  {{ config.text_generations }}
+</span>
+<br />
+
 Spread search:
 <span class="method">
   {% if config.spread %}
+&#x2713;
+{% else %}
+No
+{% endif %}
+</span>
+<br />
+
+{% if config.group_string != "" %}
+Groups:
+<span class="method">
+  {{ config.group_string }}
+</span>
+<br />
+{% endif %}
+
+{% if config.pin_string != "" %}
+Pin:
+<span class="method">
+  {{ config.pin_string }}
+</span>
+<br />
+
+Pin totals:
+<span class="output">
+  {{ config.pinning_string }}
+</span>
+<br />
+{% endif %}
+
+Tournament size:
+<span class="method">
+  {{ config.text_tour_size }}
+</span>
+<br />
+
+Fraction mating pool:
+<span class="method">
+  {{ config.text_frac_mating_pool }}
+</span>
+<br />
+
+Fraction elite:
+<span class="method">
+  {{ config.text_frac_elite }}
+</span>
+<br />
+
+Mutation rate index:
+<span class="method">
+  {{ config.text_mut_rate_index }}
+</span>
+<br />
+
+Mutation rate offset:
+<span class="method">
+  {{ config.text_mut_rate_offset }}
+</span>
+<br />
+
+Mutation offset magnitude:
+<span class="method">
+  {{ config.text_mut_offset_magnitude }}
+</span>
+<br />
+
+Local search:
+<span class="method">
+  {% if config.local_search %}
 &#x2713;
 {% else %}
 No
