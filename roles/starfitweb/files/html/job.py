@@ -277,7 +277,7 @@ def make_plots(result, config):
     file_obj += [imgfile]
 
     if config.algorithm == "ga":
-        result.plot_fitness()
+        result.plot_fitness(gen=True)
         imgfile = BytesIO()
         mpl.pyplot.savefig(imgfile, format=config.plotformat)
         file_obj += [imgfile]
