@@ -1,0 +1,5 @@
+Time limit
+==========
+
+Maximum time for the genetic algorithm to run.  The number of generations
+accomplished may vary with hardware and problem size.

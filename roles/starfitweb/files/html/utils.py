@@ -115,6 +115,9 @@ class Config(object):
 
         self.database = dbx
 
+        self.gen = min(max(self.gen, 100), 10000)
+        self.time_limit = min(max(self.time_limit, 1), 60)
+
         self.z_min = I(self.z_min)
         if not self.z_min.is_element:
             self.z_min = "H"

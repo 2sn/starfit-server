@@ -1,0 +1,5 @@
+Local search
+============
+
+Solve for the best dilution factors for a given combination of stars
+rather than relying on the genetic algorithm to find them.

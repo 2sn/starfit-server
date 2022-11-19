@@ -1,0 +1,16 @@
+Pinning
+=======
+
+For genetic algorithm, databases can be put in groups (field `Group`)
+, e.g., different r-process sources.  From each group, contributions
+can be enforced once or multiple times (field `Pin`).
+
+If not grouping is provided, each database is treated as its own
+group.
+
+Pinning can accelerate finding solutions that include contributions
+form a group it that group has a lot fewer members than others.
+
+Grouping can provide a better representation of the desired
+astrophysics, e.g., massive star models or r-process contributions
+from sifferent sources can be paired.
