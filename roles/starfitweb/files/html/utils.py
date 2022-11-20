@@ -82,7 +82,8 @@ class Config(object):
         limit_solver={"type": "boolean", "coerce": bool},
         spread={"type": "boolean", "coerce": bool},
         local_search={"type": "boolean", "coerce": bool},
-        group={"type": "string", "coerce": str},
+        group_ga={"type": "string", "coerce": str},
+        group_multi={"type": "string", "coerce": str},
         pin={"type": "string", "coerce": str},
     )
 
@@ -172,14 +173,20 @@ class Config(object):
             self.errors = [f"Bad choice of algorithm='{self.algorithm}'"]
             return
 
+        if self.algorithm == "ga":
+            self.group = self.group_ga
+        elif self.algorithm == "multi":
+            self.group = self.group_multi
+        del self.group_ga
+        del self.group_multi
+
         if self.algorithm in (
             "ga",
             "multi",
         ):
             ndb = len(self.database)
             groups = self.group.strip()
-            ngroup = len(groups)
-            if ngroup > 0:
+            if len(groups) > 0:
                 try:
                     groups = [
                         [int(d) for d in g.split(",") if len(d) > 0]
@@ -210,7 +217,9 @@ class Config(object):
                 if max(gdb) >= ndb:
                     self.errors = ["Require group entries in range."]
                     return
-                ngroup = len(groups)
+            else:
+                groups = list()
+            ngroup = len(groups)
 
         if self.algorithm == "multi":
             sol_sizes = self.sol_sizes.strip()
@@ -224,8 +233,6 @@ class Config(object):
             nsol_sizes = len(sol_sizes)
             sol_size = sum(sol_sizes)
 
-            ndb = len(self.database)
-            groups = self.group.strip()
             if ngroup > 0:
                 if ngdb < ndb:
                     if (nsol_sizes == ngroup + 1) or (
