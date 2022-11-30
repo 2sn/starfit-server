@@ -273,6 +273,7 @@ def make_plots(result, config):
         return_plot_data=True,
         yscale=config.yscale,
         ynorm="Fe",
+        multi=config.multi,
     )
     file_obj += [imgfile]
 

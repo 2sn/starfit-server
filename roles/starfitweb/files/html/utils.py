@@ -85,6 +85,7 @@ class Config(object):
         group_ga={"type": "string", "coerce": str},
         group_multi={"type": "string", "coerce": str},
         pin={"type": "string", "coerce": str},
+        multi={"type": "integer", "coerce": int},
     )
 
     def __init__(self, form):
