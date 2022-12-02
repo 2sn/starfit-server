@@ -86,6 +86,7 @@ class Config(object):
         group_multi={"type": "string", "coerce": str},
         pin={"type": "string", "coerce": str},
         multi={"type": "integer", "coerce": int},
+        show_index={"type": "boolean", "coerce": bool},
     )
 
     def __init__(self, form):

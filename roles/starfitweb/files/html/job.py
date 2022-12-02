@@ -162,7 +162,9 @@ def set_star_values(result, config):
 
 
 def set_result_values(result, config):
-    config.text_result = result.text_result(10, format="html")
+    config.text_result = result.text_result(
+        10, format="html", show_index=config.show_index
+    )
     config.text_db = result.text_db(filename=True)
     config.text_db_n_columns = str(len(config.text_db[0]))
     if config.algorithm == "ga":
