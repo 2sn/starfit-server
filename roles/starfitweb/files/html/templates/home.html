@@ -373,7 +373,7 @@
 		multiple>
             {% for db in dblist %}
             <option value="{{ db }}"
-		    {% if db == db_select %} selected {% endif %}
+		    {% if db in db_select %} selected {% endif %}
 		    >{{ dblist[db] }}</option>
             {% endfor %}
           </select>

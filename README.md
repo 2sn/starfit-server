@@ -69,9 +69,9 @@ Note: the follow instructions only add new databases to the web application, and
 
 New model databases can be added to `/var/www/html/data/db`. This path is publicly accessible at `https://<ip-address>/data`, but it won't be included in the PyPI build unless it is also added to the data download hashlist.
 
-The labels in the webpage database list are specified in the file `/var/www/html/data/db/labels`. The dropdown menu is dynamically populated when the page is loaded. If no label is specified, a label is extracted from the filename.
+The labels in the webpage database list are specified in the file `/var/www/html/data/db/labels`. The dropdown menu is dynamically populated when the page is loaded. If no label is specified, a label is extracted from the filename.  An asterisk at the beginning of the label indicates that this database is pre-select.
 
-# Adding new smaple stars
+# Adding new sample stars
 Note: the follow instructions only add new sample to the web application, and does *not* add them to the StarFit PyPI package. To add new files to StarFit, follow the [instructions on the StarFit repo](https://github.com/conradtchan/starfit#adding-new-data-files).
 
 New sample stars can be added to `/var/www/html/data/stars`. This path is publicly accessible at `https://<ip-address>/data`, but it won't be included in the PyPI build unless it is also added to the stars download hashlist.

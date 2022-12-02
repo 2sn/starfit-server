@@ -16,7 +16,8 @@ except ImportError:
 db_files = glob.glob('/var/www/html/data/db/*.stardb.*')
 
 # Dict of labels of DB files
-db_labels = {}
+db_labels = dict()
+db_select = list()
 
 # Look for labels file
 db_labels_file = '/var/www/html/data/db/labels'
@@ -25,7 +26,12 @@ if path.isfile(db_labels_file):
         # Read each line, and put the filename and label in the dict
         for line in f.readlines():
             cols = line.split('=')
-            db_labels[cols[0].strip()] = cols[1].strip()
+            label = cols[1].strip()
+            key = cols[0].strip()
+            if label.startswith("*"):
+                label = label[1:]
+                db_select.append(key)
+            db_labels[key] = label
 
 # If there are files that do not have a label, generate one for them based on the filename
 for fpath in db_files:
@@ -60,9 +66,11 @@ for fpath in star_files:
     if fname not in star_labels:
         star_labels[fname] = fname[:-4]
 
-# set default label
+# set default labels
 if star_select is None:
     star_select = next(iter(star_labels))
+if db_select is None:
+    db_select = [next(iter(db_labels))]
 
 # Load jinja template
 jinja_env = j2.Environment(loader=j2.FileSystemLoader("templates"))
@@ -73,7 +81,7 @@ print(template.render(
     dblist=db_labels,
     starfit_version=starfit_version,
     db_listing_size=str(min(30, len(db_labels))),
-    db_select=next(iter(db_labels)),
+    db_select=db_select,
     starlist=star_labels,
     star_select=star_select,
 ))
