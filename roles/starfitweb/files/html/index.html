@@ -41,18 +41,28 @@ star_labels = {}
 
 # Look for labels file
 star_labels_file = '/var/www/html/data/stars/labels'
+star_select = None
 if path.isfile(star_labels_file):
     with open(star_labels_file, 'r') as f:
         # Read each line, and put the filename and label in the dict
         for line in f.readlines():
             cols = line.split('=')
-            star_labels[cols[0].strip()] = cols[1].strip()
+            label = cols[1].strip()
+            key = cols[0].strip()
+            if label.startswith("*"):
+                label = label[1:]
+                star_select = key
+            star_labels[key] = label
 
 # If there are files that do not have a label, generate one for them based on the filename
 for fpath in star_files:
     fname = path.basename(fpath)
     if fname not in star_labels:
         star_labels[fname] = fname[:-4]
+
+# set default label
+if star_select is None:
+    star_select = next(iter(star_labels))
 
 # Load jinja template
 jinja_env = j2.Environment(loader=j2.FileSystemLoader("templates"))
@@ -65,5 +75,5 @@ print(template.render(
     db_listing_size=str(min(30, len(db_labels))),
     db_select=next(iter(db_labels)),
     starlist=star_labels,
-    star_select=next(iter(star_labels))
+    star_select=star_select,
 ))

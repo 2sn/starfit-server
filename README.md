@@ -76,7 +76,7 @@ Note: the follow instructions only add new sample to the web application, and do
 
 New sample stars can be added to `/var/www/html/data/stars`. This path is publicly accessible at `https://<ip-address>/data`, but it won't be included in the PyPI build unless it is also added to the stars download hashlist.
 
-The labels in the webpage dropdown menu are specified in the file `/var/www/html/data/stars/labels`. The dropdown menu is dynamically populated when the page is loaded. If no label is specified, a label is extracted from the filename.
+The labels in the webpage dropdown menu are specified in the file `/var/www/html/data/stars/labels`. The dropdown menu is dynamically populated when the page is loaded. If no label is specified, a label is extracted from the filename.  An asterisk at the beginning of the label indicates that this is the default star to pre-select.
 
 # Troubleshooting jobs
 All user jobs are run via RQ (Redis Queue) workers in combination with a Redis database. If there are jobs failing for seemingly unknown reasons, try restarting the Redis and RQ workers services
