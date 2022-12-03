@@ -285,6 +285,12 @@ def make_plots(result, config):
         mpl.pyplot.savefig(imgfile, format=config.plotformat)
         file_obj += [imgfile]
 
+    if config.plot_cov:
+        result.plot_error_matrix(zoom=False)
+        imgfile = BytesIO()
+        mpl.pyplot.savefig(imgfile, format=config.plotformat)
+        file_obj += [imgfile]
+
     # Save plot data to ASCII file
     plotdatafile = os.path.join("/tmp", "plot_data_points" + config.start_time)
     with open(plotdatafile, mode="w") as f:
