@@ -28,7 +28,8 @@ def convert_img_to_b64_tag(file, format):
         typestr = f"image/{format}"
         if format == "svg":
             typestr += "+xml"
-        img_tag = f'<object data="data:{typestr};base64,{plot_b64}" type="{typestr}" width="100%"></object>'
+        img_tag = f'<object data="data:{typestr};base64,{plot_b64}" type="{typestr}" width="100%"'
+        img_tag += f' download="figure.{format}"></object>'
     return img_tag
 
 
