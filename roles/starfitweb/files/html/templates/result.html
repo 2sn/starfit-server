@@ -8,8 +8,8 @@
   <br />
   {% include 'star.html' %}
   <br />
-  {% if len(config.warnings) > 0 %}
-  <span class="warnsection">Warnings:</span>
+  {% if config.has_warnings %}
+  <span class="warnsection">Warning:</span>
   <br />
   {% include 'warnings.html' %}
   <br />
