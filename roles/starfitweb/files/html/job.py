@@ -291,11 +291,6 @@ def set_result_values(result, config):
             if len(exclude_warn) > 0:
                 warn["exclude"] = ", ".join(x.Name() for x in exclude_warn)
             config.warnings[l] = warn
-
-    config.warnings = {
-        'Kobayashi (2018)': {'exclusions' : 'Li, Ca, Au'},
-        }
-
     config.has_warnings = len(config.warnings) > 0
 
 
