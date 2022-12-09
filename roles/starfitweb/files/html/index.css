@@ -205,6 +205,12 @@ span.section {
     font-family: 'Exo 2', sans-serif;
 }
 
+span.warnsection {
+    color: #bf0000;
+    font-weight: 600;
+    font-family: 'Exo 2', sans-serif;
+}
+
 span.warn {
     color: #bf0000;
     font-weight: 500;

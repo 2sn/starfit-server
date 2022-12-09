@@ -8,6 +8,12 @@
   <br />
   {% include 'star.html' %}
   <br />
+  {% if len(config.warnings) > 0 %}
+  <span class="warnsection">Warnings:</span>
+  <br />
+  {% include 'warnings.html' %}
+  <br />
+  {% endif %}
   <span class="section">Method:</span>
   <br />
   {% include 'method.html' %}

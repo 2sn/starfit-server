@@ -207,13 +207,12 @@ def set_result_values(result, config):
         config.text_covariances = "None"
 
     eval_elements = [x.element.Z for x in result.eval_data]
-    config.lolim_string = ", ".join(
-        [
-            I(x).Name()
+    lolim = [
+            I(x)
             for x in config.z_lolim
             if x in eval_elements and x not in config.z_exclude
         ]
-    )
+    config.lolim_string = ", ".join(x.Name() for x in lolim)
     config.lolim_string = compressed_ion_list(config.lolim_string)
 
     star_elements_full = [I(x).Z for x in result.star.get_elements()]
@@ -242,16 +241,24 @@ def set_result_values(result, config):
             )
         ]
     )
+    matched_elements = [
+            I(x)
+            for x in eval_elements
+            if not (
+                (x in config.z_exclude) or (x in config.z_lolim) or (x in upper_limits)
+            )
+        ]
+    config.matched_elements_string = ', '.join(x.Name() for x in matched_elements)
     config.matched_elements_string = compressed_ion_list(config.matched_elements_string)
 
-    config.upper_limits_string = ", ".join(
-        [
-            I(x).Name()
+    included_upper_limits = [
+            I(x)
             for x in upper_limits
             if x not in config.z_exclude and x in eval_elements
         ]
     )
-    config.upper_limits_string = compressed_ion_list(config.upper_limits_string)
+    config.included_upper_limits_string = ", ".join(x.Name() for x in included_upper_limits)
+    config.included_upper_limits_string = compressed_ion_list(config.included_upper_limits_string)
 
     if config.upper_lim is False:
         config.upper_exclude_string = ", ".join(
@@ -263,6 +270,30 @@ def set_result_values(result, config):
         )
     else:
         config.upper_exclude_string = ""
+
+    config.warnings = dict()
+    for db, l in zip(result.db, result.db_lab):
+        lower_warn = list()
+        for i in db.lower:
+            if i.Z in matched_elemets:
+                lower_warn.append(i)
+        exclude_warn = list()
+        for i in db.exclude:
+            if i.Z in included_upper_limts or i.Z in matched_elements or i.Z in lowlim
+                exclude_warn.append(i)
+
+        if len(lower_warn) > 0 or len(exclude_warn) > 0:
+            try:
+                l = int(l)
+                l = f'DB {l:d}'
+            except:
+                pass
+            warn = dict()
+            if len(lower_warn) > 0:
+                warn['lower limit'] = ', '.join(x.Name() for x in lower_warn)
+            if len(exclude_warn) > 0:
+                warn['exclude'] = ', '.join(x.Name() for x in exclude_warn)
+           config.warnings[l] = warn
 
 
 def make_plots(result, config):

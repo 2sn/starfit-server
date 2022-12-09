@@ -1,0 +1,12 @@
+<span class="warn">
+<ul>
+  {% for db,warn in config.warnings.items() %}
+  <li>{{ db }}:
+    <ul>
+      {% for w,i in warn.items() %}
+      <li>{{ w }}: {{ i }}</li>
+      {% endfor %}
+    </ul>
+  </li>
+  {% endfor %}
+</ul>
