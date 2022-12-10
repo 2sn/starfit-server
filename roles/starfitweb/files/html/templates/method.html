@@ -142,6 +142,21 @@ Total may exceed 100 %
 </span>
 <br />
 
+{% if config.constraints != "" %}
+Constraints:
+{ if config.constraints_ok %}
+<span class="method">
+  {{ config.constraints }}
+</span>
+{% else %}
+<span class="warnsection">Failed:</span>
+<span class="warn">
+  {{ config.constraints }}
+</span>
+{% endif %}
+</span>
+{% endif %}
+
 {% if config.algorithm == "ga" %}
 <br />
  <span class="section">Genetic algorithm parameters:</span>

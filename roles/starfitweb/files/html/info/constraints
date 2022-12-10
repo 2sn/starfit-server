@@ -1,0 +1,14 @@
+Constraints
+===========
+
+List of conditions separated by comma (acts as "and").
+
+Conditions for specific databases can be prefixed with a number
+(zero-based) if the index of the database in the list, followed by a
+colon(`:`).
+
+Entries for different databases are separated by semicolon (`;`).
+
+The fieldname has to be given first, then the operator, and finally
+the comparison value.  Allowed operators are `<`, `<=`, `==`, `>=`,
+`>`, and `!=`.

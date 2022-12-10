@@ -89,6 +89,7 @@ class Config(object):
         multi={"type": "integer", "coerce": int},
         plot_cov={"type": "boolean", "coerce": bool},
         show_index={"type": "boolean", "coerce": bool},
+        constraints={"type": "string", "coerce": str},
     )
 
     def __init__(self, form):
