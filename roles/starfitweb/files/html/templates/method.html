@@ -144,7 +144,7 @@ Total may exceed 100 %
 
 {% if config.constraints != "" %}
 Constraints:
-{ if config.constraints_ok %}
+{% if config.constraints_ok %}
 <span class="method">
   {{ config.constraints }}
 </span>
@@ -155,6 +155,7 @@ Constraints:
 </span>
 {% endif %}
 </span>
+<br />
 {% endif %}
 
 {% if config.algorithm == "ga" %}
