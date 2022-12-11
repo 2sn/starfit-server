@@ -38,11 +38,12 @@ def compute(config):
             cdf=config.cdf,
             det=config.det,
             cov=config.cov,
+            dst=config.dst,
             limit_solution=config.limit_solution,
             limit_solver=config.limit_solver,
             time_limit=config.time_limit,
             constraints=config.constraints,
-            constraints_error='raise',
+            constraints_error="raise",
             fixed_offsets=config.fixed,
             sol_size=config.sol_size,
             group=config.group,
@@ -72,10 +73,11 @@ def compute(config):
             cdf=config.cdf,
             det=config.det,
             cov=config.cov,
+            dst=config.dst,
             limit_solution=config.limit_solution,
             limit_solver=config.limit_solver,
             constraints=config.constraints,
-            constraints_error='raise',
+            constraints_error="raise",
             fixed_offsets=config.fixed,
             sol_size=config.sol_sizes,
             group=config.group,
@@ -97,10 +99,11 @@ def compute(config):
             cdf=config.cdf,
             det=config.det,
             cov=config.cov,
+            dst=config.dst,
             limit_solution=config.limit_solution,
             limit_solver=config.limit_solver,
             constraints=config.constraints,
-            constraints_error='raise',
+            constraints_error="raise",
         )
     else:
         result = None
@@ -300,6 +303,7 @@ def set_result_values(result, config):
     config.has_warnings = len(config.warnings) > 0
 
     config.constraints_ok = result.constraints_ok
+
 
 def make_plots(result, config):
 

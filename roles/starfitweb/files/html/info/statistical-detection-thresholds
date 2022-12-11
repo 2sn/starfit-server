@@ -1,0 +1,7 @@
+Statistical Detection Tresholds
+===============================
+
+If checked, use only statstical error for detection thresholds.  The
+form of the errer distribution is set by the cdf flag.
+
+If unchecked, use statistical and covariant errors for detection thresholds.

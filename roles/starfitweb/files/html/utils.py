@@ -79,6 +79,7 @@ class Config(object):
         cdf={"type": "boolean", "coerce": bool},
         det={"type": "boolean", "coerce": bool},
         cov={"type": "boolean", "coerce": bool},
+        dst={"type": "boolean", "coerce": bool},
         limit_solution={"type": "boolean", "coerce": bool},
         limit_solver={"type": "boolean", "coerce": bool},
         spread={"type": "boolean", "coerce": bool},
