@@ -53,6 +53,6 @@
   template:
     src: deploy_info.j2
     dest: /var/www/html/deploy_info
-    mode: 0644
+    mode: "0644"
     owner: root
     group: apache

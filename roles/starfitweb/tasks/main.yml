@@ -21,7 +21,7 @@
 - name: Ensure executables are executable
   file:
     path: /var/www/html/{{ item }}
-    mode: 0755
+    mode: "0755"
   loop:
     - index.html
     - unsubscribe

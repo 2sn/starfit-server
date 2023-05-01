@@ -306,7 +306,6 @@ def set_result_values(result, config):
 
 
 def make_plots(result, config):
-
     # File objects
     file_obj = []
 

@@ -94,7 +94,6 @@ class Config(object):
     )
 
     def __init__(self, form):
-
         try:
             stardata = form["stardata"]
         except:
