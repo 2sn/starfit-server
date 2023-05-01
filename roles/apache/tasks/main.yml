@@ -21,7 +21,7 @@
 
       <VirtualHost *:80>
           ServerName {{ domain }}
-          Redirect permanent / https://{{ domain }}
+          Redirect permanent / https://{{ domain }}/
       </VirtualHost>
 
       <VirtualHost *:443>
